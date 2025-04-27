@@ -1,0 +1,26 @@
+{
+  "name": "proj-web-allan",
+  "version": "1.0.0",
+  "main": "db_connection.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JoanaDark1/proj-web-allan.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JoanaDark1/proj-web-allan/issues"
+  },
+  "homepage": "https://github.com/JoanaDark1/proj-web-allan#readme",
+  "description": "",
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "express": "^5.1.0",
+    "mysql": "^2.18.1",
+    "mysql2": "^3.14.0"
+  }
+}
