@@ -29,7 +29,7 @@ var sqlMedico = `CREATE TABLE IF NOT EXISTS medicos (
     email VARCHAR(45) NOT NULL UNIQUE,
     senha VARCHAR(45) NOT NULL,
     telefone VARCHAR(15) NOT NULL,
-    crm INT UNIQUE  NOT NULL,
+    crm VARCHAR(10) UNIQUE  NOT NULL,
     rqm INT UNIQUE,
     img_perfil VARCHAR(100)
 )`;

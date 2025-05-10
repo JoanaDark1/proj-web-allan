@@ -18,10 +18,40 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById("tipo-usuario").value = "medico";
             container.innerHTML = `
                 <div class="wrap-input validate-input" data-validate="CRM obrigatório">
-                    <input class="input" name="crm" type="text" placeholder="CRM" required>
+                    <input class="wrap-input input" name="crm" type="text" placeholder="CRM" required minlength = "5" maxlength="6" id="crm">
+                    <select id="estado_crm" name="estado_crm" class="input" required>
+                            <option value="">Selecione o estado do seu CRM</option>
+                            <option value="AC">AC</option>
+                            <option value="AL">AL</option>
+                            <option value="AP">AP</option>
+                            <option value="AM">AM</option>
+                            <option value="BA">BA</option>
+                            <option value="CE">CE</option>
+                            <option value="DF">DF</option>
+                            <option value="ES">ES</option>
+                            <option value="GO">GO</option>
+                            <option value="MA">MA</option>
+                            <option value="MT">MT</option>
+                            <option value="MS">MS</option>
+                            <option value="MG">MG</option>
+                            <option value="PA">PA</option>
+                            <option value="PB">PB</option>
+                            <option value="PR">PR</option>
+                            <option value="PE">PE</option>
+                            <option value="PI">PI</option>
+                            <option value="RJ">RJ</option>
+                            <option value="RN">RN</option>
+                            <option value="RS">RS</option>
+                            <option value="RO">RO</option>
+                            <option value="RR">RR</option>
+                            <option value="SC">SC</option>
+                            <option value="SP">SP</option>
+                            <option value="SE">SE</option>
+                            <option value="TO">TO</option>
+                    </select>
                 </div>
                 <div class="wrap-input validate-input" data-validate="RQM opcional">
-                    <input class="input" name="rqm" type="text" placeholder="RQM">
+                    <input class="input" name="rqm" type="text" placeholder="RQM" minlength = "4" maxlength="7">
                 </div>
             `;
         });

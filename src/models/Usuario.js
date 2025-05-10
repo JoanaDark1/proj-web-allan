@@ -1,4 +1,4 @@
-class User{
+class Usuario {
     constructor({id,nome,email,senha}){
         this.id = id;
         this.nome = nome;
@@ -17,4 +17,4 @@ class User{
         throw new Error('Método save deve ser implementado pela subclasse');
     }
 }
-module.exports = User;
+module.exports = Usuario;

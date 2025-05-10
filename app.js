@@ -2,6 +2,9 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mysql = require('mysql2');
 const path = require('path');
+const Medico = require('./src/models/Medico');
+const Enfermeiro = require('./src/models/Enfermeiro');
+const Gestor = require('./src/models/Gestor');
 
 const app = express();
 const port = 3000;
@@ -64,14 +67,25 @@ app.post('/login', (req, res) => {
                 if (result.length > 0) {
                     return res.redirect(`/user_profile?tipo=gestor&id=${result[0].id}`);
                 }
-                // caso não exista match em nenhuma tabela
-                return res.status(401).send("Email ou senha inválidos.");
+
+                 //verifcando na tabela Admin
+                let sql = "SELECT * FROM admin WHERE email = ? AND senha = ?";
+                con.query(sql, [email, senha], (err, result) => {
+                    if (err) {
+                        console.log(err);
+                        return res.status(500).send("Erro ao fazer login.");
+                    }
+                    if (result.length > 0) {
+                        return res.redirect(`/user_profile?tipo=admin&id=${result[0].id}`); // talvez o admin não seja redirecionado p/ uma pag de user profile
+                    }
+                    // caso não exista match em nenhuma tabela
+                    return res.status(401).send("Email ou senha inválidos.");
 
 
             });
         });
     });
-});
+}); });
 
 app.get('/user_profile', (req, res) => { 
     const {tipo, id} = req.query; //pegando os dados da url
@@ -88,20 +102,26 @@ app.post('/add', (req, res) => {  //res = resposta do servidor, req = requisiç�
     let values = [];
 
     if (tipo === "medico") {
-        const { crm, rqm } = req.body
+        
+        const rqm = req.body.rqm;
+        const crm = req.body.crm + '/' + req.body.estado_crm;
+        //const { crm, rqm } = req.body
+        novo_usuario = new Medico(null,nome,email,senha,telefone,crm,rqm);
         sql = "INSERT INTO medicos(nome,email,senha,crm,rqm,telefone) VALUES (?,?,?,?,?,?)";
-        values = [nome, email, senha, crm, rqm, telefone];
+        values = [novo_usuario.nome, novo_usuario.email, novo_usuario.senha, novo_usuario.crm, novo_usuario.rqm, novo_usuario.telefone];
 
     }
     else if (tipo === "enfermeiro") {
         const { coren } = req.body
+        novo_usuario = new Enfermeiro(null,nome,email,senha,coren,telefone);
         sql = "INSERT INTO enfermeiros(nome,email,senha,coren,telefone) VALUES (?,?,?,?,?)";
-        values = [nome, email, senha, coren, telefone];
+        values = [novo_usuario.nome, novo_usuario.email, novo_usuario.senha, novo_usuario.coren, novo_usuario.telefone];
     }
     else if (tipo === "gestor") {
         const { empresa_hospital } = req.body
+        novo_usuario = new Gestor(null,nome,email,senha,empresa_hospital,telefone);
         sql = "INSERT INTO gestores(nome,email,senha,empresa_hospital,telefone) VALUES (?,?,?,?,?)";
-        values = [nome, email, senha, empresa_hospital, telefone];
+        values = [novo_usuario.nome, novo_usuario.email, novo_usuario.senha, novo_usuario.empresa_hospital, novo_usuario.telefone];
     }
     else {
         return res.send("Tipo de usuário inválido.");
@@ -121,4 +141,3 @@ app.post('/add', (req, res) => {  //res = resposta do servidor, req = requisiç�
 app.listen(port, () => {
     console.log(`Servidor rodando em http://localhost:${port}`);
 });
-
