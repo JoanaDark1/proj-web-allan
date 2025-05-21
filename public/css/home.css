@@ -66,7 +66,7 @@
 :root {
 	--blur: 0px;
 	--spread: 0px;
-	--pixel-size: 15px;
+	--pixel-size: calc(50vw / 64);
 	--gutter-size: 0px;
 	--shadow-mult: calc(var(--gutter-size) + var(--pixel-size));
 }
