@@ -52,8 +52,8 @@ document.addEventListener("DOMContentLoaded", function () {
     
                     </div>
                 <div class="wrap-input validate-input" data-validate="RQM opcional">
-                    <input class="input" name="rqm" type="text" placeholder="RQM" minlength = "4" maxlength="7">
-                    <input class="wrap-input input" name="Especialidade" type="text" placeholder="Especialidade" required minlength = "5" maxlength="50" id="Especialidade">
+                    <input class="input" name="rqm1" type="text" placeholder="RQM" minlength = "4" maxlength="7">
+                    <input class="wrap-input input" name="especialidade1" type="text" placeholder="Especialidade" required minlength = "5" maxlength="50" id="Especialidade">
                     <p> Caso possua uma segunda especialidade poderá ser adicionada na página do usuário</p>
                 </div>
             `;
@@ -65,9 +65,18 @@ document.addEventListener("DOMContentLoaded", function () {
             btnSubmit.disabled = false; // habilitar o botão de submit
             document.getElementById("tipo-usuario").value = "enfermeiro";
             container.innerHTML = `
-                <div class="wrap-input validate-input" data-validate="COREN obrigatório">
-                    <input class="input" name="coren" type="text" placeholder="COREN" required> 
-                    <input class="wrap-input input" name="Especialidade" type="text" placeholder="Especialidade" required minlength = "5" maxlength="50" id="Especialidade">
+                <div class="wrap-input validate-input" data-validate="COREN obrigatório" >
+                    <input class="input" name="coren" type="text" placeholder="COREN" required  minlength = "4" maxlength="7"> 
+                    <select id="coren_tipo" name="coren_tipo" class="input" required>
+                            <option value="">Selecione a categoria do seu CRM</option>
+                            <option value="ENF">Enfermeiro-ENF</option>
+                            <option value="TE">Técnico de Enfermagem-TE</option>
+                            <option value="AE">Auxiliar de Enfermagem-AE</option>
+                            <option value="OB">Obstetriz-OB</option>
+                          
+                    </select>
+    
+                    <input class="wrap-input input" name="especialidade1" type="text" placeholder="Especialidade"  minlength = "5" maxlength="50" id="Especialidade">
 
                 </div>
             `;

@@ -1,4 +1,8 @@
+const dotenv = require('dotenv');  
+dotenv.config({ path: '../.env' });
+
 const con = require("./db.js");
+
 
 con.connect(function (err) {
   if (err) throw err;
@@ -8,7 +12,7 @@ con.connect(function (err) {
     email VARCHAR(45) NOT NULL UNIQUE,
     senha VARCHAR(45) NOT NULL,
     telefone VARCHAR(15) NOT NULL,
-    coren INT UNIQUE NOT NULL,
+    coren VARCHAR(15) UNIQUE NOT NULL,
     especialidade1 VARCHAR(50),
     img_perfil VARCHAR(100)
 )`;
@@ -24,7 +28,7 @@ con.connect(function (err) {
     email VARCHAR(45) NOT NULL UNIQUE,
     senha VARCHAR(45) NOT NULL,
     telefone VARCHAR(15) NOT NULL,
-    crm VARCHAR(10) UNIQUE  NOT NULL,
+    crm VARCHAR(15) UNIQUE  NOT NULL,
     rqm1 INT UNIQUE, 
     rqm2 INT UNIQUE,
     especialidade1 VARCHAR(50),
@@ -86,7 +90,7 @@ con.connect(function (err) {
       (medico_id IS NULL AND enfermeiro_id IS NOT NULL)) -- so um dos 2 pode ser nulo
 )`;
 
-  con.query(sqlGestores, function (err, result) {
+  con.query(sqlCertificados, function (err, result) {
     if (err) throw err;
     console.log("Tabela certificados criada");
   });

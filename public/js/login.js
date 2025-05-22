@@ -16,13 +16,17 @@
 
     /* Validate */
 
+    /* Validate */
+
     function validate(input) {
         if ($(input).attr('type') == 'email' || $(input).attr('name') == 'email') {
             // se falha no regex de email
-            if ($(input).val().trim().match(/^([a-zA-Z0-9_\-\.]+)@((([a-zA-Z0-9\-]+\.)+))([a-zA-Z])$/) == null) {
+            if ($(input).val().trim().match(/^([a-z0-9_\-\.]+)@((([a-z0-9\-]+\.)+))([a-z]{2,})$/i) == null) {
                 return false;
             }
         }
+
+
         else {
             if ($(input).val().trim() == '') {
                 return false;
@@ -68,19 +72,22 @@
 
 
     /*mostrar senha*/
-    var showPass = 0;
-    $('.btn-show-pass').on('click', function(){
-        if(showPass == 0) {
-            $(this).next('input').attr('type','text');
+
+    $('.btn-show-pass').on('click', function (e) {
+        e.preventDefault(); // impede o botão de tentar enviar o formulário
+
+        const input = $(this).siblings('input');
+        if (input.attr('type') === 'password') {
+            input.attr('type', 'text');
             $(this).addClass('active');
-            showPass = 1;
+
         }
         else {
-            $(this).next('input').attr('type','password');
+            input.attr('type', 'password');
             $(this).removeClass('active');
-            showPass = 0;
+
         }
-        
+
     });
 
 })(jQuery);

@@ -92,32 +92,35 @@ app.get('/user_profile', (req, res) => {
 app.post('/add', (req, res) => {  //res = resposta do servidor, req = requisição do cliente
 
     console.log("Dados recebidos:", req.body);
-    const { nome, email, telefone, senha, tipo } = req.body; //req.body objeto que contém todos os campos enviados pelo formulário
+    const {tipo } = req.body; //req.body objeto que contém todos os campos enviados pelo formulário
 
     let sql = "";
     let values = [];
 
     if (tipo === "medico") {
         
-        const rqm = req.body.rqm;
+        //const rqm1 = req.body.rqm1;
         const crm = req.body.crm + '/' + req.body.estado_crm;
-        //const { crm, rqm } = req.body
-        novo_usuario = new Medico(null,nome,email,senha,telefone,crm,rqm);
-        sql = "INSERT INTO medicos(nome,email,senha,crm,rqm,telefone) VALUES (?,?,?,?,?,?)";
-        values = [novo_usuario.nome, novo_usuario.email, novo_usuario.senha, novo_usuario.crm, novo_usuario.rqm, novo_usuario.telefone];
+        //const especialidade1 = req.body.especialidade1;
+        //novo_usuario = new Medico(null,nome,email,senha,telefone,crm,rqm1,img_perfil,especialidade1,especialidade2);
+        sql = "INSERT INTO medicos(nome,email,senha,crm,rqm1,telefone,especialidade1) VALUES (?,?,?,?,?,?,?)";
+        values = [req.body.nome, req.body.email, req.body.senha, crm, req.body.rqm1, 
+            req.body.telefone, req.body.especialidade1];
 
     }
     else if (tipo === "enfermeiro") {
-        const { coren } = req.body
-        novo_usuario = new Enfermeiro(null,nome,email,senha,coren,telefone);
-        sql = "INSERT INTO enfermeiros(nome,email,senha,coren,telefone) VALUES (?,?,?,?,?)";
-        values = [novo_usuario.nome, novo_usuario.email, novo_usuario.senha, novo_usuario.coren, novo_usuario.telefone];
+        const coren = req.body.coren + '-' + req.body.coren_tipo;
+        //const { coren, especialidade1 } = req.body
+        //novo_usuario = new Enfermeiro(null,nome,email,senha,coren,telefone,especialidade1);
+        sql = "INSERT INTO enfermeiros(nome,email,senha,coren,telefone,especialidade1) VALUES (?,?,?,?,?,?)";
+        values = [req.body.nome, req.body.email, req.body.senha, coren, 
+            req.body.telefone, req.body.especialidade1];
     }
     else if (tipo === "gestor") {
         const { empresa_hospital } = req.body
-        novo_usuario = new Gestor(null,nome,email,senha,empresa_hospital,telefone);
+        //novo_usuario = new Gestor(null,nome,email,senha,empresa_hospital,telefone);
         sql = "INSERT INTO gestores(nome,email,senha,empresa_hospital,telefone) VALUES (?,?,?,?,?)";
-        values = [novo_usuario.nome, novo_usuario.email, novo_usuario.senha, novo_usuario.empresa_hospital, novo_usuario.telefone];
+        values = [req.body.nome, req.body.email, req.body.senha, req.body.empresa_hospital, req.body.telefone];
     }
     else {
         return res.send("Tipo de usuário inválido.");
@@ -130,7 +133,10 @@ app.post('/add', (req, res) => {  //res = resposta do servidor, req = requisiç�
             return res.status(500).send("Erro ao cadastrar usuário.");
         }
         console.log("Resultado da query: ", result);  // Log do resultado
-        res.send("Usuário cadastrado com sucesso!");
+        console.log("Usuário cadastrado com sucesso!");
+        return res.redirect(`/user_profile?tipo=${tipo}&id=${result.insertId}`); 
+
+        
     });
 });
 
