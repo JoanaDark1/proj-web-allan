@@ -1,15 +1,6 @@
-var mysql = require('mysql2');
+const con = require("./db.js");
 
-var con = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  //password: "87Amore;;w34",
-  //password: "1234",
-  //password: "abacaxi1401",
-  database: "med_oportuna"
-});
-
-con.connect(function(err) {
+con.connect(function (err) {
   if (err) throw err;
   console.log("CONECTADO!");
   var sqlEnfemeiro = `CREATE TABLE IF NOT EXISTS enfermeiros (
@@ -17,31 +8,36 @@ con.connect(function(err) {
     email VARCHAR(45) NOT NULL UNIQUE,
     senha VARCHAR(45) NOT NULL,
     telefone VARCHAR(15) NOT NULL,
-    coren INT UNIQUE,
+    coren INT UNIQUE NOT NULL,
+    especialidade1 VARCHAR(50),
     img_perfil VARCHAR(100)
 )`;
 
-con.query(sqlEnfemeiro, function (err, result) {
-  if (err) throw err;
-  console.log("Tabela enfermeiros criada");
-});
+  con.query(sqlEnfemeiro, function (err, result) {
+    if (err) throw err;
+    console.log("Tabela enfermeiros criada");
+  });
 
-var sqlMedico = `CREATE TABLE IF NOT EXISTS medicos (
+  //medicos podem ter até 2 especialidades
+  var sqlMedico = `CREATE TABLE IF NOT EXISTS medicos (
     id INT AUTO_INCREMENT PRIMARY KEY, nome VARCHAR(45) NOT NULL,
     email VARCHAR(45) NOT NULL UNIQUE,
     senha VARCHAR(45) NOT NULL,
     telefone VARCHAR(15) NOT NULL,
     crm VARCHAR(10) UNIQUE  NOT NULL,
-    rqm INT UNIQUE,
+    rqm1 INT UNIQUE, 
+    rqm2 INT UNIQUE,
+    especialidade1 VARCHAR(50),
+    especialidade2 VARCHAR(50),
     img_perfil VARCHAR(100)
 )`;
 
-con.query(sqlMedico, function (err, result) {
-  if (err) throw err;
-  console.log("Tabela medicos criada");
-});
+  con.query(sqlMedico, function (err, result) {
+    if (err) throw err;
+    console.log("Tabela medicos criada");
+  });
 
-var sqlGestores = `CREATE TABLE IF NOT EXISTS gestores (
+  var sqlGestores = `CREATE TABLE IF NOT EXISTS gestores (
     id INT AUTO_INCREMENT PRIMARY KEY, nome VARCHAR(45) NOT NULL,
     email VARCHAR(45) NOT NULL UNIQUE,
     senha VARCHAR(45) NOT NULL,
@@ -64,5 +60,34 @@ var sqlGestores = `CREATE TABLE IF NOT EXISTS gestores (
   con.query(sqlAdmin, function (err, result) {
     if (err) throw err;
     console.log("Tabela admin criada");
+  });
+
+
+  // certificados so deverm importar mesmo pros profissionais de saude
+  var sqlCertificados = `CREATE TABLE IF NOT EXISTS certificados (
+    id INT AUTO_INCREMENT PRIMARY KEY, 
+    titulo VARCHAR(45) NOT NULL,
+    data_emissao DATE NOT NULL,
+    carga_horaria INT NOT NULL,
+    tipo_certificado VARCHAR(45) NOT NULL, -- se é de curso ou congresso
+
+    -- fk dos tipos de usuario
+    medico_id INT null,
+    enfermeiro_id INT null,
+
+    CONSTRAINT fk_certificado_medico 
+      FOREIGN KEY (medico_id) REFERENCES medicos(id) ON DELETE CASCADE,
+
+    CONSTRAINT fk_certificado_enfermeiro 
+      FOREIGN KEY (enfermeiro_id) REFERENCES enfermeiros(id) ON DELETE CASCADE,
+
+    CONSTRAINT chk_user_type CHECK(
+      (medico_id IS NOT NULL AND enfermeiro_id IS NULL) OR 
+      (medico_id IS NULL AND enfermeiro_id IS NOT NULL)) -- so um dos 2 pode ser nulo
+)`;
+
+  con.query(sqlGestores, function (err, result) {
+    if (err) throw err;
+    console.log("Tabela certificados criada");
   });
 });

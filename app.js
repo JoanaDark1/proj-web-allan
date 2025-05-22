@@ -5,9 +5,12 @@ const path = require('path');
 const Medico = require('./src/models/Medico');
 const Enfermeiro = require('./src/models/Enfermeiro');
 const Gestor = require('./src/models/Gestor');
+const con = require('./database/db.js');
 
 const app = express();
 const port = 3000;
+
+
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -17,15 +20,6 @@ app.use(express.static('public'));
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'templates', 'home.html'));
-});
-
-var con = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    //password: "87Amore;;w34",
-    //password: "1234",
-    //password: "abacaxi1401",
-    database: "med_oportuna"
 });
 
 con.connect(function (err) {
