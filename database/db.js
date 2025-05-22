@@ -1,5 +1,5 @@
-const dotenv = require('dotenv');  
-dotenv.config({ path: '../.env' });
+// const dotenv = require('dotenv');  
+// dotenv.config({ path: '../.env' });
 
 var mysql = require('mysql2');
 

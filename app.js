@@ -2,10 +2,11 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mysql = require('mysql2');
 const path = require('path');
-const Medico = require('./src/models/Medico');
-const Enfermeiro = require('./src/models/Enfermeiro');
-const Gestor = require('./src/models/Gestor');
+const dotenv = require('dotenv');
+dotenv.config();
 const con = require('./database/db.js');
+
+
 
 const app = express();
 const port = 3000;
