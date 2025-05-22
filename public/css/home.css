@@ -81,7 +81,7 @@
 
 .pixel-art {
 	position: relative;
-	top: -60px;
+	top: -20vh;
 	left: 810px;
 	height: var(--pixel-size);
 	width: var(--pixel-size);
@@ -1367,14 +1367,14 @@
     background-image: url("https://www.transparenttextures.com/patterns/argyle.png");
 	width: 100%;
     height: 80%;
-	margin-top: 30px;
+	margin-top: 2%;
 }
 
 .home-txt {
     position: relative;
 	color: #ffffff;
 	left: 50px;
-    top: 300px;
+    top: 35%;
 	background-color: #2b7e4c; 
     padding: 20px;
     border-radius: 10px;
@@ -1384,11 +1384,11 @@
 
 .home-txt h1 {
     font-weight: 1000; 
-	font-size: 41px;
+	font-size: 2.5vw;
 }
 
 .home-txt h2 {
-    font-weight: 600;
+    font-weight: 2vw;
 }
 
 .topnav {

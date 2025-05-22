@@ -23,7 +23,7 @@
             <img src="/images/logo_cor-removebg-preview.png" alt="logo">  
             <span class="logo">MedOportuna</span>
 
-        </a>
+            </a>
         </div>
 
         <ul class="topnav">
@@ -47,9 +47,9 @@
     </div>
     <!-- <div class="container-cadastro-btn"> -->
     <div class="d-flex justify-content-sm-around">
-        <button class="cadastro-btn">Sou médico</button>
-        <button class="cadastro-btn">Sou enfermeiro</button>
-        <button class="cadastro-btn">Sou gestor</button>
+        <button class="cadastro-btn" data-profissao="medico">Sou médico</button>
+        <button class="cadastro-btn" data-profissao="enfermeiro">Sou enfermeiro</button>
+        <button class="cadastro-btn" data-profissao="gestor">Sou gestor</button>
     </div>
 
     <div id="quem-usa"></div>
@@ -119,8 +119,16 @@
             this.classList.add('ativo');
             });
         });
+
+        // Lógica dos botões "sou médico"
+        document.querySelectorAll('.cadastro-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                const profissao = this.dataset.profissao;
+                // Redireciona para a página correspondente
+                window.location.href = `vagas-${profissao}.html`; // exemplo: vagas-medico.html
+            });
+        });
     </script>
 
-   
 </body>
 </html>

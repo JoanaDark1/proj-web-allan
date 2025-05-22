@@ -86,7 +86,7 @@ app.post('/login', (req, res) => {
 
 app.get('/user_profile', (req, res) => { 
     const {tipo, id} = req.query; //pegando os dados da url
-    res.send(` ENTROUUU, ${tipo} ${id} seu porraaaaa`);
+    res.send(` ENTROUUU, ${tipo} ${id} seu lindo`);
 });
 
 
