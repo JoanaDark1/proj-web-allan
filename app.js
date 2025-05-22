@@ -99,6 +99,7 @@ app.get('/user_profile', (req, res) => {
     if (tipo === 'admin') {
         tabela = 'admin';
     }
+    else if (tipo === 'gestor') { tabela = 'gestores'; }
 
     const sql = ` SELECT * FROM ${tabela} WHERE id = ? `;
     con.query(sql, [id], (err, result) => {
@@ -111,7 +112,7 @@ app.get('/user_profile', (req, res) => {
             tipo,
             id: usuario.id,
             nome: usuario.nome,   // ajuste conforme nome da coluna
-            foto_perfil: usuario.foto_perfil,
+            foto_perfil: usuario.img_perfil,
         });
     });
 
@@ -123,7 +124,7 @@ app.post('/add', (req, res) => {  //res = resposta do servidor, req = requisiç�
 
     console.log("Dados recebidos:", req.body);
     const { tipo } = req.body; //req.body objeto que contém todos os campos enviados pelo formulário
-    const foto_perfil_padrao = path.join(__dirname, 'public', 'images', 'User_Avatar.png');
+    const foto_perfil_padrao = '/images/User_Avatar.png';
 
     let sql = "";
     let values = [];
@@ -132,12 +133,10 @@ app.post('/add', (req, res) => {  //res = resposta do servidor, req = requisiç�
 
 
         const crm = req.body.crm + '/' + req.body.estado_crm;
-        if (req.body.rqm1 === '') {
-            const rqm1 = null;
-        }
+       
 
         sql = "INSERT INTO medicos(nome,email,senha,crm,rqm1,telefone,especialidade1,img_perfil) VALUES (?,?,?,?,?,?,?,?)";
-        values = [req.body.nome, req.body.email, req.body.senha, crm, rqm1,
+        values = [req.body.nome, req.body.email, req.body.senha, crm, req.body.rqm1,
         req.body.telefone, req.body.especialidade1, foto_perfil_padrao];
 
     }
