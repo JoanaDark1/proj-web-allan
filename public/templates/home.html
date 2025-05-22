@@ -15,6 +15,8 @@
     rel="stylesheet">
 </head>
 <body>
+    <div id="topo"></div>
+    
     <nav>
         <div class="navbar-left">
             <a href="/templates/home.html" class="logo">
@@ -25,9 +27,9 @@
         </div>
 
         <ul class="topnav">
-            <li><a href="">Início</a></li>
-            <li><a href="">Quem usa</a></li>
-            <li><a href="">Publicar Vagas</a></li>
+            <li><a href="#topo">Início</a></li>
+            <li><a href="#quem-usa">Quem usa</a></li>
+            <li><a href="#publicar-vagas">Publicar Vagas</a></li>
         </ul>
 
         <div class="d-flex align-items-end">
@@ -50,6 +52,7 @@
         <button class="cadastro-btn">Sou gestor</button>
     </div>
 
+    <div id="quem-usa"></div>
     <div class="quem-usa-faixa mt-5 mb-3">
         <h3>Quem usa?</h3>
     </div>
@@ -57,12 +60,12 @@
     <div class="home-info container mt-5">
         <div class="row align-items-center">
             <div class="col-md-6">
-            <p>
-                Nossa plataforma é utilizada por profissionais de saúde e gestores que buscam praticidade e eficiência na conexão com oportunidades na área. 
-                Médicos, enfermeiros e outros profissionais encontram aqui um ambiente ideal para buscar vagas de emprego, participar de congressos e colaborar em pesquisas acadêmicas.
-                É possível criar um perfil personalizado, utilizar filtros avançados para encontrar oportunidades, publicar anúncios em busca de parceiros para projetos científicos e gerenciar facilmente suas informações.
-                Já os gestores de instituições e organizações de saúde contam com uma solução eficaz para divulgar vagas, eventos e congressos, ampliando seu alcance e conectando-se diretamente com profissionais qualificados.
-                Tudo de forma simples, ágil e segura, em um espaço pensado para fortalecer a rede de saúde e fomentar novas oportunidades.
+            <p style="text-align: justify;">
+                Nossa plataforma é utilizada por <strong>profissionais de saúde</strong> e <strong>gestores</strong> que buscam praticidade e eficiência na conexão com oportunidades na área. 
+                <strong>Médicos, enfermeiros e outros profissionais</strong> encontram aqui um ambiente ideal para buscar vagas de emprego, participar de congressos e colaborar em pesquisas acadêmicas.
+                É possível <strong>criar um perfil personalizado</strong>, utilizar <strong>filtros avançados</strong> para encontrar oportunidades, publicar anúncios em busca de parceiros para projetos científicos e gerenciar facilmente suas informações.
+                Já os <strong>gestores de instituições</strong> e organizações de saúde contam com uma solução eficaz para divulgar vagas, eventos e congressos, ampliando seu alcance e conectando-se diretamente com <strong>profissionais qualificados</strong>.
+                Tudo de forma <strong>simples, ágil e segura</strong>, em um espaço pensado para fortalecer a rede de saúde e fomentar novas oportunidades.
             </p>
             </div>
             <div class="col-md-6">
@@ -72,6 +75,32 @@
         </div>
     </div>
 
+    <!-- Seção: Publicar Vagas -->
+    <div id="publicar-vagas" class="publicar-vagas-section mt-5 mb-5">
+        <div class="container">
+            <h3 class="text-center mb-4"><strong>Publicar Vagas</strong></h3>
+            <p class="texto-justificado">
+            Se você é <strong>gestor de uma instituição</strong> ou <strong>organizador de eventos</strong>, pode usar nossa plataforma para <strong>divulgar vagas de emprego, plantões, congressos e projetos acadêmicos</strong> diretamente para profissionais da área da saúde. 
+            Publique facilmente e amplie seu alcance com poucos cliques.
+            </p>
+
+            <div class="d-flex justify-content-center mt-4">
+            <a href="/templates/publicar-vaga.html" class="btn btn-success btn-lg">Quero Publicar uma Vaga</a>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer mt-5">
+        <div class="container text-center py-4">
+            <p class="mb-1">© 2025 MedOportuna. Todos os direitos reservados.</p>
+            <p class="small">
+            Desenvolvido por <strong>Equipe MedOportuna</strong> | 
+            <a href="mailto:contato@medoportuna.com">contato@medoportuna.com</a>
+            </p>
+        </div>
+    </footer>
+
+
     <!--Lógica de mudança de cor dos links do topnav-->
     <script>
         const links = document.querySelectorAll('.topnav li a');
@@ -79,7 +108,9 @@
         links.forEach(link => {
             link.addEventListener('click', function(e) {
             // Impede navegação se href for vazio
-            e.preventDefault();
+            if (this.getAttribute("href") === "") {
+                e.preventDefault();
+            }
 
             // Remove classe ativo de todos
             links.forEach(linkzin => linkzin.classList.remove('ativo'));

@@ -8,8 +8,10 @@
  body,
  html {
     height: 100%;
+	padding-top: 3%;
     font-family: "Poppins", sans-serif;
     font-weight: 400;
+	scroll-behavior: smooth;
  }
  
  a {
@@ -30,7 +32,7 @@
  nav {
     background-color: #2b7e4c;
     font-family: "Poppins", serif;
-    position: relative;
+    position: fixed;
     width: 100%;
     top: 0;
     left: 0;
@@ -1420,6 +1422,14 @@
   border-radius: 8px;
 }
 
+#quem-usa {
+	background-color: #ffffff;
+    padding: 1% 0;
+    margin-top: 1%;
+    margin-bottom: 1%;
+    width: 100%;
+    width: 100%;
+}
 
 .home-info p {
     font-size: 16px;
@@ -1433,13 +1443,30 @@
 }
 
 .home-info img {
-    max-width: 100%;
+	width: 100%;
+    max-width: 700px;
     height: auto;
     border-radius: 10px;
 }
 
+.publicar-vagas-section {
+    background-color: #191970;
+    padding: 60px 20px;
+    border-radius: 8px;
+}
 
- /***************** Button ******************/
+.publicar-vagas-section h3 {
+    color: #2b7e4c;
+    font-weight: 600;
+}
+
+.publicar-vagas-section p {
+    font-size: 16px;
+    line-height: 1.7;
+	color: #ffffff;
+}
+
+/***************** Button ******************/
 
 .container-cadastro-btn {
     width: 100%;
@@ -1449,10 +1476,10 @@
     display: -ms-flexbox;
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
-  }
+	justify-content: center;
+}
  
-  .cadastro-btn::before {
+.cadastro-btn::before {
     content: "";
     display: block;
     position: absolute;
@@ -1469,15 +1496,14 @@
     -o-transition: all 0.4s;
     -moz-transition: all 0.4s;
     transition: all 0.4s;
-  }
+}
 
-  .cadastro-btn:hover::before {
+.cadastro-btn:hover::before {
     background-color: #191970;
     
 }
 
- 
-  .cadastro-btn {
+.cadastro-btn {
     font-family: "Poppins";
     font-weight: 500;
     font-size: 16px;
@@ -1506,4 +1532,23 @@
     -o-transition: all 0.4s;
     -moz-transition: all 0.4s;
     transition: all 0.4s;
-  }
+}
+
+/***************** Footer ******************/
+
+.site-footer {
+    background-color: #2b7e4c;
+    color: white;
+    font-family: "Poppins", sans-serif;
+    width: 100%;
+}
+
+.site-footer a {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+.site-footer a:hover {
+    color: #dcdcdc;
+    text-decoration: none;
+}
