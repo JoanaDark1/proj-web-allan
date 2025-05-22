@@ -29,8 +29,8 @@ con.connect(function (err) {
     senha VARCHAR(45) NOT NULL,
     telefone VARCHAR(15) NOT NULL,
     crm VARCHAR(15) UNIQUE  NOT NULL,
-    rqm1 VARCHAR(15) UNIQUE, 
-    rqm2 VARCHAR(15) UNIQUE,
+    rqe1 VARCHAR(15) UNIQUE, 
+    rqe2 VARCHAR(15) UNIQUE,
     especialidade1 VARCHAR(50),
     especialidade2 VARCHAR(50),
     img_perfil VARCHAR(100)
