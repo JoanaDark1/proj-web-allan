@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     </div>
                 <div class="wrap-input validate-input" data-validate="RQM opcional">
                     <input class="input" name="rqm1" type="text" placeholder="RQM" minlength = "4" maxlength="7">
-                    <input class="wrap-input input" name="especialidade1" type="text" placeholder="Especialidade" required minlength = "5" maxlength="50" id="Especialidade">
+                    <input class="wrap-input input" name="especialidade1" type="text" placeholder="Especialidade"  minlength = "5" maxlength="50" id="Especialidade">
                     <p> Caso possua uma segunda especialidade poderá ser adicionada na página do usuário</p>
                 </div>
             `;

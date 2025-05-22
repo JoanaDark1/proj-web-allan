@@ -23,6 +23,11 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'templates', 'home.html'));
 });
 
+// // Configurar o Express para usar EJS como motor de template
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'public', 'templates',));
+
+
 con.connect(function (err) {
     if (err) throw err;
     console.log("CONECTADO!");
@@ -65,7 +70,7 @@ app.post('/login', (req, res) => {
                     return res.redirect(`/user_profile?tipo=gestor&id=${result[0].id}`);
                 }
 
-                 //verifcando na tabela Admin
+                //verifcando na tabela Admin
                 let sql = "SELECT * FROM admin WHERE email = ? AND senha = ?";
                 con.query(sql, [email, senha], (err, result) => {
                     if (err) {
@@ -79,49 +84,75 @@ app.post('/login', (req, res) => {
                     return res.status(401).send("Email ou senha inválidos.");
 
 
+                });
             });
         });
     });
-}); });
+});
 
-app.get('/user_profile', (req, res) => { 
-    const {tipo, id} = req.query; //pegando os dados da url
-    res.send(` ENTROUUU, ${tipo} ${id} seu lindo`);
+app.get('/user_profile', (req, res) => {
+    const { tipo, id } = req.query; //pegando os dados da url
+    console.log("Recebido em /user_profile: Tipo =", tipo, "ID =", id); // Adicione esta linha
+
+
+    let tabela = tipo + 's';
+    if (tipo === 'admin') {
+        tabela = 'admin';
+    }
+
+    const sql = ` SELECT * FROM ${tabela} WHERE id = ? `;
+    con.query(sql, [id], (err, result) => {
+        if (err || result.length === 0) {
+            return res.status(404).send("Usuário não encontrado");
+        }
+
+        const usuario = result[0];
+        res.render('user_profile', {
+            tipo,
+            id: usuario.id,
+            nome: usuario.nome,   // ajuste conforme nome da coluna
+            foto_perfil: usuario.foto_perfil,
+        });
+    });
+
+
 });
 
 
 app.post('/add', (req, res) => {  //res = resposta do servidor, req = requisição do cliente
 
     console.log("Dados recebidos:", req.body);
-    const {tipo } = req.body; //req.body objeto que contém todos os campos enviados pelo formulário
+    const { tipo } = req.body; //req.body objeto que contém todos os campos enviados pelo formulário
+    const foto_perfil_padrao = path.join(__dirname, 'public', 'images', 'User_Avatar.png');
 
     let sql = "";
     let values = [];
 
     if (tipo === "medico") {
-        
-        //const rqm1 = req.body.rqm1;
+
+
         const crm = req.body.crm + '/' + req.body.estado_crm;
-        //const especialidade1 = req.body.especialidade1;
-        //novo_usuario = new Medico(null,nome,email,senha,telefone,crm,rqm1,img_perfil,especialidade1,especialidade2);
-        sql = "INSERT INTO medicos(nome,email,senha,crm,rqm1,telefone,especialidade1) VALUES (?,?,?,?,?,?,?)";
-        values = [req.body.nome, req.body.email, req.body.senha, crm, req.body.rqm1, 
-            req.body.telefone, req.body.especialidade1];
+        if (req.body.rqm1 === '') {
+            const rqm1 = null;
+        }
+
+        sql = "INSERT INTO medicos(nome,email,senha,crm,rqm1,telefone,especialidade1,img_perfil) VALUES (?,?,?,?,?,?,?,?)";
+        values = [req.body.nome, req.body.email, req.body.senha, crm, rqm1,
+        req.body.telefone, req.body.especialidade1, foto_perfil_padrao];
 
     }
     else if (tipo === "enfermeiro") {
         const coren = req.body.coren + '-' + req.body.coren_tipo;
-        //const { coren, especialidade1 } = req.body
-        //novo_usuario = new Enfermeiro(null,nome,email,senha,coren,telefone,especialidade1);
-        sql = "INSERT INTO enfermeiros(nome,email,senha,coren,telefone,especialidade1) VALUES (?,?,?,?,?,?)";
-        values = [req.body.nome, req.body.email, req.body.senha, coren, 
-            req.body.telefone, req.body.especialidade1];
+        
+        sql = "INSERT INTO enfermeiros(nome,email,senha,coren,telefone,especialidade1,img_perfil) VALUES (?,?,?,?,?,?,?)";
+        values = [req.body.nome, req.body.email, req.body.senha, coren,
+        req.body.telefone, req.body.especialidade1, foto_perfil_padrao];
     }
     else if (tipo === "gestor") {
         const { empresa_hospital } = req.body
-        //novo_usuario = new Gestor(null,nome,email,senha,empresa_hospital,telefone);
-        sql = "INSERT INTO gestores(nome,email,senha,empresa_hospital,telefone) VALUES (?,?,?,?,?)";
-        values = [req.body.nome, req.body.email, req.body.senha, req.body.empresa_hospital, req.body.telefone];
+        
+        sql = "INSERT INTO gestores(nome,email,senha,empresa_hospital,telefone,img_perfil) VALUES (?,?,?,?,?,?)";
+        values = [req.body.nome, req.body.email, req.body.senha, req.body.empresa_hospital, req.body.telefone, foto_perfil_padrao];
     }
     else {
         return res.send("Tipo de usuário inválido.");
@@ -135,9 +166,10 @@ app.post('/add', (req, res) => {  //res = resposta do servidor, req = requisiç�
         }
         console.log("Resultado da query: ", result);  // Log do resultado
         console.log("Usuário cadastrado com sucesso!");
-        return res.redirect(`/user_profile?tipo=${tipo}&id=${result.insertId}`); 
+        console.log("ID inserido: ", result.insertId);
+        return res.redirect(`/user_profile?tipo=${tipo}&id=${result.insertId}`);
 
-        
+
     });
 });
 
