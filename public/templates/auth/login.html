@@ -96,7 +96,18 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"></script>
 
 
-<script src="/js/login.js"></script>
+<script src="/js/login.js">
+    document.addEventListener("DOMContentLoaded", function () {
+        const profissao = localStorage.getItem("profissaoEscolhida");
+        if (profissao) {
+            // Redireciona após login
+            localStorage.removeItem("profissaoEscolhida");
+            window.location.href = `/templates/vagas-${profissao}.html`;
+        }
+    });
+</script>
+
+
 </body>
 
 </html>

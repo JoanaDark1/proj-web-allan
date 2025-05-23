@@ -279,6 +279,7 @@ app.post('/upload-profile-pic', upload.single('profilePic'), (req, res) => {
     });
 });
 
+// talvez va embora
 app.get('/verificar-usuario', (req, res) => {
     if (!req.session.user) {
         return res.redirect('/templates/auth/login.html');
