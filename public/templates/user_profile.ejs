@@ -22,7 +22,7 @@
 </head>
 
 <body>
-     <div class="main-container">
+    <div class="main-container">
         <div class="profile-header">
             <% if (tipo !='admin' ) { %>
                 <div class="profile-pic-container">
@@ -30,192 +30,338 @@
                     <i class="fa-solid fa-pencil edit-icon" id="editProfilePic"></i>
                     <input type="file" id="fileInput" accept="image/*" style="display: none;">
                 </div>
-            <% } %>
+                <% } %>
 
-            <div class="user-info">
-                <h1><%= nome %></h1>
-                <div class="user-details">
-                    <% if (tipo==='medico' ) { %>
-                        <p><strong>CRM:</strong> <%= crm %></p>
-                        <% if (especialidade1) { %>
-                            <p><strong>Especialidade:</strong> <%= especialidade1 %> (<%= rqe1 ? `RQE: ${rqe1}` : 'RQE não informado' %>)</p>
-                        <% } %>
-                         <% if (especialidade2) { %>
-                            <p><strong>Especialidade 2:</strong> <%= especialidade2 %> (<%= rqe2 ? `RQE: ${rqe2}` : 'RQE não informado' %>)</p>
-                        <% } %>
-                    <% } else if (tipo==='enfermeiro' ) { %>
-                        <p><strong>COREN:</strong> <%= coren %></p>
-                        <% if (especialidade1) { %>
-                            <p><strong>Especialidade:</strong> <%= especialidade1 %></p>
-                        <% } %>
-                    <% } else if (tipo==='gestor' ) { %>
-                        <p><strong>Empresa/Hospital:</strong> <%= empresa_hospital %></p>
-                    <% } %>
+                    <div class="user-info">
+                        <button id="editInfoBtn" class="btn btn-outline-secondary btn-sm float-right">
+                            <i class="fas fa-pencil-alt"></i> Editar
+                        </button>
+
+                        <h1>
+                            <%= nome %>
+                        </h1>
+
+                        <div id="view-mode-details">
+                            <div class="user-details">
+                                <% if (tipo==='medico' ) { %>
+                                    <p><strong>CRM:</strong>
+                                        <%= crm %>
+                                    </p>
+                                    <% if (especialidade1) { %>
+                                        <p><strong>Especialidade:</strong>
+                                            <%= especialidade1 %> (<%= rqe1 ? `RQE: ${rqe1}` : 'RQE não informado' %>)
+                                        </p>
+                                        <% } else { %>
+                                            <p class="text-muted">Nenhuma especialidade cadastrada.</p>
+                                            <% } %>
+                                                <% if (especialidade2) { %>
+                                                    <p><strong>Especialidade 2:</strong>
+                                                        <%= especialidade2 %> (<%= rqe2 ? `RQE: ${rqe2}`
+                                                                : 'RQE não informado' %>)
+                                                    </p>
+                                                    <% } %>
+                                                        <% } else if (tipo==='enfermeiro' ) { %>
+                                                            <p><strong>COREN:</strong>
+                                                                <%= coren %>
+                                                            </p>
+                                                            <% if (especialidade1) { %>
+                                                                <p><strong>Especialidade:</strong>
+                                                                    <%= especialidade1 %>
+                                                                </p>
+                                                                <% } %>
+                                                                    <% } else if (tipo==='gestor' ) { %>
+                                                                        <p><strong>Empresa/Hospital:</strong>
+                                                                            <%= empresa_hospital %>
+                                                                        </p>
+                                                                        <% } %>
+                            </div>
+                        </div>
+
+                        <form id="edit-mode-form" style="display: none;">
+                            <% if (tipo==='medico' ) { %>
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label for="crm">CRM</label>
+                                        <input type="text" class="form-control" name="crm" value="<%= crm || '' %>">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-8">
+                                        <label for="especialidade1">Especialidade 1</label>
+                                        <input type="text" class="form-control" name="especialidade1"
+                                            value="<%= especialidade1 || '' %>">
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label for="rqe1">RQE 1</label>
+                                        <input type="text" class="form-control" name="rqe1" value="<%= rqe1 || '' %>"
+                                            maxlength="6">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-8">
+                                        <label for="especialidade2">Especialidade 2 (Opcional)</label>
+                                        <input type="text" class="form-control" name="especialidade2"
+                                            value="<%= especialidade2 || '' %>">
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label for="rqe2">RQE 2 (Opcional)</label>
+                                        <input type="text" class="form-control" name="rqe2" value="<%= rqe2 || '' %>"
+                                            maxlength="6">
+                                    </div>
+                                </div>
+                                <% } else if (tipo==='enfermeiro' ) { %>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            <label for="coren">COREN</label>
+                                            <input type="text" class="form-control" name="coren"
+                                                value="<%= coren || '' %>">
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label for="especialidade1">Especialidade</label> <input type="text"
+                                                class="form-control" name="especialidade1"
+                                                value="<%= especialidade1 || '' %>">
+                                        </div>
+                                    </div>
+                                    <% } %>
+
+                                        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                                        <button type="button" id="cancelEditBtn"
+                                            class="btn btn-secondary">Cancelar</button>
+                        </form>
+                    </div>
+        </div> 
+
+
+        <% if (tipo==='medico' || tipo==='enfermeiro' ) { %>
+            <div class="certificate-section">
+                <h2>Meus Certificados</h2>
+
+                <button id="toggleAddCertificateBtn" class="btn btn-info mb-3">Adicionar Novo Certificado</button>
+
+                <div id="addCertificateWrapper" style="display: none;">
+                    <h3>Adicionar Novo Certificado</h3>
+                    <form id="addCertificateForm">
+                        <input type="hidden" name="userId" value="<%= id %>">
+                        <input type="hidden" name="userType" value="<%= tipo %>">
+
+                        <div class="form-group">
+                            <label for="titulo">Título:</label>
+                            <input type="text" class="form-control" id="titulo" name="titulo" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="data_emissao">Data de Emissão:</label>
+                            <input type="date" class="form-control" id="data_emissao" name="data_emissao" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="carga_horaria">Carga Horária (horas):</label>
+                            <input type="number" class="form-control" id="carga_horaria" name="carga_horaria" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="tipo_certificado">Tipo de Certificado:</label>
+                            <select class="form-control" id="tipo_certificado" name="tipo_certificado" required>
+                                <option value="">Selecione</option>
+                                <option value="curso">Curso</option>
+                                <option value="congresso">Congresso</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Adicionar Certificado</button>
+                    </form>
+                </div>
+
+                <h3 class="mt-4">Certificados Cadastrados</h3>
+                <div class="certificate-list">
+                    <% if (certificados && certificados.length> 0) { %>
+                        <% certificados.forEach(cert=> { %>
+                            <div class="certificate-item">
+                                <h5>
+                                    <%= cert.titulo %>
+                                </h5>
+                                <p>Data de Emissão: <%= new Date(cert.data_emissao).toLocaleDateString('pt-BR') %>
+                                </p>
+                                <p>Carga Horária: <%= cert.carga_horaria %> horas</p>
+                                <p>Tipo: <%= cert.tipo_certificado %>
+                                </p>
+                            </div>
+                            <% }); %>
+                                <% } else { %>
+                                    <p>Nenhum certificado cadastrado ainda.</p>
+                                    <% } %>
                 </div>
             </div>
-        </div>
-    
-    <% if (tipo==='medico' || tipo==='enfermeiro' ) { %>
-        <div class="certificate-section">
-            <h2>Meus Certificados</h2>
-            
-            <button id="toggleAddCertificateBtn" class="btn btn-info mb-3">Adicionar Novo Certificado</button>
+            <% } %>
 
-            <div id="addCertificateWrapper" style="display: none;">
-                <h3>Adicionar Novo Certificado</h3>
-                <form id="addCertificateForm">
-                    <input type="hidden" name="userId" value="<%= id %>">
-                    <input type="hidden" name="userType" value="<%= tipo %>">
+                <a href="/">Sair</a>
 
-                    <div class="form-group">
-                        <label for="titulo">Título:</label>
-                        <input type="text" class="form-control" id="titulo" name="titulo" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="data_emissao">Data de Emissão:</label>
-                        <input type="date" class="form-control" id="data_emissao" name="data_emissao" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="carga_horaria">Carga Horária (horas):</label>
-                        <input type="number" class="form-control" id="carga_horaria" name="carga_horaria" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="tipo_certificado">Tipo de Certificado:</label>
-                        <select class="form-control" id="tipo_certificado" name="tipo_certificado" required>
-                            <option value="">Selecione</option>
-                            <option value="curso">Curso</option>
-                            <option value="congresso">Congresso</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Adicionar Certificado</button>
-                </form>
-            </div>
+                <script>
+    document.addEventListener('DOMContentLoaded', () => {
 
-            <h3 class="mt-4">Certificados Cadastrados</h3>
-            <div class="certificate-list">
-                <% if (certificados && certificados.length > 0) { %>
-                    <% certificados.forEach(cert => { %>
-                        <div class="certificate-item">
-                            <h5><%= cert.titulo %></h5>
-                            <p>Data de Emissão: <%= new Date(cert.data_emissao).toLocaleDateString('pt-BR') %></p>
-                            <p>Carga Horária: <%= cert.carga_horaria %> horas</p>
-                            <p>Tipo: <%= cert.tipo_certificado %></p>
-                        </div>
-                    <% }); %>
-                <% } else { %>
-                    <p>Nenhum certificado cadastrado ainda.</p>
-                <% } %>
-            </div>
-        </div>
-    <% } %>
+        // --- SELETORES DE ELEMENTOS ---
+        // Perfil e Foto
+        const editButton = document.getElementById('editProfilePic');
+        const fileInput = document.getElementById('fileInput');
+        const profileImage = document.getElementById('profileImage');
 
-    <a href="/">Sair</a>
+        // Edição de Informações
+        const editInfoBtn = document.getElementById('editInfoBtn');
+        const cancelEditBtn = document.getElementById('cancelEditBtn');
+        const viewModeDiv = document.getElementById('view-mode-details');
+        const editModeForm = document.getElementById('edit-mode-form');
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const editButton = document.getElementById('editProfilePic');
-            const fileInput = document.getElementById('fileInput');
-            const profileImage = document.getElementById('profileImage');
-            const addCertificateForm = document.getElementById('addCertificateForm');
-            
-            // so aparece o campo de adicionar certificado se clicar no botao
-            const toggleAddCertificateBtn = document.getElementById('toggleAddCertificateBtn');
-            const addCertificateWrapper = document.getElementById('addCertificateWrapper');
+        // Certificados
+        const addCertificateForm = document.getElementById('addCertificateForm');
+        const toggleAddCertificateBtn = document.getElementById('toggleAddCertificateBtn');
+        const addCertificateWrapper = document.getElementById('addCertificateWrapper');
 
-            if (toggleAddCertificateBtn && addCertificateWrapper) {
-                toggleAddCertificateBtn.addEventListener('click', () => {
-                    // Verifica se o formulário está visível
-                    if (addCertificateWrapper.style.display === 'none') {
-                        addCertificateWrapper.style.display = 'block'; // Mostra o formulário
-                        toggleAddCertificateBtn.textContent = 'Cancelar'; // Muda o texto do botão
-                    } else {
-                        addCertificateWrapper.style.display = 'none'; // Esconde o formulário
-                        toggleAddCertificateBtn.textContent = 'Adicionar Novo Certificado'; // Volta o texto original
-                    }
+
+        // --- LÓGICA PARA EDITAR INFORMAÇÕES DO PERFIL ---
+        if (editInfoBtn && cancelEditBtn && viewModeDiv && editModeForm) {
+            // Ao clicar em "Editar"
+            editInfoBtn.addEventListener('click', () => {
+                viewModeDiv.style.display = 'none';
+                editModeForm.style.display = 'block';
+                editInfoBtn.style.display = 'none'; // Esconde o botão "Editar"
+            });
+
+            // Ao clicar em "Cancelar"
+            cancelEditBtn.addEventListener('click', () => {
+                viewModeDiv.style.display = 'block';
+                editModeForm.style.display = 'none';
+                editInfoBtn.style.display = 'block'; // Mostra o botão "Editar" novamente
+            });
+
+            // Ao enviar o formulário (clicar em "Salvar")
+            editModeForm.addEventListener('submit', (event) => {
+                event.preventDefault(); // Impede o recarregamento da página
+
+                const formData = new FormData(editModeForm);
+                const userData = {};
+                formData.forEach((value, key) => {
+                    userData[key] = value;
                 });
-            }
 
+                // Adiciona o ID e o tipo do usuário, essenciais para o backend
+                userData.userId = '<%= id %>';
+                userData.userType = '<%= tipo %>';
 
-            // Lógica de upload de foto de perfil
-            if (editButton && fileInput) {
-                editButton.addEventListener('click', () => {
-                    fileInput.click();
-                });
-            }
-
-            if (fileInput && profileImage) {
-                fileInput.addEventListener('change', (event) => {
-                    const file = event.target.files[0];
-                    if (file) {
-                        const reader = new FileReader();
-                        reader.onload = (e) => {
-                            profileImage.src = e.target.result;
-                            uploadProfilePicture(file);
-                        };
-                        reader.readAsDataURL(file);
-                    }
-                });
-            }
-
-            function uploadProfilePicture(file) {
-                const formData = new FormData();
-                formData.append('profilePic', file);
-                formData.append('userId', '<%= id %>');
-                formData.append('userType', '<%= tipo %>');
-
-                fetch('/upload-profile-pic', {
+                // Envia os dados para o servidor
+                fetch('/update-user-info', {
                     method: 'POST',
-                    body: formData
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(userData)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        // Se a resposta não for OK (ex: 404, 500), lança um erro para o .catch
+                        throw new Error(`Erro HTTP: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        alert('Informações atualizadas com sucesso!');
+                        location.reload(); // Recarrega a página
+                    } else {
+                        alert('Erro ao atualizar informações: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro na requisição fetch:', error);
+                    alert('Ocorreu um erro de comunicação com o servidor. Verifique o console (F12) para detalhes.');
+                });
+            });
+        }
+
+        // --- LÓGICA PARA ADICIONAR CERTIFICADO ---
+        if (toggleAddCertificateBtn && addCertificateWrapper) {
+            toggleAddCertificateBtn.addEventListener('click', () => {
+                if (addCertificateWrapper.style.display === 'none') {
+                    addCertificateWrapper.style.display = 'block';
+                    toggleAddCertificateBtn.textContent = 'Cancelar';
+                } else {
+                    addCertificateWrapper.style.display = 'none';
+                    toggleAddCertificateBtn.textContent = 'Adicionar Novo Certificado';
+                }
+            });
+        }
+
+        if (addCertificateForm) {
+            addCertificateForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+                const formData = new FormData(addCertificateForm);
+                const certificateData = {};
+                formData.forEach((value, key) => {
+                    certificateData[key] = value;
+                });
+
+                fetch('/add-certificate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(certificateData)
                 })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        alert('Foto de perfil atualizada com sucesso!');
+                        alert('Certificado adicionado com sucesso!');
+                        location.reload();
                     } else {
-                        alert('Erro ao atualizar foto de perfil: ' + data.message);
+                        alert('Erro ao adicionar certificado: ' + data.message);
                     }
                 })
                 .catch(error => {
-                    console.error('Erro na requisição de upload:', error);
-                    alert('Ocorreu um erro ao enviar a foto.');
+                    console.error('Erro na requisição de adicionar certificado:', error);
+                    alert('Ocorreu um erro ao adicionar o certificado.');
                 });
-            }
+            });
+        }
 
-            // Lógica para adicionar certificado
-            if (addCertificateForm) {
-                addCertificateForm.addEventListener('submit', (event) => {
-                    event.preventDefault(); // Impede o envio padrão do formulário
+        // --- LÓGICA PARA UPLOAD DE FOTO DE PERFIL ---
+        if (editButton && fileInput) {
+            editButton.addEventListener('click', () => {
+                fileInput.click();
+            });
+        }
 
-                    const formData = new FormData(addCertificateForm);
-                    const certificateData = {};
-                    formData.forEach((value, key) => {
-                        certificateData[key] = value;
-                    });
+        if (fileInput && profileImage) {
+            fileInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        profileImage.src = e.target.result;
+                        uploadProfilePicture(file);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
 
-                    fetch('/add-certificate', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(certificateData)
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert('Certificado adicionado com sucesso!');
-                            location.reload(); // Recarrega a página para ver o novo certificado
-                        } else {
-                            alert('Erro ao adicionar certificado: ' + data.message);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Erro na requisição de adicionar certificado:', error);
-                        alert('Ocorreu um erro ao adicionar o certificado.');
-                    });
-                });
-            }
-        });
-    </script>
+        function uploadProfilePicture(file) {
+            const formData = new FormData();
+            formData.append('profilePic', file);
+            formData.append('userId', '<%= id %>');
+            formData.append('userType', '<%= tipo %>');
+
+            fetch('/upload-profile-pic', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Foto de perfil atualizada com sucesso!');
+                } else {
+                    alert('Erro ao atualizar foto de perfil: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Erro na requisição de upload:', error);
+                alert('Ocorreu um erro ao enviar a foto.');
+            });
+        }
+    });
+</script>
 </body>
 
 </html>

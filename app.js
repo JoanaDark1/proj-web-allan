@@ -371,6 +371,57 @@ app.post('/add-certificate', (req, res) => {
     });
 });
 
+//pra fazer o update dos dados do usuario
+app.post('/update-user-info', (req, res) => {
+    // Pega os dados que o frontend enviou no corpo da requisição
+    const { userId, userType, ...userData } = req.body;
+
+    // Validação básica para garantir que temos os dados necessários
+    if (!userId || !userType) {
+        return res.status(400).json({ success: false, message: 'Faltam dados de identificação do usuário.' });
+    }
+
+    let sql;
+    let params;
+
+    // Monta o comando SQL UPDATE de acordo com o tipo de usuário
+    if (userType === 'medico') {
+        sql = `UPDATE medicos SET crm = ?, especialidade1 = ?, rqe1 = ?, especialidade2 = ?, rqe2 = ? WHERE id = ?`;
+        params = [
+            userData.crm || null,
+            userData.especialidade1 || null,
+            userData.rqe1 || null,
+            userData.especialidade2 || null,
+            userData.rqe2 || null,
+            userId
+        ];
+    } else if (userType === 'enfermeiro') {
+        sql = `UPDATE enfermeiros SET coren = ?, especialidade1 = ? WHERE id = ?`;
+        params = [
+            userData.coren || null,
+            userData.especialidade1 || null,
+            userId
+        ];
+    } else {
+        // Se não for médico nem enfermeiro, retorna um erro, pois não há o que atualizar.
+        return res.status(400).json({ success: false, message: 'Tipo de usuário inválido para esta operação.' });
+    }
+
+    // Executa a query no seu banco de dados usando a variável 'con'
+    con.query(sql, params, (err, result) => {
+        if (err) {
+            console.error('Erro ao ATUALIZAR no banco de dados:', err);
+            return res.status(500).json({ success: false, message: 'Erro interno do servidor.' });
+        }
+
+        // Se a query funcionou, envia uma resposta de sucesso para o frontend
+        if (result.affectedRows > 0) {
+            res.json({ success: true });
+        } else {
+            res.status(404).json({ success: false, message: 'Usuário não encontrado no banco de dados.' });
+        }
+    });
+});
 app.listen(port, () => {
     console.log(`Servidor rodando em http://localhost:${port}`);
 });

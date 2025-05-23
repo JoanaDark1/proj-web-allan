@@ -1,7 +1,7 @@
 /* --- GERAL E FONTES --- */
 body {
     font-family: 'Poppins', sans-serif;
-    background-color: #f4f7f6; /* Um cinza bem claro para o fundo */
+    background-color: #f4f7f6; 
     color: #333;
     padding: 20px;
     display: flex;
@@ -24,26 +24,26 @@ body {
 .profile-header {
     display: flex;
     align-items: center;
-    gap: 30px; /* Espaço entre a foto e as informações */
+    gap: 30px; 
     padding-bottom: 25px;
     border-bottom: 1px solid #e0e0e0;
     margin-bottom: 25px;
 }
 
-/* --- IMAGEM DE PERFIL (COM CORREÇÃO) --- */
+/* --- IMAGEM DE PERFIL  --- */
 .profile-pic-container {
     position: relative;
-    width: 150px;  /* Largura fixa */
-    height: 150px; /* Altura fixa para garantir o círculo */
-    flex-shrink: 0; /* Impede que o container encolha */
+    width: 150px;  
+    height: 150px; /* altura fixa para garantir o círculo */
+    flex-shrink: 0; 
 }
 
 .profile-pic-container img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* ESSA É A MÁGICA! Preenche o espaço mantendo a proporção */
+    object-fit: cover; /* pra não distorcer a imagem  */
     border-radius: 50%;
-    border: 4px solid #007bff; /* Borda azul para destaque */
+    border: 4px solid #007bff; 
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
@@ -108,7 +108,7 @@ body {
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     padding: 25px;
-    margin-top: -15px; /* Puxa para perto do título */
+    margin-top: -15px; 
     margin-bottom: 30px;
 }
 
@@ -122,4 +122,4 @@ body {
 
 .certificate-item {
     background-color: #fff;
-    border: 1px solid #e9ecef;
+    border: 1px solid #e9ecef;}
