@@ -70,7 +70,7 @@ con.connect(function (err) {
   // certificados so deverm importar mesmo pros profissionais de saude
   var sqlCertificados = `CREATE TABLE IF NOT EXISTS certificados (
     id INT AUTO_INCREMENT PRIMARY KEY, 
-    titulo VARCHAR(45) NOT NULL,
+    titulo VARCHAR(150) NOT NULL,
     data_emissao DATE NOT NULL,
     carga_horaria INT NOT NULL,
     tipo_certificado VARCHAR(45) NOT NULL, -- se é de curso ou congresso

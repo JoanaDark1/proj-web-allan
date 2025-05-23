@@ -20,6 +20,9 @@ app.use(session({
     saveUninitialized: false
 }));
 
+app.use(express.json());
+
+
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -137,7 +140,7 @@ app.post('/login', (req, res) => {
 
 app.get('/user_profile', (req, res) => {
     const { tipo, id } = req.query; //pegando os dados da url
-    console.log("Recebido em /user_profile: Tipo =", tipo, "ID =", id); // Adicione esta linha
+    console.log("Recebido em /user_profile: Tipo =", tipo, "ID =", id); 
 
 
     let tabela = tipo + 's';
@@ -146,44 +149,57 @@ app.get('/user_profile', (req, res) => {
     }
     else if (tipo === 'gestor') { tabela = 'gestores'; }
 
-    const sql = ` SELECT * FROM ${tabela} WHERE id = ? `;
-    con.query(sql, [id], (err, result) => {
-        if (err || result.length === 0) {
+    const sqlUsuario = ` SELECT * FROM ${tabela} WHERE id = ? `;
+    con.query(sqlUsuario, [id], (err, resultUsuario) => {
+        if (err) {
+            console.error("Erro na busca de usuário em /user_profile:", err);
+            return res.status(500).send("Erro interno do servidor.");
+        }
+        if (resultUsuario.length === 0) {
+            console.log(`Nenhum usuário encontrado na tabela '${tabela}' com ID '${id}'`);
             return res.status(404).send("Usuário não encontrado");
         }
 
-        const usuario = result[0];
+        const usuario = resultUsuario[0];
+
+        // Objeto base com todas as propriedades que o template espera
         const dataParaTemplate = {
             tipo: tipo,
             id: usuario.id,
             nome: usuario.nome,
-            foto_perfil: usuario.img_perfil || '/images/User_Avatar.png', 
-            crm: undefined, 
-            rqe1: undefined,
-            rqe2: undefined,
-            especialidade1: undefined,
-            especialidade2: undefined,
-            coren: undefined,
-            empresa_hospital: undefined
+            foto_perfil: usuario.img_perfil || '/images/User_Avatar.png',
+            crm: usuario.crm,
+            rqe1: usuario.rqe1,
+            rqe2: usuario.rqe2,
+            especialidade1: usuario.especialidade1,
+            especialidade2: usuario.especialidade2,
+            coren: usuario.coren,
+            empresa_hospital: usuario.empresa_hospital,
+            certificados: [] // <-- CORRETO: INICIALIZE SEMPRE COMO UMA ARRAY VAZIA
         };
-        // Adicione as propriedades específicas baseadas no tipo
-        if (tipo === 'medico') {
-            dataParaTemplate.crm = usuario.crm;
-            dataParaTemplate.rqe1 = usuario.rqe1;
-            dataParaTemplate.rqe2 = usuario.rqe2;
-            dataParaTemplate.especialidade1 = usuario.especialidade1;
-            dataParaTemplate.especialidade2 = usuario.especialidade2;
-        } else if (tipo === 'enfermeiro') {
-            dataParaTemplate.coren = usuario.coren;
-            dataParaTemplate.especialidade1 = usuario.especialidade1;
-        } else if (tipo === 'gestor') {
-            dataParaTemplate.empresa_hospital = usuario.empresa_hospital;
+
+        // Somente profissionais de saúde têm certificados
+        if (tipo === 'medico' || tipo === 'enfermeiro') {
+            let fkColumn;
+            if (tipo === 'medico') fkColumn = 'medico_id';
+            else if (tipo === 'enfermeiro') fkColumn = 'enfermeiro_id';
+
+            const sqlCertificados = `SELECT * FROM certificados WHERE ${fkColumn} = ?`;
+            con.query(sqlCertificados, [id], (err, resultCertificados) => {
+                if (err) {
+                    console.error("Erro ao buscar certificados:", err);
+                    // Se houver erro, 'certificados' já é um array vazio, o que é seguro
+                } else {
+                    dataParaTemplate.certificados = resultCertificados;
+                }
+                res.render('user_profile', dataParaTemplate);
+            });
+        } else {
+            // Para gestores e admins, renderiza imediatamente.
+            // 'certificados' já será um array vazio, então não haverá ReferenceError.
+            res.render('user_profile', dataParaTemplate);
         }
-
-        res.render('user_profile', dataParaTemplate)
     });
-
-
 });
 
 
@@ -320,6 +336,39 @@ app.get('/verificar-acesso', (req, res) => {
             redirecionarLogin: false
         });
     }
+});
+
+// Nova rota para adicionar certificados
+app.post('/add-certificate', (req, res) => {
+    const { userId, userType, titulo, data_emissao, carga_horaria, tipo_certificado } = req.body;
+
+    if (!userId || !userType || !titulo || !data_emissao || !carga_horaria || !tipo_certificado) {
+        return res.status(400).json({ success: false, message: 'Todos os campos do certificado são obrigatórios.' });
+    }
+
+    if (userType !== 'medico' && userType !== 'enfermeiro') {
+        return res.status(403).json({ success: false, message: 'Apenas médicos e enfermeiros podem adicionar certificados.' });
+    }
+
+    let medicoId = null;
+    let enfermeiroId = null;
+
+    if (userType === 'medico') {
+        medicoId = userId;
+    } else if (userType === 'enfermeiro') {
+        enfermeiroId = userId;
+    }
+
+    const sql = `INSERT INTO certificados (titulo, data_emissao, carga_horaria, tipo_certificado, medico_id, enfermeiro_id) VALUES (?, ?, ?, ?, ?, ?)`;
+    const values = [titulo, data_emissao, carga_horaria, tipo_certificado, medicoId, enfermeiroId];
+
+    con.query(sql, values, (err, result) => {
+        if (err) {
+            console.error('Erro ao inserir certificado no banco de dados:', err);
+            return res.status(500).json({ success: false, message: 'Erro ao salvar o certificado.' });
+        }
+        res.json({ success: true, message: 'Certificado adicionado com sucesso!', certificateId: result.insertId });
+    });
 });
 
 app.listen(port, () => {
