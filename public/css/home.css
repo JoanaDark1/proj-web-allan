@@ -81,8 +81,8 @@
 
 .pixel-art {
 	position: relative;
-	top: -20vh;
-	left: 810px;
+	top: -15vh;
+	left: 53vw;
 	height: var(--pixel-size);
 	width: var(--pixel-size);
 	box-shadow:

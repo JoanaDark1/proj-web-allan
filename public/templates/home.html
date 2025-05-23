@@ -122,12 +122,23 @@
 
         // Lógica dos botões "sou médico"
         document.querySelectorAll('.cadastro-btn').forEach(button => {
-            button.addEventListener('click', function () {
-                const profissao = this.dataset.profissao;
-                // Redireciona para a página correspondente
-                window.location.href = `vagas-${profissao}.html`; // exemplo: vagas-medico.html
-            });
+        button.addEventListener('click', function () {
+            const profissao = this.dataset.profissao;
+
+            fetch('/verificar-sessao')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.logado) {
+                        // Redirecionar para verificação do tipo e redirecionamento
+                        window.location.href = "/verificar-usuario";
+                    } else {
+                        // Salvar a profissão clicada e redirecionar para login
+                        localStorage.setItem("profissaoEscolhida", profissao);
+                        window.location.href = "/templates/auth/login.html";
+                    }
+                });
         });
+    });
     </script>
 
 </body>

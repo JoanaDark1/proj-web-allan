@@ -12,6 +12,13 @@ const multer = require('multer'); // npm install multer
 const app = express();
 const port = 3000;
 
+const session = require('express-session');
+
+app.use(session({
+    secret: 'sua-chave-secreta',
+    resave: false,
+    saveUninitialized: false
+}));
 
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -61,7 +68,14 @@ app.post('/login', (req, res) => {
             return res.status(500).send("Erro ao fazer login.");
         }
         if (result.length > 0) { //se for maior que 0 achou pelo menos um match
+            if (result.length > 0) {
+            req.session.user = {
+                email,
+                tipo: 'medico',
+                id: result[0].id
+            };
             return res.redirect(`/user_profile?tipo=medico&id=${result[0].id}`);
+            }
         }
 
         //verifcando na tabela enfermeiros
@@ -72,6 +86,11 @@ app.post('/login', (req, res) => {
                 return res.status(500).send("Erro ao fazer login.");
             }
             if (result.length > 0) {
+                req.session.user = {
+                    email,
+                    tipo: 'enfermeiro',
+                    id: result[0].id
+                };
                 return res.redirect(`/user_profile?tipo=enfermeiro&id=${result[0].id}`);
             }
 
@@ -83,6 +102,11 @@ app.post('/login', (req, res) => {
                     return res.status(500).send("Erro ao fazer login.");
                 }
                 if (result.length > 0) {
+                    req.session.user = {
+                        email,
+                        tipo: 'gestor',
+                        id: result[0].id
+                    };
                     return res.redirect(`/user_profile?tipo=gestor&id=${result[0].id}`);
                 }
 
@@ -94,6 +118,11 @@ app.post('/login', (req, res) => {
                         return res.status(500).send("Erro ao fazer login.");
                     }
                     if (result.length > 0) {
+                        req.session.user = {
+                            email,
+                            tipo: 'admin',
+                            id: result[0].id
+                        };
                         return res.redirect(`/user_profile?tipo=admin&id=${result[0].id}`); // talvez o admin não seja redirecionado p/ uma pag de user profile
                     }
                     // caso não exista match em nenhuma tabela
@@ -248,6 +277,24 @@ app.post('/upload-profile-pic', upload.single('profilePic'), (req, res) => {
             res.status(404).json({ success: false, message: 'Usuário não encontrado para atualização.' });
         }
     });
+});
+
+app.get('/verificar-usuario', (req, res) => {
+    if (!req.session.user) {
+        return res.redirect('/templates/auth/login.html');
+    }
+
+    const { tipo } = req.session.user;
+
+    return res.redirect(`/vagas-${tipo}.html`);
+});
+
+app.get('/verificar-sessao', (req, res) => {
+    if (req.session.user) {
+        res.json({ logado: true });
+    } else {
+        res.json({ logado: false });
+    }
 });
 
 app.listen(port, () => {
