@@ -7,10 +7,46 @@
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/css/home.css">
+
+    <style>
+        body {
+            background-color: #ffffff;
+            font-family: "Poppins", sans-serif;
+        }
+
+        .navbar {
+            background-color: #2b7e4c !important;
+        }
+
+        header {
+            background-color: #191970;
+            color: white;
+        }
+
+        .card-title {
+            font-weight: 600;
+        }
+
+        footer {
+            background-color: #2b7e4c;
+        }
+
+        footer p {
+            color: #ffffff;
+            margin-bottom: 0.25rem;
+        }
+
+        footer a {
+            color: white;
+        }
+
+        .btn-success {
+            font-size: 1.1rem;
+        }
+    </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark px-4">
         <div class="container-fluid">
             <a class="navbar-brand" href="/"><img src="/images/logo_cor-removebg-preview.png" height="40" alt="Logo"> MedOportuna</a>
             <div class="d-flex">
@@ -20,7 +56,7 @@
         </div>
     </nav>
 
-    <header class="py-5 bg-primary text-white text-center">
+    <header class="py-5 text-white text-center">
         <div class="container">
             <h1 class="display-4">Vagas para Médicos</h1>
             <p class="lead">Encontre oportunidades de plantões, hospitais, clínicas e pesquisas</p>
@@ -67,10 +103,9 @@
         </div>
     </main>
 
-    <footer class="text-center py-4 bg-light">
+    <footer class="text-center py-4">
         <p class="mb-1">© 2025 MedOportuna. Todos os direitos reservados.</p>
         <p class="small">Contato: <a href="mailto:contato@medoportuna.com">contato@medoportuna.com</a></p>
     </footer>
-
 </body>
 </html>

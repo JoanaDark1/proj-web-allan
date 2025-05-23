@@ -298,6 +298,30 @@ app.get('/verificar-sessao', (req, res) => {
     }
 });
 
+app.get('/verificar-acesso', (req, res) => {
+    const { profissao } = req.query;
+
+    if (!req.session.user) {
+        return res.json({
+            autorizado: false,
+            mensagem: "Você precisa estar logado para acessar essa área.",
+            redirecionarLogin: true
+        });
+    }
+
+    const tipoUsuario = req.session.user.tipo;
+
+    if (profissao === tipoUsuario) {
+        return res.json({ autorizado: true });
+    } else {
+        return res.json({
+            autorizado: false,
+            mensagem: `Acesso negado. Esta área é exclusiva para ${profissao}s.`,
+            redirecionarLogin: false
+        });
+    }
+});
+
 app.listen(port, () => {
     console.log(`Servidor rodando em http://localhost:${port}`);
 });

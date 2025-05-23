@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Área do Gestor - MedOportuna</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #ffffff;
+            font-family: "Poppins", sans-serif;
+        }
+
+        .navbar {
+            background-color: #2b7e4c !important;
+        }
+
+        header {
+            background-color: #191970;
+            color: white;
+        }
+
+        .card-title {
+            font-weight: 600;
+        }
+
+        footer {
+            background-color: #2b7e4c;
+        }
+
+        footer p {
+            color: #ffffff;
+            margin-bottom: 0.25rem;
+        }
+
+        footer a {
+            color: white;
+        }
+
+        .btn-success {
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-dark px-4">
+        <a class="navbar-brand" href="/">MedOportuna</a>
+        <a href="/templates/auth/login.html" class="btn btn-outline-light">Entrar</a>
+    </nav>
+
+    <header class="py-5 text-white text-center">
+        <div class="container">
+            <h1>Área do Gestor</h1>
+            <p class="lead">Gerencie suas vagas e publique oportunidades para profissionais da saúde</p>
+        </div>
+    </header>
+
+    <main class="container my-5">
+        <div class="row">
+            <!-- Vaga publicada -->
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Plantonista Clínico Geral</h5>
+                        <p class="card-text">Hospital Santa Maria - Fortaleza/CE</p>
+                        <p class="card-text">Publicada em: 20/05/2025 | Válida até: 10/06/2025</p>
+                        <a href="#" class="btn btn-outline-primary">Ver Candidaturas</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botão para publicar nova vaga -->
+            <div class="col-md-6 mb-4 d-flex align-items-center">
+                <a href="/templates/publicar-vaga.html" class="btn btn-success btn-lg w-100">Publicar Nova Vaga</a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="text-center py-4">
+        <p class="mb-1">© 2025 MedOportuna. Todos os direitos reservados.</p>
+        <p class="small">Contato: <a href="mailto:contato@medoportuna.com">contato@medoportuna.com</a></p>
+    </footer>
+</body>
+</html>
