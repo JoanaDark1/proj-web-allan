@@ -102,12 +102,14 @@ con.connect(function (err) {
     local VARCHAR(255) NOT NULL,
     remuneracao VARCHAR(255),
     profissao ENUM('medico', 'enfermeiro', 'gestor') NOT NULL,
-    data_publicacao DATETIME NOT NULL
-  )`;
+    data_publicacao DATETIME NOT NULL,
+    gestor_id INT,
+    CONSTRAINT fk_vaga_gestor FOREIGN KEY (gestor_id) REFERENCES gestores(id) ON DELETE CASCADE
+)`;
 
-  con.query(sqlVagas, function (err, result) {
-    if (err) throw err;
-    console.log("Tabela vagas criada");
-  });
+con.query(sqlVagas, function (err, result) {
+  if (err) throw err;
+  console.log("Tabela vagas criada com chave estrangeira para gestores");
+});
 
 });

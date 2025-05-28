@@ -128,7 +128,7 @@
                 .then(res => res.json())
                 .then(data => {
                     if (data.autorizado) {
-                        window.location.href = `/templates/vagas-${profissao}.html`;
+                        window.location.href = `/vagas-${profissao}`;
                     } else {
                         alert(data.mensagem);
                         if (data.redirecionarLogin) {

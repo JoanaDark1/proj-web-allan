@@ -438,28 +438,51 @@ app.post('/publicar-vaga', (req, res) => {
     const { titulo, descricao, local, remuneracao, profissao } = req.body;
     const data_publicacao = new Date();
 
-    const sql = `INSERT INTO vagas (titulo, descricao, local, remuneracao, profissao, data_publicacao)
-                 VALUES (?, ?, ?, ?, ?, ?)`;
-    con.query(sql, [titulo, descricao, local, remuneracao, profissao, data_publicacao], (err, result) => {
+    if (!req.session.user || req.session.user.tipo !== 'gestor') {
+        return res.status(403).send("Apenas gestores podem publicar vagas.");
+    }
+
+    const gestor_id = req.session.user.id;
+
+    const sql = `INSERT INTO vagas (titulo, descricao, local, remuneracao, profissao, data_publicacao, gestor_id)
+                 VALUES (?, ?, ?, ?, ?, ?, ?)`;
+
+    con.query(sql, [titulo, descricao, local, remuneracao, profissao, data_publicacao, gestor_id], (err) => {
         if (err) {
             console.error("Erro ao publicar vaga:", err);
             return res.status(500).send("Erro ao publicar a vaga.");
         }
-        return res.redirect(`/vagas-${profissao}`);
+        res.redirect('/vagas-gestor');
     });
 });
 
-
 app.get('/vagas-:profissao', (req, res) => {
     const { profissao } = req.params;
-    const sql = "SELECT * FROM vagas WHERE profissao = ? ORDER BY data_publicacao DESC";
-    con.query(sql, [profissao], (err, result) => {
-        if (err) {
-            console.error("Erro ao buscar vagas:", err);
-            return res.status(500).send("Erro ao buscar vagas.");
+
+    if (profissao === 'gestor') {
+        if (!req.session.user || req.session.user.tipo !== 'gestor') {
+            return res.redirect('/templates/auth/login.html');
         }
-        res.render(`vagas-${profissao}`, { vagas: result });
-    });
+        const gestor_id = req.session.user.id;
+        const sql = "SELECT * FROM vagas WHERE profissao = 'gestor' AND gestor_id = ? ORDER BY data_publicacao DESC";
+        con.query(sql, [gestor_id], (err, result) => {
+            if (err) {
+                console.error("Erro ao buscar vagas do gestor:", err);
+                return res.status(500).send("Erro ao buscar vagas.");
+            }
+            return res.render('vagas-gestor', { vagas: result });
+        });
+
+    } else {
+        const sql = "SELECT * FROM vagas WHERE profissao = ? ORDER BY data_publicacao DESC";
+        con.query(sql, [profissao], (err, result) => {
+            if (err) {
+                console.error("Erro ao buscar vagas:", err);
+                return res.status(500).send("Erro ao buscar vagas.");
+            }
+            return res.render(`vagas-${profissao}`, { vagas: result });
+        });
+    }
 });
 
 app.listen(port, () => {
