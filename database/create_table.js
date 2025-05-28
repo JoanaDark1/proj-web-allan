@@ -94,4 +94,20 @@ con.connect(function (err) {
     if (err) throw err;
     console.log("Tabela certificados criada");
   });
+
+  var sqlVagas = `CREATE TABLE IF NOT EXISTS vagas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    titulo VARCHAR(255) NOT NULL,
+    descricao TEXT NOT NULL,
+    local VARCHAR(255) NOT NULL,
+    remuneracao VARCHAR(255),
+    profissao ENUM('medico', 'enfermeiro', 'gestor') NOT NULL,
+    data_publicacao DATETIME NOT NULL
+  )`;
+
+  con.query(sqlVagas, function (err, result) {
+    if (err) throw err;
+    console.log("Tabela vagas criada");
+  });
+
 });

@@ -421,7 +421,47 @@ app.post('/update-user-info', (req, res) => {
             res.status(404).json({ success: false, message: 'Usuário não encontrado no banco de dados.' });
         }
     });
+
+
 });
+
+app.get('/acessar-publicar-vaga', (req, res) => {
+        if (!req.session.user || req.session.user.tipo !== 'gestor') {
+            return res.redirect('/templates/auth/login.html');
+        }
+
+        // Se for um gestor logado, redireciona para o formulário de publicação
+        return res.sendFile(path.join(__dirname, 'public', 'templates', 'publicar-vaga.html'));
+});
+
+app.post('/publicar-vaga', (req, res) => {
+    const { titulo, descricao, local, remuneracao, profissao } = req.body;
+    const data_publicacao = new Date();
+
+    const sql = `INSERT INTO vagas (titulo, descricao, local, remuneracao, profissao, data_publicacao)
+                 VALUES (?, ?, ?, ?, ?, ?)`;
+    con.query(sql, [titulo, descricao, local, remuneracao, profissao, data_publicacao], (err, result) => {
+        if (err) {
+            console.error("Erro ao publicar vaga:", err);
+            return res.status(500).send("Erro ao publicar a vaga.");
+        }
+        return res.redirect(`/vagas-${profissao}`);
+    });
+});
+
+
+app.get('/vagas-:profissao', (req, res) => {
+    const { profissao } = req.params;
+    const sql = "SELECT * FROM vagas WHERE profissao = ? ORDER BY data_publicacao DESC";
+    con.query(sql, [profissao], (err, result) => {
+        if (err) {
+            console.error("Erro ao buscar vagas:", err);
+            return res.status(500).send("Erro ao buscar vagas.");
+        }
+        res.render(`vagas-${profissao}`, { vagas: result });
+    });
+});
+
 app.listen(port, () => {
     console.log(`Servidor rodando em http://localhost:${port}`);
 });

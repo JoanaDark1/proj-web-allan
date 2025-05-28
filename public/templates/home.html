@@ -15,7 +15,6 @@
     rel="stylesheet">
 </head>
 <body>
-    <div id="topo"></div>
     
     <nav>
         <div class="navbar-left">
@@ -27,7 +26,7 @@
         </div>
 
         <ul class="topnav">
-            <li><a href="#topo">Início</a></li>
+            <li><a href="#">Início</a></li>
             <li><a href="#quem-usa">Quem usa</a></li>
             <li><a href="#publicar-vagas">Publicar Vagas</a></li>
         </ul>
@@ -85,7 +84,7 @@
             </p>
 
             <div class="d-flex justify-content-center mt-4">
-            <a href="/templates/publicar-vaga.html" class="btn btn-success btn-lg">Quero Publicar uma Vaga</a>
+                <a id="btn-publicar-vaga" href="#" class="btn btn-success btn-lg">Quero Publicar uma Vaga</a>
             </div>
         </div>
     </div>
@@ -139,6 +138,19 @@
                 });
         });
     });
+    //Lógica da página publicar vaga
+        document.getElementById('btn-publicar-vaga').addEventListener('click', function (e) {
+            e.preventDefault();
+            fetch('/acessar-publicar-vaga')
+                .then(response => {
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                    } else {
+                        window.location.href = '/acessar-publicar-vaga'; 
+                    }
+                })
+                .catch(err => console.error('Erro ao verificar login:', err));
+        });
     </script>
 
 </body>
