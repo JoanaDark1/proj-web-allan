@@ -464,7 +464,7 @@ app.get('/vagas-:profissao', (req, res) => {
             return res.redirect('/templates/auth/login.html');
         }
         const gestor_id = req.session.user.id;
-        const sql = "SELECT * FROM vagas WHERE profissao = 'gestor' AND gestor_id = ? ORDER BY data_publicacao DESC";
+        const sql = "SELECT * FROM vagas WHERE gestor_id = ? ORDER BY data_publicacao DESC";
         con.query(sql, [gestor_id], (err, result) => {
             if (err) {
                 console.error("Erro ao buscar vagas do gestor:", err);
