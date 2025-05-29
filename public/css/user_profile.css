@@ -8,7 +8,94 @@ body {
     flex-direction: column;
     align-items: center;
 }
+/***************** Navbar  ******************/
+nav {
+    background-color: #426488; 
+    font-family: "Poppins", serif;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between; /* Alinha a logo à esquerda e os links à direita */
+    align-items: center;
+    /* Adiciona um preenchimento (padding) melhor e uma sombra sutil */
+    padding: 0 40px; 
+    height: 95px; /* Altura fixa para um melhor alinhamento */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15); /* Sombra para dar profundidade */
+}
 
+/* --- LADO ESQUERDO DA NAVBAR (LOGO) --- */
+.navbar-left {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: 500; /* Um pouco mais de peso na fonte */
+    color: #ffffff;   /* Branco puro para melhor contraste */
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Espaço entre a imagem e o texto */
+    text-decoration: none; 
+}
+
+.logo img {
+    height: 80px; /* Levemente menor para caber bem na altura da navbar */
+    width: auto;
+    object-fit: contain;
+}
+
+/* --- LADO DIREITO DA NAVBAR (LINKS) --- */
+.topnav {
+    list-style-type: none; /* Remove as "bolinhas" da lista */
+    margin: 0;
+    padding: 0;
+    display: flex; /* Alinha os itens da lista horizontalmente */
+    gap: 15px; /* Espaço entre os itens do menu */
+}
+
+.topnav li a {
+    color: #e0e0e0; /* Cor suave para os links */
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 10px 15px; /* Área de clique maior */
+    border-radius: 5px; /* Bordas levemente arredondadas */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Transição suave */
+}
+
+/* Efeito ao passar o mouse por cima do link */
+.topnav li a:hover {
+    background-color: rgba(255, 255, 255, 0.15); /* Fundo sutil */
+    color: #ffffff; /* Cor do texto fica branca */
+}
+
+/* Estilo para um link ativo (se você quiser usar no futuro) */
+.topnav li a.ativo {
+    color: #ffffff;
+    font-weight: 700; /* Mais destaque para o link ativo */
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+
+.logo {
+    font-size: 25px;
+    font-weight: 400;
+    color: #f2f2f2;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+
+.logo img {
+    height: 90px; 
+    width: auto; 
+    object-fit: contain; 
+}
 /* --- CONTAINER PRINCIPAL --- */
 .main-container {
     background-color: #ffffff;
@@ -17,7 +104,7 @@ body {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     width: 100%;
     max-width: 900px; /* Largura máxima para o conteúdo */
-    margin-top: 20px;
+    margin-top: 100px;
 }
 
 /* --- CABEÇALHO DO PERFIL --- */

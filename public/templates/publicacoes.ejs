@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página do Usuário - <%= nome %>
+    </title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Oxanium:wght@200..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="/css/publicacoes.css">
+
+</head>
+
+<body data-user-id="<%=id%>" data-user-type="<%=tipo%>">
+    <% if (tipo==='medico' ) { %>
+        <nav>
+            <div class="navbar-left">
+                <a href="/templates/home.html" class="logo">
+                    <img src="/images/logo_cor-removebg-preview.png" alt="logo">
+                    <span class="logo">MedOportuna</span>
+                </a>
+            </div>
+            <ul class="topnav">
+
+                <li><a href="/vagas-medico">Vagas</a></li>
+                <li><a href="/user_profile">Meu perfil</a></li>
+            </ul>
+        </nav>
+        <% } else if (tipo==='enfermeiro' ) { %>
+            <nav>
+                <div class="navbar-left">
+                    <a href="/templates/home.html" class="logo">
+                        <img src="/images/logo_cor-removebg-preview.png" alt="logo">
+                        <span class="logo">MedOportuna</span>
+                    </a>
+                </div>
+                <ul class="topnav">
+
+                    <li><a href="/vagas-enfermeiro">Vagas</a></li>
+                    <li><a href="/user_profile">Meu perfil</a></li>
+                </ul>
+            </nav>
+            <% } %>
+
+                <div class="main-container">
+                    <!-- depois fazer a logica do admin conseguir excluir os posts -->
+                    <div id="view-mode-details"> <!--detalhes dos posts-->
+                        <div class="post-details">
+                            <% if (tipo==='medico' || tipo==='enfermeiro' ) { %>
+
+                                <p><strong>TÍTULO:</strong>
+                                    <%= titulo %>
+                                </p>
+                                <p>DATA DE PUBLICAÇÃO:>:
+                                    <%= data_publicacao %>
+                                </p>
+                                <p><strong>DESCRIÇÃO:</strong>
+                                    <%= descricao %>
+                                </p>
+                                <p><strong>CONTATO:</strong>
+                                    <%= contato %>
+                                </p>
+
+                                <% } %>
+                                    <% } else if (tipo==='gestor' ) { %>
+                                        <script>
+                                            alert("Você não tem permissão para visualizar esta página.");
+                                            window.location.href = "/templates/home.html";
+                                        </script>
+                                        <% } %>
+
+
+                        </div>
+                    </div>
+
+
+                    <% if (tipo==='medico' || tipo==='enfermeiro' ) { %>
+                        <div class="post-section">
+                            <h2>Meus Certificados</h2>
+
+                            <button id="toggleAddPostBtn" class="btn btn-info mb-3">Adicionar Novo Certificado</button>
+
+                            <div id="addPostWrapper" style="display: none;">
+                                <h3>Adicionar Nova Publicação</h3>
+                                <form id="addPostForm">
+                                    <input type="hidden" name="userId" value="<%= id %>">
+                                    <input type="hidden" name="userType" value="<%= tipo %>">
+
+                                    <div class="form-group">
+                                        <label for="titulo">Título:</label>
+                                        <input type="text" class="form-control" id="titulo" name="titulo" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="data_publicacao">Data da Publicação:</label> <input
+                                            type="datetime-local" class="form-control" id="data_publicacao"
+                                            name="data_publicacao" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="descricao">Descrição:</label> <textarea class="form-control"
+                                            id="descricao" name="descricao" rows="3" required></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="contato">Contato (email ou telefone):</label> <input type="text"
+                                            class="form-control" id="contato" name="contato" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Adicionar Publicação</button>
+                                </form>
+                            </div>
+
+                            <h3 class="mt-4">Publicações</h3>
+                            <div class="post-list">
+                                <% if (publicacoes && publicacoes.length> 0) { %>
+                                    <% publicacoes.forEach(post=> { %>
+                                        <div class="post-item">
+                                            <h5>
+                                                <%= post.titulo %>
+                                            </h5>
+                                            <p>Data de Publicação: <%= new
+                                                    Date(post.data_publicacao).toLocaleDateString('pt-BR') %>
+                                            </p>
+                                            <p>Descrição: <%= post.descricao %>
+                                            </p>
+                                            <p>Contato: <%= post.contato %>
+                                            </p>
+                                        </div>
+                                        <% }); %>
+                                            <% } else { %>
+                                                <p>Nenhum Publicação criada ainda.</p>
+                                                <% } %>
+                            </div>
+                        </div>
+                        <% } %>
+
+                            <a href="/">Sair</a>
+
+                            <script src="/js/user_profile.js">
+
+                            </script>
+</body>
+
+</html>

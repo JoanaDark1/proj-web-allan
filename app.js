@@ -162,7 +162,7 @@ app.get('/user_profile', (req, res) => {
 
         const usuario = resultUsuario[0];
 
-        // Objeto base com todas as propriedades que o template espera
+        // Objeto base com todas as propriedades que o template espera, aqui ta incluindo todos os tipos de usuario juntos
         const dataParaTemplate = {
             tipo: tipo,
             id: usuario.id,
@@ -175,22 +175,22 @@ app.get('/user_profile', (req, res) => {
             especialidade2: usuario.especialidade2,
             coren: usuario.coren,
             empresa_hospital: usuario.empresa_hospital,
-            certificados: [] // <-- CORRETO: INICIALIZE SEMPRE COMO UMA ARRAY VAZIA
+            certificados: [] // inicia como array vazio porque talvez o user não tenha certificados
         };
 
         // Somente profissionais de saúde têm certificados
         if (tipo === 'medico' || tipo === 'enfermeiro') {
-            let fkColumn;
+            let fkColumn; //foreign key pra achar o dono do certificado, lembrando que tem uma coluna que é medico_id e outra enfermeiro_id na tabela de certificados
             if (tipo === 'medico') fkColumn = 'medico_id';
             else if (tipo === 'enfermeiro') fkColumn = 'enfermeiro_id';
 
             const sqlCertificados = `SELECT * FROM certificados WHERE ${fkColumn} = ?`;
-            con.query(sqlCertificados, [id], (err, resultCertificados) => {
+            con.query(sqlCertificados, [id], (err, resultCertificados) => { //[id] é o id do usuario que ta logado
                 if (err) {
                     console.error("Erro ao buscar certificados:", err);
                     // Se houver erro, 'certificados' já é um array vazio, o que é seguro
                 } else {
-                    dataParaTemplate.certificados = resultCertificados;
+                    dataParaTemplate.certificados = resultCertificados; //resultCertificados é um array de objetos, cada objeto é um certificado
                 }
                 res.render('user_profile', dataParaTemplate);
             });
@@ -261,8 +261,8 @@ app.post('/upload-profile-pic', upload.single('profilePic'), (req, res) => {
         return res.status(400).json({ success: false, message: 'Nenhuma foto enviada.' });
     }
 
-    // O caminho que será salvo no banco de dados deve ser o caminho relativo URL-friendly
-    // que o navegador usará para acessar a imagem via seu middleware express.static('public').
+    // O caminho que via ser salvo é caminho relativo URL-friendly
+    // o navegador usa  para acessar a imagem via  middleware express.static('public').
     const newImagePath = '/images/profile_images/' + req.file.filename;
     
     const userId = req.body.userId;
@@ -371,12 +371,64 @@ app.post('/add-certificate', (req, res) => {
     });
 });
 
+// rota pra exibir as publicações
+app.get('/posts', (req, res) => {
+    const sql = "SELECT p.*, IFNULL(m.nome, enf.nome) AS nome_autor FROM publicacoes p LEFT JOIN medicos m ON p.medico_id = m.id LEFT JOIN enfermeiros enf ON p.enfermeiro_id = enf.id ORDER BY p.data_publicacao DESC"; // Exemplo de query
+    con.query(sql, (err, allPosts) => {
+        if (err) {
+            console.error('Erro ao buscar publicações:', err);
+            // Tratar erro, talvez renderizar página de erro
+            return res.status(500).send("Erro ao carregar publicações.");
+        }
+        res.render('publicacoes.ejs', { // o nome do seu arquivo .ejs
+            nome: req.session.user.nome, // Exemplo de como pegar dados do usuário logado
+            id: req.session.user.id,
+            tipo: req.session.user.tipo,
+            publicacoes: allPosts, // Passa TODAS as publicações para o template
+            // outras variáveis necessárias para o template como titulo, data_publicacao, descricao, contato singulares (se ainda forem necessárias)
+        });
+    });
+});
+
+// Nova rota para adicionar publicações
+app.post('/add-post', (req, res) => {
+    const { userId, userType, titulo, data_publicacao, descricao, contato } = req.body;
+
+    if (!userId || !userType || !titulo || !data_publicacao || !descricao || !contato) {
+        return res.status(400).json({ success: false, message: 'Todos os campos da publicação são obrigatórios.' });
+    }
+
+    if (userType !== 'medico' && userType !== 'enfermeiro') {
+        return res.status(403).json({ success: false, message: 'Apenas médicos e enfermeiros podem adicionar publicações.' });
+    }
+
+    let medicoId = null;
+    let enfermeiroId = null;
+
+    if (userType === 'medico') {
+        medicoId = userId;
+    } else if (userType === 'enfermeiro') {
+        enfermeiroId = userId;
+    }
+
+    const sql = `INSERT INTO publicacoes (titulo, data_publicacao, descricao, contato, medico_id, enfermeiro_id) VALUES (?, ?, ?, ?, ?, ?)`;
+    const values = [titulo, data_publicacao, descricao, contato, medicoId, enfermeiroId];
+
+    con.query(sql, values, (err, result) => {
+        if (err) {
+            console.error('Erro ao inserir publicação no banco de dados:', err);
+            return res.status(500).json({ success: false, message: 'Erro ao salvar a publicação.' });
+        }
+        res.json({ success: true, message: 'publicação adicionada com sucesso!', postId: result.insertId });
+    });
+});
+
 //pra fazer o update dos dados do usuario
 app.post('/update-user-info', (req, res) => {
     // Pega os dados que o frontend enviou no corpo da requisição
     const { userId, userType, ...userData } = req.body;
 
-    // Validação básica para garantir que temos os dados necessários
+
     if (!userId || !userType) {
         return res.status(400).json({ success: false, message: 'Faltam dados de identificação do usuário.' });
     }
@@ -403,7 +455,7 @@ app.post('/update-user-info', (req, res) => {
             userId
         ];
     } else {
-        // Se não for médico nem enfermeiro, retorna um erro, pois não há o que atualizar.
+        // Se não for médico nem enfermeiro não há o que atualizar.
         return res.status(400).json({ success: false, message: 'Tipo de usuário inválido para esta operação.' });
     }
 

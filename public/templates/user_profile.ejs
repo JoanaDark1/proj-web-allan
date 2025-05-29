@@ -21,7 +21,48 @@
 
 </head>
 
-<body>
+<body data-user-id="<%=id%>" data-user-type="<%=tipo%>">
+     <% if (tipo === 'medico' ) { %>
+        <nav>
+            <div class="navbar-left">
+                <a href="/templates/home.html" class="logo">
+                    <img src="/images/logo_cor-removebg-preview.png" alt="logo">
+                    <span class="logo">MedOportuna</span>
+                </a>
+            </div>
+            <ul class="topnav">
+                <li><a href="/publicacoes">Publicações de colaboração</a></li>
+                <li><a href="/vagas-medico">Vagas</a></li>
+            </ul>
+        </nav>
+    <% } else if (tipo === 'enfermeiro') { %>
+        <nav>
+            <div class="navbar-left">
+                <a href="/templates/home.html" class="logo">
+                    <img src="/images/logo_cor-removebg-preview.png" alt="logo">
+                    <span class="logo">MedOportuna</span>
+                </a>
+            </div>
+            <ul class="topnav">
+                <li><a href="/publicacoes">Publicações de colaboração</a></li>
+                <li><a href="/vagas-enfermeiro">Vagas</a></li>
+            </ul>
+        </nav>
+    <% } else if (tipo === 'gestor') { %>
+        <nav>
+            <div class="navbar-left">
+                <a href="/templates/home.html" class="logo">
+                    <img src="/images/logo_cor-removebg-preview.png" alt="logo">
+                    <span class="logo">MedOportuna</span>
+                </a>
+            </div>
+            <ul class="topnav">
+                <li><a href="/acessar-publicar-vaga">Publicar Vaga</a></li>
+                <li><a href="/vagas-gestor">Minhas Vagas</a></li>
+            </ul>
+        </nav>
+    <% } %>
+    
     <div class="main-container">
         <div class="profile-header">
             <% if (tipo !='admin' ) { %>
@@ -41,9 +82,10 @@
                             <%= nome %>
                         </h1>
 
-                        <div id="view-mode-details">
+                        <div id="view-mode-details"> <!--detalhes do usuario-->
                             <div class="user-details">
                                 <% if (tipo==='medico' ) { %>
+                                    
                                     <p><strong>CRM:</strong>
                                         <%= crm %>
                                     </p>
@@ -74,10 +116,12 @@
                                                                             <%= empresa_hospital %>
                                                                         </p>
                                                                         <% } %>
+
+
                             </div>
                         </div>
 
-                        <form id="edit-mode-form" style="display: none;">
+                        <form id="edit-mode-form" style="display: none;"> <!-- parte de edição-->
                             <% if (tipo==='medico' ) { %>
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
@@ -122,14 +166,25 @@
                                                 value="<%= especialidade1 || '' %>">
                                         </div>
                                     </div>
-                                    <% } %>
+                                    <% } else if (tipo==='gestor'){ %>
+                                        <div class="form-row">
+                                            <div class="form-group col-md-6">
+                                                <label for="empresa_hospital"></label>
+                                                <input type="text" class="form-control" name="empresa_hospital"
+                                                value="<%= empresa_hospital || '' %>">
+                                                
+                                            </div>
+                                        </div>
+                                        <%} %>
+
+
 
                                         <button type="submit" class="btn btn-primary">Salvar Alterações</button>
                                         <button type="button" id="cancelEditBtn"
                                             class="btn btn-secondary">Cancelar</button>
                         </form>
                     </div>
-        </div> 
+        </div>
 
 
         <% if (tipo==='medico' || tipo==='enfermeiro' ) { %>
@@ -192,176 +247,9 @@
 
                 <a href="/">Sair</a>
 
-                <script>
-    document.addEventListener('DOMContentLoaded', () => {
+                <script src="/js/user_profile.js">
 
-        // --- SELETORES DE ELEMENTOS ---
-        // Perfil e Foto
-        const editButton = document.getElementById('editProfilePic');
-        const fileInput = document.getElementById('fileInput');
-        const profileImage = document.getElementById('profileImage');
-
-        // Edição de Informações
-        const editInfoBtn = document.getElementById('editInfoBtn');
-        const cancelEditBtn = document.getElementById('cancelEditBtn');
-        const viewModeDiv = document.getElementById('view-mode-details');
-        const editModeForm = document.getElementById('edit-mode-form');
-
-        // Certificados
-        const addCertificateForm = document.getElementById('addCertificateForm');
-        const toggleAddCertificateBtn = document.getElementById('toggleAddCertificateBtn');
-        const addCertificateWrapper = document.getElementById('addCertificateWrapper');
-
-
-        // --- LÓGICA PARA EDITAR INFORMAÇÕES DO PERFIL ---
-        if (editInfoBtn && cancelEditBtn && viewModeDiv && editModeForm) {
-            // Ao clicar em "Editar"
-            editInfoBtn.addEventListener('click', () => {
-                viewModeDiv.style.display = 'none';
-                editModeForm.style.display = 'block';
-                editInfoBtn.style.display = 'none'; // Esconde o botão "Editar"
-            });
-
-            // Ao clicar em "Cancelar"
-            cancelEditBtn.addEventListener('click', () => {
-                viewModeDiv.style.display = 'block';
-                editModeForm.style.display = 'none';
-                editInfoBtn.style.display = 'block'; // Mostra o botão "Editar" novamente
-            });
-
-            // Ao enviar o formulário (clicar em "Salvar")
-            editModeForm.addEventListener('submit', (event) => {
-                event.preventDefault(); // Impede o recarregamento da página
-
-                const formData = new FormData(editModeForm);
-                const userData = {};
-                formData.forEach((value, key) => {
-                    userData[key] = value;
-                });
-
-                // Adiciona o ID e o tipo do usuário, essenciais para o backend
-                userData.userId = '<%= id %>';
-                userData.userType = '<%= tipo %>';
-
-                // Envia os dados para o servidor
-                fetch('/update-user-info', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(userData)
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        // Se a resposta não for OK (ex: 404, 500), lança um erro para o .catch
-                        throw new Error(`Erro HTTP: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        alert('Informações atualizadas com sucesso!');
-                        location.reload(); // Recarrega a página
-                    } else {
-                        alert('Erro ao atualizar informações: ' + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Erro na requisição fetch:', error);
-                    alert('Ocorreu um erro de comunicação com o servidor. Verifique o console (F12) para detalhes.');
-                });
-            });
-        }
-
-        // --- LÓGICA PARA ADICIONAR CERTIFICADO ---
-        if (toggleAddCertificateBtn && addCertificateWrapper) {
-            toggleAddCertificateBtn.addEventListener('click', () => {
-                if (addCertificateWrapper.style.display === 'none') {
-                    addCertificateWrapper.style.display = 'block';
-                    toggleAddCertificateBtn.textContent = 'Cancelar';
-                } else {
-                    addCertificateWrapper.style.display = 'none';
-                    toggleAddCertificateBtn.textContent = 'Adicionar Novo Certificado';
-                }
-            });
-        }
-
-        if (addCertificateForm) {
-            addCertificateForm.addEventListener('submit', (event) => {
-                event.preventDefault();
-                const formData = new FormData(addCertificateForm);
-                const certificateData = {};
-                formData.forEach((value, key) => {
-                    certificateData[key] = value;
-                });
-
-                fetch('/add-certificate', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(certificateData)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Certificado adicionado com sucesso!');
-                        location.reload();
-                    } else {
-                        alert('Erro ao adicionar certificado: ' + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Erro na requisição de adicionar certificado:', error);
-                    alert('Ocorreu um erro ao adicionar o certificado.');
-                });
-            });
-        }
-
-        // --- LÓGICA PARA UPLOAD DE FOTO DE PERFIL ---
-        if (editButton && fileInput) {
-            editButton.addEventListener('click', () => {
-                fileInput.click();
-            });
-        }
-
-        if (fileInput && profileImage) {
-            fileInput.addEventListener('change', (event) => {
-                const file = event.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        profileImage.src = e.target.result;
-                        uploadProfilePicture(file);
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-        }
-
-        function uploadProfilePicture(file) {
-            const formData = new FormData();
-            formData.append('profilePic', file);
-            formData.append('userId', '<%= id %>');
-            formData.append('userType', '<%= tipo %>');
-
-            fetch('/upload-profile-pic', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Foto de perfil atualizada com sucesso!');
-                } else {
-                    alert('Erro ao atualizar foto de perfil: ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Erro na requisição de upload:', error);
-                alert('Ocorreu um erro ao enviar a foto.');
-            });
-        }
-    });
-</script>
+                </script>
 </body>
 
 </html>

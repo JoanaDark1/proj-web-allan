@@ -112,4 +112,32 @@ con.query(sqlVagas, function (err, result) {
   console.log("Tabela vagas criada com chave estrangeira para gestores");
 });
 
+  // publicacoes dos profissionais de saude
+  var sqlPublicacoes = `CREATE TABLE IF NOT EXISTS publicacoes (
+    id INT AUTO_INCREMENT PRIMARY KEY, 
+    titulo VARCHAR(150) NOT NULL,
+    data_publicacao DATETIME NOT NULL,
+    descricao TEXT NOT NULL,
+    contato VARCHAR(60) NOT NULL, -- email ou telefone do profissional
+
+    -- fk dos tipos de usuario
+    medico_id INT null,
+    enfermeiro_id INT null,
+
+    CONSTRAINT fk_publicacao_medico 
+      FOREIGN KEY (medico_id) REFERENCES medicos(id) ON DELETE CASCADE,
+
+    CONSTRAINT fk_publicacao_enfermeiro 
+      FOREIGN KEY (enfermeiro_id) REFERENCES enfermeiros(id) ON DELETE CASCADE,
+
+    CONSTRAINT chk_user_type_publicacoes CHECK(
+      (medico_id IS NOT NULL AND enfermeiro_id IS NULL) OR 
+      (medico_id IS NULL AND enfermeiro_id IS NOT NULL)) -- so um dos 2 pode ser nulo
+)`;
+
+  con.query(sqlPublicacoes, function (err, result) {
+    if (err) throw err;
+    console.log("Tabela publicacoes criada");
+  });
+
 });
