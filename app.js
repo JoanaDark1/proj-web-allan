@@ -487,7 +487,7 @@ app.get('/acessar-publicar-vaga', (req, res) => {
 });
 
 app.post('/publicar-vaga', (req, res) => {
-    const { titulo, descricao, local, remuneracao, profissao } = req.body;
+    const { titulo, descricao, local, remuneracao, profissao, contato } = req.body;
     const data_publicacao = new Date();
 
     if (!req.session.user || req.session.user.tipo !== 'gestor') {
@@ -496,10 +496,10 @@ app.post('/publicar-vaga', (req, res) => {
 
     const gestor_id = req.session.user.id;
 
-    const sql = `INSERT INTO vagas (titulo, descricao, local, remuneracao, profissao, data_publicacao, gestor_id)
-                 VALUES (?, ?, ?, ?, ?, ?, ?)`;
+    const sql = `INSERT INTO vagas (titulo, descricao, local, remuneracao, profissao, data_publicacao, contato, gestor_id)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
 
-    con.query(sql, [titulo, descricao, local, remuneracao, profissao, data_publicacao, gestor_id], (err) => {
+    con.query(sql, [titulo, descricao, local, remuneracao, profissao, data_publicacao, contato, gestor_id], (err) => {
         if (err) {
             console.error("Erro ao publicar vaga:", err);
             return res.status(500).send("Erro ao publicar a vaga.");

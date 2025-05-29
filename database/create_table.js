@@ -101,8 +101,9 @@ con.connect(function (err) {
     descricao TEXT NOT NULL,
     local VARCHAR(255) NOT NULL,
     remuneracao VARCHAR(255),
-    profissao ENUM('medico', 'enfermeiro', 'gestor') NOT NULL,
+    profissao ENUM('medico', 'enfermeiro') NOT NULL,
     data_publicacao DATETIME NOT NULL,
+    contato VARCHAR(60) NOT NULL,
     gestor_id INT,
     CONSTRAINT fk_vaga_gestor FOREIGN KEY (gestor_id) REFERENCES gestores(id) ON DELETE CASCADE
 )`;
