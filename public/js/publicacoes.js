@@ -1,62 +1,69 @@
 document.addEventListener('DOMContentLoaded', () => {
 
 
-        // Perfil e Foto
-        const editButton = document.getElementById('editProfilePic');
-        const fileInput = document.getElementById('fileInput');
-        const profileImage = document.getElementById('profileImage');
-
-        // Edição de Informações
-        const editInfoBtn = document.getElementById('editInfoBtn');
-        const cancelEditBtn = document.getElementById('cancelEditBtn');
-        const viewModeDiv = document.getElementById('view-mode-details');
-        const editModeForm = document.getElementById('edit-mode-form');
-
-        // Certificados
-        const addCertificateForm = document.getElementById('addCertificateForm');
-        const toggleAddCertificateBtn = document.getElementById('toggleAddCertificateBtn');
-        const addCertificateWrapper = document.getElementById('addCertificateWrapper');
+       
+        const toggleAddPostBtn = document.getElementById('toggleAddPostBtn');
+        const addPostWrapper = document.getElementById('addPostWrapper');
+        const addPostForm = document.getElementById('addPostForm');
+        const cancelPostBtn = document.getElementById('cancelPostBtn');
+        const postList = document.getElementById('postList');
+        const formMessage = document.getElementById('formMessage');
 
 
-        // --- LÓGICA PARA EDITAR INFORMAÇÕES DO PERFIL ---
-        if (editInfoBtn && cancelEditBtn && viewModeDiv && editModeForm) { // so inicia se existir todos os elementos
-            // Ao clicar em "Editar"
-            editInfoBtn.addEventListener('click', () => {
-                viewModeDiv.style.display = 'none';
-                editModeForm.style.display = 'block'; // o form de edit aparece
-                editInfoBtn.style.display = 'none'; // Esconde o botão de editar
+        const currentUserId = document.body.dataset.userId;
+        const currentUserType = document.body.dataset.userType;
+
+
+        if (toggleAddPostBtn) { 
+     
+            toggleAddPostBtn.addEventListener('click', () => {
+               addPostWrapper.classList.toggle('hidden'); 
+               if(!addPostWrapper.classList.contains('hidden')) {
+                    toggleAddPostBtn.textContent = '➖Cancelar';
+                } else{
+                    toggleAddPostBtn.textContent = '➕Nova Publicação';
+                }
+                formMessage.textContent ='';
+                addPostForm.reset();
+
+            }); 
+        }
+        if(cancelPostBtn){
+            cancelPostBtn.addEventListener('click',() =>{
+                addPostWrapper.classList.add('hidden');
+                if(toggleAddPostBtn){
+                    toggleAddPostBtn.textContent = '➕Nova Publicação';
+                }
+                formMessage.textContent ='';
+                addPostForm.reset();
             });
+        }
 
-            // Ao clicar em "Cancelar"
-            cancelEditBtn.addEventListener('click', () => {
-                viewModeDiv.style.display = 'block'; // mostra as infos
-                editModeForm.style.display = 'none'; //esconde o form de edit
-                editInfoBtn.style.display = 'block'; // Mostra o botão de editar denovo
-            });
+        if (addPostForm) {
+            addPostForm.addEventListener('submit',  (event) => {
 
-            // ativa quando clica em um botao com submit
-            editModeForm.addEventListener('submit', (event) => {
-                event.preventDefault(); // Impede o recarregamento da página
+        
+                event.preventDefault();
+                formMessage.textContent='';
 
-                const formData = new FormData(editModeForm); //O FormData coleta TODOS os dados do form
-                const userData = {};
-                formData.forEach((value, key) => { //key é o nome do campo, value é o valor e e ta percorrendo todos os campos do form
-                    userData[key] = value;
+                const formData = new FormData(addPostForm); //O FormData coleta TODOS os dados do form
+                const postData = {};
+                formData.forEach((value, key) => { 
+                    postData[key] = value;
                 });
 
-                //  ID e o tipo do usuário ta pegando do body do html e tem uma conversao no jeito que escreve e passa pra ca
-                userData.userId  = document.body.dataset.userId;
-                userData.userType = document.body.dataset.userType.trim();
+                postData.userId  = currentUserId;
+                postData.userType = currentUserType;
+                postData.data_publicacao = new Date().toISOString();
 
-                
-
-                // Envia os dados para o servidor
-                fetch('/update-user-info', {
+                console.log('Dados enviados para /add-post:', postData);
+         
+                   fetch('/add-post', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(userData)
+                    body: JSON.stringify(postData)
                 })
                 .then(response => {
                     if (!response.ok) {
@@ -67,63 +74,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 })
                 .then(data => {
                     if (data.success) {
-                        alert('Informações atualizadas com sucesso!');
+                        // alert('Publicação  adicionada com sucesso!');
                         location.reload(); // Recarrega a página
                     } else {
-                        alert('Erro ao atualizar informações: ' + data.message);
+                        alert('Erro ao Publicar: ' + data.message);
                     }
                 })
                 .catch(error => {
                     console.error('Erro na requisição fetch:', error);
-                    alert('Ocorreu um erro de comunicação com o servidor. Verifique o console (F12) para detalhes.');
+                    alert('Ocorreu um erro de comunicação com o servidor: ' + error.message);
                 });
             });
         }
-
-        // --- LÓGICA PARA ADICIONAR post ---
-        if (toggleAddPostBtn && addPostWrapper) {
-            toggleAddPostBtn.addEventListener('click', () => {
-                if (addPostWrapper.style.display === 'none') {
-                    addPostWrapper.style.display = 'block';
-                    toggleAddPostBtn.textContent = 'Cancelar';
-                } else {
-                    addPostWrapper.style.display = 'none';
-                    toggleAddPostBtn.textContent = 'Adicionar Nova Publicação';
-                }
-            });
-        }
-
-        if (addPostForm) {
-            addPostForm.addEventListener('submit', (event) => {
-                event.preventDefault();
-                const formData = new FormData(addPostForm);
-                const postData = {};
-                formData.forEach((value, key) => {
-                    postData[key] = value;
-                });
-
-                fetch('/add-post', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(postData)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Certificado adicionado com sucesso!');
-                        location.reload();
-                    } else {
-                        alert('Erro ao adicionar certificado: ' + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Erro na requisição de adicionar certificado:', error);
-                    alert('Ocorreu um erro ao adicionar o certificado.');
-                });
-            });
-        }
-
-        
-
         
     });

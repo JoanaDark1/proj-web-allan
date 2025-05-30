@@ -1,6 +1,5 @@
 /* publicacoes.css */
 
-/* Reset básico */
 * {
     margin: 0;
     padding: 0;
@@ -9,12 +8,13 @@
 
 body, html {
     font-family: "Poppins", sans-serif;
-    background-color: #f4f4f4;
+    background-color: #f4f4f4; /* Fundo geral da página */
+    color: #333; /* Cor de texto padrão */
+    line-height: 1.6;
 }
 
-/***************** Navbar ******************/
 nav {
-    background-color: #2b7e4c;
+       background-color: #426488; 
     font-family: "Poppins", serif;
     position: fixed;
     width: 100%;
@@ -22,10 +22,12 @@ nav {
     left: 0;
     z-index: 1000;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; /* Alinha a logo à esquerda e os links à direita */
     align-items: center;
-    padding: 0 16px;
-    height: 80px;
+    /* Adiciona um preenchimento (padding) melhor e uma sombra sutil */
+    padding: 0 40px; 
+    height: 95px; /* Altura fixa para um melhor alinhamento */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15); /* Sombra para dar profundidade */
 }
 
 .navbar-left {
@@ -36,19 +38,19 @@ nav {
 .logo {
     font-size: 25px;
     font-weight: 400;
-    color: #f2f2f2;
+    color: #f2f2f2; /* Branco/cinza claro para texto na navbar */
     text-decoration: none;
     display: flex;
     align-items: center;
 }
 
 .logo img {
-    height: 90px;
+    height: 70px; /* Ajustei um pouco a altura */
     width: auto;
     object-fit: contain;
+    margin-right: 10px; /* Espaço entre imagem e texto do logo */
 }
 
-/***************** Topnav ******************/
 .topnav {
     list-style: none;
     display: flex;
@@ -62,17 +64,249 @@ nav {
 
 .topnav a {
     text-transform: uppercase;
-    color: #f7eded;
+    color: #f7eded; /* Branco levemente rosado/cinza claro */
     text-align: center;
-    padding: 14px 20px;
+    padding: 14px 16px; /* Ajustei padding */
     text-decoration: none;
-    font-size: 16px;
+    font-size: 15px; /* Ajustei tamanho da fonte */
+    font-weight: 500; /* Peso da fonte */
     display: inline-block;
-    transition: 0.3s;
+    transition: color 0.3s ease, background-color 0.3s ease; /* Transição suave */
+    border-radius: 4px; /* Bordas arredondadas sutis */
 }
 
-.topnav li a.ativo,
+.topnav li a.ativo, /* Se você tiver uma classe 'ativo' */
 .topnav a:hover {
-    color: #191970;
-    font-weight: bold;
+    color: #ffffff; /* Branco mais forte no hover */
+    background-color: rgba(255, 255, 255, 0.1); /* Fundo sutil no hover */
+    font-weight: 600; /* Mais negrito no hover */
+}
+
+/***************** Container Principal da Página ******************/
+.main-container {
+    padding-top: 100px; /* Espaço para a navbar fixa (80px da navbar + 20px de margem) */
+    padding-bottom: 40px;
+    max-width: 960px; /* Largura máxima para o conteúdo principal */
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Seção de "Detalhes do Post" (view-mode-details) - Estilo genérico se precisar */
+#view-mode-details .post-details {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    margin-bottom: 30px;
+}
+
+#view-mode-details .post-details p {
+    margin-bottom: 10px;
+    font-size: 1rem;
+}
+
+#view-mode-details .post-details strong {
+    color: #2b7e4c; /* Cor de destaque verde */
+}
+
+
+/***************** Seção do Mural de Publicações ******************/
+.post-section {
+    background-color: #ffffff; /* Fundo branco para a seção de posts */
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.08); /* Sombra mais pronunciada */
+}
+
+.post-section h1 {
+    color: #2b7e4c; /* Título principal em verde */
+    margin-bottom: 20px;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* Botão "Nova Publicação" - já usa Bootstrap, mas podemos refinar se necessário */
+#toggleAddPostBtn {
+    font-weight: 500;
+    /* Estilos Bootstrap .btn .btn-info .mb-3 já aplicados */
+}
+
+/* Wrapper do Formulário de Adicionar Post */
+#addPostWrapper {
+    background-color: #f9f9f9; /* Fundo levemente diferente para o formulário */
+    padding: 20px;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+    margin-top: 15px;
+    margin-bottom: 30px;
+    transition: max-height 0.3s ease-out, opacity 0.3s ease-out; /* Para animação se usar JS para altura */
+}
+
+#addPostWrapper.hidden {
+    /* display: none; é aplicado inline pelo JS ou classe CSS */
+    /* opacity: 0; */ /* Para animação, se desejar */
+    /* max-height: 0; */ /* Para animação, se desejar */
+}
+
+/* Formulário (inputs já estilizados pelo Bootstrap form-control) */
+#addPostForm .form-group label {
+    font-weight: 500;
+    color: #444;
+}
+
+/* Botões dentro do formulário */
+#addPostForm button[type="submit"] {
+    /* .btn .btn-primary do Bootstrap */
+    font-weight: 500;
+}
+#cancelPostBtn.btn-outline-secondary { /* Se você adicionar a classe Bootstrap */
+    font-weight: 500;
+}
+
+
+/* Mensagem do Formulário */
+#formMessage {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    text-align: center;
+}
+#formMessage.alert-success { /* Classe adicionada pelo JS */
+    background-color: #d4edda;
+    color: #155724;
+    border-color: #c3e6cb;
+}
+#formMessage.alert-danger { /* Classe adicionada pelo JS */
+    background-color: #f8d7da;
+    color: #721c24;
+    border-color: #f5c6cb;
+}
+
+/* Título "Publicações" acima da lista */
+.post-section h3.mt-4 {
+    color: #333;
+    font-weight: 500;
+    border-bottom: 2px solid #2b7e4c; /* Linha abaixo do título */
+    padding-bottom: 8px;
+    margin-bottom: 20px;
+}
+
+/***************** Lista de Posts e Itens Individuais ******************/
+#postList {
+    margin-top: 20px;
+}
+
+.post-item {
+    background-color: #ffffff;
+    border: 1px solid #e7e7e7;
+    border-left: 5px solid #2b7e4c; /* Borda lateral verde de destaque */
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 0 8px 8px 0; /* Arredondamento só nas bordas direita */
+    box-shadow: 0 1px 5px rgba(0,0,0,0.05);
+    transition: box-shadow 0.3s ease;
+}
+
+.post-item:hover {
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
+
+.post-item h5 { /* Título do post */
+    color: #2b7e4c; /* Verde */
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 1.25rem;
+}
+
+.post-item p {
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+    color: #555;
+}
+
+.post-item p:last-child {
+    margin-bottom: 0;
+}
+
+.post-item p strong { /* Para "Contato:", "Descrição:" etc. se você usar <strong> */
+    font-weight: 600;
+    color: #333;
+}
+
+/* Mensagem de "Nenhuma publicação" */
+#noPostsMessage { /* Adicione este ID ao seu <p> no EJS */
+    text-align: center;
+    color: #777;
+    font-style: italic;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+}
+
+/***************** Link Sair ******************/
+.main-container > a[href="/"] { /* Estilizando o link "Sair" que está solto no main-container */
+    display: inline-block;
+    margin-top: 30px;
+    padding: 10px 20px;
+    background-color: #dc3545; /* Cor de "perigo" do Bootstrap para sair */
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+.main-container > a[href="/"]:hover {
+    background-color: #c82333; /* Tom mais escuro no hover */
+}
+
+
+/* Responsividade básica para a navbar e conteúdo */
+@media (max-width: 768px) {
+    nav {
+        flex-direction: column;
+        height: auto; /* Altura automática para acomodar itens empilhados */
+        padding: 10px;
+    }
+    .navbar-left {
+        margin-bottom: 10px; /* Espaço abaixo do logo */
+        width: 100%;
+        justify-content: center;
+    }
+    .topnav {
+        flex-direction: column;
+        width: 100%;
+    }
+    .topnav li {
+        margin: 5px 0;
+        text-align: center;
+    }
+    .topnav a {
+        padding: 10px;
+        width: 100%;
+    }
+    .main-container {
+        padding-top: 180px; /* Aumentar padding se a navbar empilhada ficar muito alta */
+    }
+}
+
+@media (max-width: 480px) {
+    .logo span {
+        font-size: 20px; /* Reduzir nome do logo em telas pequenas */
+    }
+    .logo img {
+        height: 50px;
+    }
+     .main-container {
+        padding-top: 160px; /* Ajuste fino */
+    }
+    .post-item h5 {
+        font-size: 1.1rem;
+    }
+    .post-item p {
+        font-size: 0.9rem;
+    }
 }

@@ -53,45 +53,14 @@
             <% } %>
 
                 <div class="main-container">
-                    <!-- depois fazer a logica do admin conseguir excluir os posts -->
-                    <div id="view-mode-details"> <!--detalhes dos posts-->
-                        <div class="post-details">
-                            <% if (tipo==='medico' || tipo==='enfermeiro' ) { %>
-
-                                <p><strong>TÍTULO:</strong>
-                                    <%= titulo %>
-                                </p>
-                                <p>DATA DE PUBLICAÇÃO:>:
-                                    <%= data_publicacao %>
-                                </p>
-                                <p><strong>DESCRIÇÃO:</strong>
-                                    <%= descricao %>
-                                </p>
-                                <p><strong>CONTATO:</strong>
-                                    <%= contato %>
-                                </p>
-
-                                <% } %>
-                                    <% } else if (tipo==='gestor' ) { %>
-                                        <script>
-                                            alert("Você não tem permissão para visualizar esta página.");
-                                            window.location.href = "/templates/home.html";
-                                        </script>
-                                        <% } %>
-
-
-                        </div>
-                    </div>
-
-
                     <% if (tipo==='medico' || tipo==='enfermeiro' ) { %>
                         <div class="post-section">
-                            <h2>Meus Certificados</h2>
+                            <h1>Mural de Publicações</h1>
 
-                            <button id="toggleAddPostBtn" class="btn btn-info mb-3">Adicionar Novo Certificado</button>
+                            <button id="toggleAddPostBtn" class="btn btn-info mb-3">➕ Nova Publicação</button>
 
-                            <div id="addPostWrapper" style="display: none;">
-                                <h3>Adicionar Nova Publicação</h3>
+                            <div id="addPostWrapper" class="hidden">
+                                <!-- <h3>Adicionar Nova Publicação</h3> -->
                                 <form id="addPostForm">
                                     <input type="hidden" name="userId" value="<%= id %>">
                                     <input type="hidden" name="userType" value="<%= tipo %>">
@@ -100,11 +69,11 @@
                                         <label for="titulo">Título:</label>
                                         <input type="text" class="form-control" id="titulo" name="titulo" required>
                                     </div>
-                                    <div class="form-group">
+                                    <!-- <div class="form-group">
                                         <label for="data_publicacao">Data da Publicação:</label> <input
                                             type="datetime-local" class="form-control" id="data_publicacao"
                                             name="data_publicacao" required>
-                                    </div>
+                                    </div> -->
                                     <div class="form-group">
                                         <label for="descricao">Descrição:</label> <textarea class="form-control"
                                             id="descricao" name="descricao" rows="3" required></textarea>
@@ -114,11 +83,13 @@
                                             class="form-control" id="contato" name="contato" required>
                                     </div>
                                     <button type="submit" class="btn btn-primary">Adicionar Publicação</button>
+                                    <button type="button" id="cancelPostBtn">Cancelar</button>
                                 </form>
+                                <div id="formMessage"></div>
                             </div>
 
                             <h3 class="mt-4">Publicações</h3>
-                            <div class="post-list">
+                            <div id="postList">
                                 <% if (publicacoes && publicacoes.length> 0) { %>
                                     <% publicacoes.forEach(post=> { %>
                                         <div class="post-item">
@@ -141,9 +112,9 @@
                         </div>
                         <% } %>
 
-                            <a href="/">Sair</a>
+    
 
-                            <script src="/js/user_profile.js">
+                            <script src="/js/publicacoes.js">
 
                             </script>
 </body>

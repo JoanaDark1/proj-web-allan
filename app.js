@@ -373,25 +373,32 @@ app.post('/add-certificate', (req, res) => {
 
 // rota pra exibir as publicações
 app.get('/posts', (req, res) => {
-    const sql = "SELECT p.*, IFNULL(m.nome, enf.nome) AS nome_autor FROM publicacoes p LEFT JOIN medicos m ON p.medico_id = m.id LEFT JOIN enfermeiros enf ON p.enfermeiro_id = enf.id ORDER BY p.data_publicacao DESC"; // Exemplo de query
+    if (!req.session.user) {
+        // Redireciona para login se não estiver logado
+        return res.redirect('/templates/auth/login.html');
+    }
+    const sql = `SELECT p.*, IFNULL(m.nome, enf.nome) AS nome_autor FROM publicacoes p 
+    LEFT JOIN medicos m ON p.medico_id = m.id LEFT JOIN enfermeiros enf ON p.enfermeiro_id
+     = enf.id ORDER BY p.data_publicacao DESC`; 
     con.query(sql, (err, allPosts) => {
         if (err) {
             console.error('Erro ao buscar publicações:', err);
-            // Tratar erro, talvez renderizar página de erro
+
             return res.status(500).send("Erro ao carregar publicações.");
         }
-        res.render('publicacoes.ejs', { // o nome do seu arquivo .ejs
+        res.render('publicacoes.ejs', { 
             nome: req.session.user.nome, // Exemplo de como pegar dados do usuário logado
             id: req.session.user.id,
             tipo: req.session.user.tipo,
             publicacoes: allPosts, // Passa TODAS as publicações para o template
-            // outras variáveis necessárias para o template como titulo, data_publicacao, descricao, contato singulares (se ainda forem necessárias)
+        
         });
     });
 });
 
 // Nova rota para adicionar publicações
 app.post('/add-post', (req, res) => {
+    console.log(req.body);
     const { userId, userType, titulo, data_publicacao, descricao, contato } = req.body;
 
     if (!userId || !userType || !titulo || !data_publicacao || !descricao || !contato) {
@@ -411,15 +418,45 @@ app.post('/add-post', (req, res) => {
         enfermeiroId = userId;
     }
 
+     let formattedDate;
+     try {
+        const dateObj = new Date(data_publicacao);
+    // Formatando para 'YYYY-MM-DD HH:MM:SS porque ele pega o formato ISO 8601
+        const year = dateObj.getFullYear();
+        const month = ('0' + (dateObj.getMonth() + 1)).slice(-2); 
+        const day = ('0' + dateObj.getDate()).slice(-2);
+        const hours = ('0' + dateObj.getHours()).slice(-2);
+        const minutes = ('0' + dateObj.getMinutes()).slice(-2);
+        const seconds = ('0' + dateObj.getSeconds()).slice(-2);
+        formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    } catch (e) {
+        console.error("Erro ao formatar data_publicacao:", e);
+     
+        return res.status(400).json({ success: false, message: 'Formato de data inválido fornecido.' });
+    }
+
     const sql = `INSERT INTO publicacoes (titulo, data_publicacao, descricao, contato, medico_id, enfermeiro_id) VALUES (?, ?, ?, ?, ?, ?)`;
-    const values = [titulo, data_publicacao, descricao, contato, medicoId, enfermeiroId];
+    const values = [titulo, formattedDate, descricao, contato, medicoId, enfermeiroId];
 
     con.query(sql, values, (err, result) => {
         if (err) {
             console.error('Erro ao inserir publicação no banco de dados:', err);
             return res.status(500).json({ success: false, message: 'Erro ao salvar a publicação.' });
         }
-        res.json({ success: true, message: 'publicação adicionada com sucesso!', postId: result.insertId });
+       
+        res.json({ success: true, message: 'publicação adicionada com sucesso!', postId: result.insertId,
+            post:{
+                id: result.insertId,
+                titulo:titulo,
+                descricao:descricao,
+                contato:contato,
+                data_publicacao: data_publicacao,
+                nome_autor: req.session.user.nome,
+                medicoId:medicoId,
+                enfermeiroId:enfermeiroId
+
+            }
+         });
     });
 });
 
