@@ -1,0 +1,92 @@
+body {
+      font-family: "Poppins", sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #191970, #2b7e4c);
+      background-attachment: fixed;
+      background-repeat: no-repeat;
+      background-size: cover;
+      min-height: 100vh;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .navbar {
+      background-color: rgba(43, 126, 76, 0.95);
+      padding: 1rem 2rem;
+    }
+
+    .navbar-brand {
+      font-weight: 600;
+      font-size: 1.5rem;
+    }
+
+    header {
+      color: white;
+      padding: 3rem 0;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+    }
+
+    header p {
+      font-size: 1.1rem;
+      margin-top: 0.5rem;
+    }
+
+    .card {
+      border: none;
+      border-radius: 12px;
+      background: #ffffff;
+      color: #000000;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s ease;
+    }
+
+    .card:hover {
+      transform: scale(1.02);
+    }
+
+    .card-title {
+      font-weight: 600;
+      color: #2b7e4c;
+    }
+
+    .card-text {
+      font-size: 0.95rem;
+    }
+
+    .text-muted {
+      font-size: 1rem;
+    }
+
+    footer {
+      background-color: rgba(43, 126, 76, 0.95);
+      color: white;
+      padding: 1.5rem 0;
+      text-align: center;
+      font-size: 0.95rem;
+      flex-shrink: 0;
+      margin-top: auto;
+    }
+
+    footer a {
+      color: #ffffff;
+      text-decoration: underline;
+    }
+
+    .separator-top,
+    .separator-bottom {
+      background-color: #ffffff;
+      height: 10px;
+      width: 100%;
+    }
+
+    main.container {
+      flex: 1 ;
+      padding-bottom: 6.3rem;
+    }

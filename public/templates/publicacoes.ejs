@@ -33,7 +33,7 @@
             <ul class="topnav">
 
                 <li><a href="/vagas-medico">Vagas</a></li>
-                <li><a href="/user_profile">Meu perfil</a></li>
+                <li><a href="/user_profile?tipo=<%= tipo %>&id=<%= id %>">">Meu perfil</a></li>
             </ul>
         </nav>
         <% } else if (tipo==='enfermeiro' ) { %>
@@ -47,7 +47,7 @@
                 <ul class="topnav">
 
                     <li><a href="/vagas-enfermeiro">Vagas</a></li>
-                    <li><a href="/user_profile">Meu perfil</a></li>
+                    <li><a href="/user_profile?tipo=<%= tipo %>&id=<%= id %>">Meu perfil</a></li>
                 </ul>
             </nav>
             <% } %>
@@ -57,7 +57,7 @@
                         <div class="post-section">
                             <h1>Mural de Publicações</h1>
 
-                            <button id="toggleAddPostBtn" class="btn btn-info mb-3">➕ Nova Publicação</button>
+                            <!-- <button id="toggleAddPostBtn" class="btn btn-info mb-3">➕ Nova Publicação</button> -->
 
                             <div id="addPostWrapper" class="hidden">
                                 <!-- <h3>Adicionar Nova Publicação</h3> -->
