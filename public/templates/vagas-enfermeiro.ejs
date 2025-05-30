@@ -1,59 +1,152 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Vagas para Enfermeiros - MedOportuna</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body { background-color: #ffffff; font-family: "Poppins", sans-serif; }
-        .navbar { background-color: #2b7e4c !important; }
-        header { background-color: #191970; color: white; }
-        .card-title { font-weight: 600; }
-        footer { background-color: #2b7e4c; }
-        footer p { color: #ffffff; margin-bottom: 0.25rem; }
-        footer a { color: white; }
-        .btn-success { font-size: 1.1rem; }
-    </style>
+  <meta charset="UTF-8">
+  <title>Vagas para Enfermeiros - MedOportuna</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #191970, #2b7e4c);
+      background-attachment: fixed;
+      background-repeat: no-repeat;
+      background-size: cover;
+      min-height: 100vh;
+      color: #fff;
+    }
+
+    .navbar {
+      background-color: rgba(43, 126, 76, 0.95);
+      padding: 1rem 2rem;
+    }
+
+    .navbar-brand {
+      font-weight: 600;
+      font-size: 1.5rem;
+    }
+
+    header {
+      color: white;
+      padding: 3rem 0;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+    }
+
+    header p {
+      font-size: 1.1rem;
+      margin-top: 0.5rem;
+    }
+
+    .card {
+      border: none;
+      border-radius: 12px;
+      background: #ffffff;
+      color: #000000;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s ease;
+    }
+
+    .card:hover {
+      transform: scale(1.02);
+    }
+
+    .card-title {
+      font-weight: 600;
+      color: #2b7e4c;
+    }
+
+    .card-text {
+      font-size: 0.95rem;
+    }
+
+    .text-muted {
+      font-size: 1rem;
+    }
+
+    footer {
+      background-color: rgba(43, 126, 76, 0.95);
+      color: white;
+      padding: 1.5rem 0;
+      text-align: center;
+      font-size: 0.95rem;
+      flex-shrink: 0;
+      margin-top: auto;
+    }
+
+    footer a {
+      color: #ffffff;
+      text-decoration: underline;
+    }
+
+    .separator-top,
+    .separator-bottom {
+      background-color: #ffffff;
+      height: 10px;
+      width: 100%;
+    }
+
+    main.container {
+      flex: 1 0 auto;
+      padding-bottom: 6.3rem;
+    }
+  </style>
 </head>
 <body>
-    <nav class="navbar navbar-dark px-4">
-        <a class="navbar-brand" href="/">MedOportuna</a>
-        <a href="/templates/auth/login.html" class="btn btn-outline-light">Entrar</a>
-    </nav>
+  <nav class="navbar navbar-dark">
+    <a class="navbar-brand" href="/">MedOportuna</a>
+    <a href="/templates/auth/login.html" class="btn btn-outline-light">Entrar</a>
+  </nav>
 
-    <header class="py-5 text-white text-center">
-        <div class="container">
-            <h1>Vagas para Enfermeiros</h1>
-            <p class="lead">Oportunidades em hospitais, UBSs e clínicas especializadas</p>
+  <div class="separator-top"></div>
+
+  <header>
+    <div class="container">
+      <h1>Vagas para Enfermeiros</h1>
+      <p class="lead">Oportunidades em hospitais, UBSs e clínicas especializadas</p>
+    </div>
+  </header>
+
+  <main class="container my-5">
+    <div class="row">
+      <% if (vagas.length === 0) { %>
+        <div class="col-12 text-center">
+          <p class="text-muted">Nenhuma vaga disponível no momento.</p>
         </div>
-    </header>
+      <% } else { %>
+        <% vagas.forEach(vaga => { %>
+          <div class="col-md-6 mb-4">
+            <div class="card p-3">
+              <div class="card-body">
+                <h5 class="card-title"><%= vaga.titulo %></h5>
+                <p class="card-text"><strong>Local:</strong> <%= vaga.local %></p>
+                <p class="card-text"><strong>Remuneração:</strong> <%= vaga.remuneracao %></p>
+                <p class="card-text"><strong>Descrição:</strong> <%= vaga.descricao %></p>
+                <p class="card-text"><strong>Contato:</strong> <%= vaga.contato %></p>
+                <p class="card-text text-muted">
+                  Publicada em:
+                  <%= new Date(vaga.data_publicacao).toLocaleDateString('pt-BR') %>
+                </p>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      <% } %>
+    </div>
+  </main>
 
-    <main class="container my-5">
-        <div class="row">
-            <% if (vagas.length === 0) { %>
-                <div class="col-12 text-center">
-                    <p class="text-muted">Nenhuma vaga disponível no momento.</p>
-                </div>
-            <% } %>
-            <% vagas.forEach(vaga => { %>
-                <div class="col-md-6 mb-4">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title"><%= vaga.titulo %></h5>
-                            <p class="card-text"><%= vaga.local %></p>
-                            <p class="card-text"><%= vaga.remuneracao %></p>
-                            <p class="card-text"><%= vaga.descricao %></p>
-                        </div>
-                    </div>
-                </div>
-            <% }) %>
-        </div>
-    </main>
+  <div class="separator-bottom"></div>
 
-    <footer class="text-center py-4">
-        <p class="mb-1">© 2025 MedOportuna. Todos os direitos reservados.</p>
-        <p class="small">Contato: <a href="mailto:contato@medoportuna.com">contato@medoportuna.com</a></p>
-    </footer>
+  <footer>
+    <p>© 2025 MedOportuna. Todos os direitos reservados.</p>
+    <p>Contato: <a href="mailto:contato@medoportuna.com">contato@medoportuna.com</a></p>
+  </footer>
 </body>
 </html>

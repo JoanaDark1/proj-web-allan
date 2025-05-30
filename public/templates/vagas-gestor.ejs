@@ -103,6 +103,10 @@
         padding-bottom: 6.3rem; 
     }
 
+    form {
+        margin-top: 1rem;
+    }
+
   </style>
 </head>
 <body>
@@ -140,6 +144,11 @@
                   Publicada em: 
                   <%= new Date(vaga.data_publicacao).toLocaleDateString('pt-BR') %>
                 </p>
+                <!-- Formulário para excluir -->
+                <form action="/excluir-vaga/<%= vaga.id %>" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir esta vaga?');">
+                    <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
+                </form>
+                </div>  
               </div>
             </div>
           </div>

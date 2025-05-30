@@ -537,6 +537,34 @@ app.get('/vagas-:profissao', (req, res) => {
     }
 });
 
+app.post('/excluir-vaga/:id', (req, res) => {
+    if (!req.session.user || req.session.user.tipo !== 'gestor') {
+        return res.status(403).send("Acesso negado.");
+    }
+
+    const vagaId = req.params.id;
+    const gestorId = req.session.user.id;
+
+    // Só permite excluir vaga que pertence ao gestor logado
+    const sql = "DELETE FROM vagas WHERE id = ? AND gestor_id = ?";
+
+    con.query(sql, [vagaId, gestorId], (err, result) => {
+        if (err) {
+            console.error("Erro ao excluir vaga:", err);
+            return res.status(500).send("Erro ao excluir vaga.");
+        }
+
+        if (result.affectedRows === 0) {
+            // Não encontrou vaga ou não pertence ao gestor
+            return res.status(404).send("Vaga não encontrada ou acesso negado.");
+        }
+
+        // Exclusão ok, redireciona para lista de vagas do gestor
+        res.redirect('/vagas-gestor');
+    });
+});
+
+
 app.listen(port, () => {
     console.log(`Servidor rodando em http://localhost:${port}`);
 });
