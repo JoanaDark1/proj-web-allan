@@ -18,11 +18,38 @@
     </form>
 
     <h3>🧑‍💼 Administradores</h3>
-    <ul>
-        <% admins.forEach(admin => { %>
-            <li><%= admin.nome %> - <%= admin.email %></li>
+    <% admins.forEach(admin => { %>
+        <div class="border p-2 mb-2">
+            <strong><%= admin.nome %></strong> (<%= admin.email %>)<br>
+            <% if (admin.email !== 'admin@medoportuna.com') { %>
+                <form action="/admin/excluir-admin" method="POST" onsubmit="return confirm('Excluir este administrador?')">
+                    <input type="hidden" name="id" value="<%= admin.id %>">
+                    <button class="btn btn-danger btn-sm">Excluir Admin</button>
+                </form>
+            <% } else { %>
+                <span class="text-muted">Admin Geral</span>
+            <% } %>
+        </div>
+    <% }) %>    
+
+
+    <h3 class="mt-5">👥 Usuários Cadastrados</h3>
+    <% if (usuarios.length > 0) { %>
+        <% usuarios.forEach(user => { %>
+            <div class="border p-2 mb-2">
+                <strong><%= user.nome %></strong> 
+                (<%= user.tipo.charAt(0).toUpperCase() + user.tipo.slice(1) %>)<br>
+                <small>Email: <%= user.email %> | ID: <%= user.id %></small><br>
+                <form action="/admin/excluir-usuario" method="POST" onsubmit="return confirm('Excluir este usuário?')">
+                    <input type="hidden" name="id" value="<%= user.id %>">
+                    <input type="hidden" name="tipo" value="<%= user.tipo %>">
+                    <button class="btn btn-danger btn-sm">Excluir Usuário</button>
+                </form>
+            </div>
         <% }) %>
-    </ul>
+    <% } else { %>
+        <p>Nenhum usuário encontrado.</p>
+    <% } %>
 
     <h3>📢 Publicações de Profissionais</h3>
     <% publicacoes.forEach(post => { %>
@@ -36,5 +63,22 @@
             </form>
         </div>
     <% }) %>
+    <h3 class="mt-5">💼 Vagas Publicadas</h3>
+    <% if (vagas.length > 0) { %>
+        <% vagas.forEach(vaga => { %>
+            <div class="border p-2 mb-2">
+                <strong><%= vaga.titulo %></strong><br>
+                <small>Profissão: <%= vaga.profissao %> | Publicada em: <%= new Date(vaga.data_publicacao).toLocaleDateString('pt-BR') %></small><br>
+                <p><%= vaga.descricao %></p>
+                <p>Local: <%= vaga.local %> | Contato: <%= vaga.contato %></p>
+                <form action="/admin/excluir-vaga" method="POST" onsubmit="return confirm('Excluir esta vaga?')">
+                    <input type="hidden" name="vagaId" value="<%= vaga.id %>">
+                    <button class="btn btn-danger btn-sm">Excluir Vaga</button>
+                </form>
+            </div>
+        <% }) %>
+    <% } else { %>
+        <p>Nenhuma vaga publicada.</p>
+    <% } %>
 </body>
 </html>
