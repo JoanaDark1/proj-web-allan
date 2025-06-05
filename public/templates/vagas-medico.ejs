@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <title>Vagas para Médicos - MedOportuna</title>
@@ -10,12 +11,42 @@
 
 
 </head>
-<body>
-  <nav class="navbar navbar-dark">
-    <a class="navbar-brand" href="/">MedOportuna</a>
-    <a href="/templates/auth/login.html" class="btn btn-outline-light">Entrar</a>
-  </nav>
 
+<body data-user-id="<%=id%>" data-user-type="<%=tipo%>">
+
+   <% if (tipo==='medico' ) { %>
+         <nav>
+    <div class="navbar-left">
+      <a href="/templates/home.html" class="logo">
+        <img src="/images/logo_cor-removebg-preview.png" alt="logo">
+        <span class="logo">MedOportuna</span>
+      </a>
+    </div>
+    <ul class="topnav">
+      <li><a href="/posts">Publicações de colaboração</a></li>
+      <li><a href="/vagas-medico">Vagas</a></li>
+      <li><a href="/user_profile?tipo=<%= tipo %>&id=<%= id %>">Meu perfil</a></li>
+      <li><a href="/logout">Sair</a></li>
+    </ul></nav>
+        <% } else if (tipo==='admin' ) { %>
+                <nav>
+                    <div class="navbar-left">
+                        <a href="/templates/home.html" class="logo">
+                            <img src="/images/logo_cor-removebg-preview.png" alt="logo">
+                            <span class="logo">MedOportuna</span>
+                        </a>
+                    </div>
+                    <ul class="topnav">
+                        <li><a href="/posts">Publicações de colaboração</a></li>
+                        <li><a href="/vagas-medico">Vagas dos Médicos</a></li>
+                        <li><a href="/vagas-enfermeiro">Vagas dos Enfermeiros</a></li>
+                        <li><a href="/logout">Sair</a></li>
+
+                    </ul>
+                </nav>
+                <% } %>
+ 
+  
   <div class="separator-top"></div>
 
   <header>
@@ -27,29 +58,39 @@
 
   <main class="container my-5">
     <div class="row">
-      <% if (vagas.length === 0) { %>
+      <% if (vagas.length===0) { %>
         <div class="col-12 text-center">
           <p class="text-muted">Nenhuma vaga disponível no momento.</p>
         </div>
-      <% } else { %>
-        <% vagas.forEach(vaga => { %>
-          <div class="col-md-6 mb-4">
-            <div class="card p-3">
-              <div class="card-body">
-                <h5 class="card-title"><%= vaga.titulo %></h5>
-                <p class="card-text"><strong>Local:</strong> <%= vaga.local %></p>
-                <p class="card-text"><strong>Remuneração:</strong> <%= vaga.remuneracao %></p>
-                <p class="card-text"><strong>Descrição:</strong> <%= vaga.descricao %></p>
-                <p class="card-text"><strong>Contato:</strong> <%= vaga.contato %></p>
-                <p class="card-text text-muted">
-                  Publicada em:
-                  <%= new Date(vaga.data_publicacao).toLocaleDateString('pt-BR') %>
-                </p>
+        <% } else { %>
+          <% vagas.forEach(vaga=> { %>
+            <div class="col-md-6 mb-4">
+              <div class="card p-3">
+                <div class="card-body">
+                  <h5 class="card-title">
+                    <%= vaga.titulo %>
+                  </h5>
+                  <p class="card-text"><strong>Local:</strong>
+                    <%= vaga.local %>
+                  </p>
+                  <p class="card-text"><strong>Remuneração:</strong>
+                    <%= vaga.remuneracao %>
+                  </p>
+                  <p class="card-text"><strong>Descrição:</strong>
+                    <%= vaga.descricao %>
+                  </p>
+                  <p class="card-text"><strong>Contato:</strong>
+                    <%= vaga.contato %>
+                  </p>
+                  <p class="card-text text-muted">
+                    Publicada em:
+                    <%= new Date(vaga.data_publicacao).toLocaleDateString('pt-BR') %>
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-        <% }) %>
-      <% } %>
+            <% }) %>
+              <% } %>
     </div>
   </main>
 
@@ -60,4 +101,5 @@
     <p>Contato: <a href="mailto:contato@medoportuna.com">contato@medoportuna.com</a></p>
   </footer>
 </body>
+
 </html>

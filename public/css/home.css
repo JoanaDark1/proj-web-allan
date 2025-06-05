@@ -1467,71 +1467,70 @@
 }
 
 /***************** Button ******************/
-
 .container-cadastro-btn {
     width: 100%;
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: -moz-box;
-    display: -ms-flexbox;
-    display: flex;
-    flex-wrap: wrap;
-	justify-content: center;
+    display: flex; 
+    flex-wrap: wrap; 
+    justify-content: flex-start; 
+	
+    align-items: center; 
+    gap: 20px; 
+    padding-top: 30px;
+    padding-bottom: 30px;
+    padding-left: 8vw;
+	margin-top: 180px;
+                     
 }
- 
+
+.cadastro-btn {
+    font-family: "Poppins", sans-serif; /* Garante a fonte e adiciona fallback */
+    font-weight: 500;
+    font-size: 16px;
+    color: #ffffff; 
+    line-height: 1.2;
+	
+    display: flex; 
+    justify-content: center;
+    align-items: center;
+    padding: 0 25px; 
+    min-width: 180px; 
+    height: 50px;
+    border-radius: 25px; 
+
+    background: transparent; 
+                             
+    border: 2px solid transparent; 
+    position: relative; 
+    z-index: 1;
+    cursor: pointer; 
+    overflow: hidden; 
+
+    transition: color 0.4s, border-color 0.4s; 
+}
+
 .cadastro-btn::before {
     content: "";
     display: block;
     position: absolute;
-    z-index: -1;
+    z-index: -1; /* Fica atrás do texto do botão */
     width: 100%;
     height: 100%;
-    border-radius: 25px;
-    background-color: #2b7e4c;
+    border-radius: 25px; /* Deve coincidir com o border-radius do botão */
+    background-color: #2b7e4c; /* Cor de fundo inicial do botão (verde) */
     top: 0;
     left: 0;
     opacity: 1;
-
-    -webkit-transition: all 0.4s;
-    -o-transition: all 0.4s;
-    -moz-transition: all 0.4s;
-    transition: all 0.4s;
+    transition: background-color 0.4s ease-in-out; /* Transição suave da cor de fundo */
 }
 
 .cadastro-btn:hover::before {
-    background-color: #191970;
-    
+    background-color: #191970; /* Cor de fundo no hover (azul escuro, igual ao fundo da .home-page) */
 }
 
-.cadastro-btn {
-    font-family: "Poppins";
-    font-weight: 500;
-    font-size: 16px;
-    color: #ffffff;
-    line-height: 1.2;
-  
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: -moz-box;
-    display: -ms-flexbox;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 0 20px;
-    min-width: 120px;
-    height: 50px;
-    border-radius: 25px;
-    margin-top: 1%;
-  
-    background: #eceaf0;
-    
-    position: relative;
-    z-index: 1;
-  
-    -webkit-transition: all 0.4s;
-    -o-transition: all 0.4s;
-    -moz-transition: all 0.4s;
-    transition: all 0.4s;
+/* Adiciona uma borda branca no hover para destacar o botão */
+.cadastro-btn:hover {
+    border-color: #ffffff; 
+   
 }
 
 /***************** Footer ******************/

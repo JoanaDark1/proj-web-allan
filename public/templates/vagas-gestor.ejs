@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <title>Minhas Vagas - Gestor | MedOportuna</title>
@@ -8,14 +9,29 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/vagas.css">
 </head>
-<body>
+
+<body data-user-id="<%=id%>" data-user-type="<%=tipo%>">
 
   <nav class="navbar navbar-dark">
-    <a class="navbar-brand" href="/">MedOportuna</a>
-    <a href="/templates/auth/login.html" class="btn btn-outline-light">Sair</a>
+    <nav>
+      <div class="navbar-left">
+        <a href="/templates/home.html" class="logo">
+          <img src="/images/logo_cor-removebg-preview.png" alt="logo">
+          <span class="logo">MedOportuna</span>
+        </a>
+      </div>
+      <ul class="topnav">
+        <li><a href="/posts">Publicações de colaboração</a></li>
+        <li><a href="/vagas-medico">Vagas</a></li>
+        <li><a href="/user_profile?tipo=<%= tipo %>&id=<%= id %>">Meu perfil</a></li>
+        <li><a href="/logout">Sair</a></li>
+
+      </ul>
+    </nav>
+
   </nav>
 
-    <div class="separator-top"></div>
+  <div class="separator-top"></div>
   <header>
     <div class="container">
       <h1>Minhas Vagas Publicadas</h1>
@@ -26,39 +42,51 @@
   <main class="container my-5">
     <div class="row row-cols-1 row-cols-md-2 g-4">
 
-      <% if (vagas.length === 0) { %>
+      <% if (vagas.length===0) { %>
         <div class="col-12 text-center">
           <p class="text-muted">Você ainda não publicou nenhuma vaga.</p>
         </div>
-      <% } else { %>
-        <% vagas.forEach(vaga => { %>
+        <% } else { %>
+          <% vagas.forEach(vaga=> { %>
             <div class="col d-flex">
-                <div class="card p-3 w-100">
+              <div class="card p-3 w-100">
                 <div class="card-body d-flex flex-column">
-                    <h5 class="card-title"><%= vaga.titulo %></h5>
-                    <p class="card-text"><strong>Local:</strong> <%= vaga.local %></p>
-                    <p class="card-text"><strong>Remuneração:</strong> <%= vaga.remuneracao %></p>
-                    <p class="card-text"><strong>Descrição:</strong> <%= vaga.descricao %></p>
-                    <p class="card-text"><strong>Contato:</strong> <%= vaga.contato %></p>
-                    <p class="card-text text-muted">
+                  <h5 class="card-title">
+                    <%= vaga.titulo %>
+                  </h5>
+                  <p class="card-text"><strong>Local:</strong>
+                    <%= vaga.local %>
+                  </p>
+                  <p class="card-text"><strong>Remuneração:</strong>
+                    <%= vaga.remuneracao %>
+                  </p>
+                  <p class="card-text"><strong>Descrição:</strong>
+                    <%= vaga.descricao %>
+                  </p>
+                  <p class="card-text"><strong>Contato:</strong>
+                    <%= vaga.contato %>
+                  </p>
+                  <p class="card-text text-muted">
                     Publicada em: <%= new Date(vaga.data_publicacao).toLocaleDateString('pt-BR') %>
-                    </p>
-                    <form action="/excluir-vaga/<%= vaga.id %>" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir esta vaga?');">
+                  </p>
+                  <form action="/excluir-vaga/<%= vaga.id %>" method="POST"
+                    onsubmit="return confirm('Tem certeza que deseja excluir esta vaga?');">
                     <button type="submit" class="btn btn-danger btn-sm mt-auto">Excluir</button>
-                    </form>
+                  </form>
                 </div>
-                </div>
+              </div>
             </div>
             <% }) %>
 
-      <% } %>
+              <% } %>
     </div>
   </main>
-    <div class="separator-bottom"></div>
+  <div class="separator-bottom"></div>
   <footer>
     <p>© 2025 MedOportuna. Todos os direitos reservados.</p>
     <p>Contato: <a href="mailto:contato@medoportuna.com">contato@medoportuna.com</a></p>
   </footer>
 
 </body>
+
 </html>

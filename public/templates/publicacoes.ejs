@@ -14,7 +14,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Oxanium:wght@200..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@200..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
         rel="stylesheet">
 
     <link rel="stylesheet" href="/css/publicacoes.css">
@@ -34,6 +34,8 @@
 
                 <li><a href="/vagas-medico">Vagas</a></li>
                 <li><a href="/user_profile?tipo=<%= tipo %>&id=<%= id %>">">Meu perfil</a></li>
+                <li><a href="/logout">Sair</a></li>
+                
             </ul>
         </nav>
         <% } else if (tipo==='enfermeiro' ) { %>
@@ -48,75 +50,122 @@
 
                     <li><a href="/vagas-enfermeiro">Vagas</a></li>
                     <li><a href="/user_profile?tipo=<%= tipo %>&id=<%= id %>">Meu perfil</a></li>
+                    <li><a href="/logout">Sair</a></li>
                 </ul>
             </nav>
-            <% } %>
+            <% } else if (tipo==='admin' ) { %>
+                <nav>
+                    <div class="navbar-left">
+                        <a href="/templates/home.html" class="logo">
+                            <img src="/images/logo_cor-removebg-preview.png" alt="logo">
+                            <span class="logo">MedOportuna</span>
+                        </a>
+                    </div>
+                    <ul class="topnav">
+                        <li><a href="/posts">Publicações de colaboração</a></li>
+                        <li><a href="/vagas-medico">Vagas dos Médicos</a></li>
+                        <li><a href="/vagas-enfermeiro">Vagas dos Enfermeiros</a></li>
+                        <li><a href="/logout">Sair</a></li>
 
-                <div class="main-container">
-                    <% if (tipo==='medico' || tipo==='enfermeiro' ) { %>
-                        <div class="post-section">
-                            <h1>Mural de Publicações</h1>
+                    </ul>
+                </nav>
+                <% } %>
 
-                            <!-- <button id="toggleAddPostBtn" class="btn btn-info mb-3">➕ Nova Publicação</button> -->
+                    <div class="main-container">
+                        <% if (tipo==='medico' || tipo==='enfermeiro' ) { %>
+                            <div class="post-section">
+                                <h1>Mural de Publicações</h1>
 
-                            <div id="addPostWrapper" class="hidden">
-                                <!-- <h3>Adicionar Nova Publicação</h3> -->
-                                <form id="addPostForm">
-                                    <input type="hidden" name="userId" value="<%= id %>">
-                                    <input type="hidden" name="userType" value="<%= tipo %>">
+                                <!-- <button id="toggleAddPostBtn" class="btn btn-info mb-3">➕ Nova Publicação</button> -->
 
-                                    <div class="form-group">
-                                        <label for="titulo">Título:</label>
-                                        <input type="text" class="form-control" id="titulo" name="titulo" required>
-                                    </div>
-                                    <!-- <div class="form-group">
+                                <div id="addPostWrapper" class="hidden">
+                                    <!-- <h3>Adicionar Nova Publicação</h3> -->
+                                    <form id="addPostForm">
+                                        <input type="hidden" name="userId" value="<%= id %>">
+                                        <input type="hidden" name="userType" value="<%= tipo %>">
+
+                                        <div class="form-group">
+                                            <label for="titulo">Título:</label>
+                                            <input type="text" class="form-control" id="titulo" name="titulo" required>
+                                        </div>
+                                        <!-- <div class="form-group">
                                         <label for="data_publicacao">Data da Publicação:</label> <input
                                             type="datetime-local" class="form-control" id="data_publicacao"
                                             name="data_publicacao" required>
                                     </div> -->
-                                    <div class="form-group">
-                                        <label for="descricao">Descrição:</label> <textarea class="form-control"
-                                            id="descricao" name="descricao" rows="3" required></textarea>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="contato">Contato (email ou telefone):</label> <input type="text"
-                                            class="form-control" id="contato" name="contato" required>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">Adicionar Publicação</button>
-                                    <button type="button" id="cancelPostBtn">Cancelar</button>
-                                </form>
-                                <div id="formMessage"></div>
-                            </div>
-
-                            <h3 class="mt-4">Publicações</h3>
-                            <div id="postList">
-                                <% if (publicacoes && publicacoes.length> 0) { %>
-                                    <% publicacoes.forEach(post=> { %>
-                                        <div class="post-item">
-                                            <h5>
-                                                <%= post.titulo %>
-                                            </h5>
-                                            <p>Data de Publicação: <%= new
-                                                    Date(post.data_publicacao).toLocaleDateString('pt-BR') %>
-                                            </p>
-                                            <p>Descrição: <%= post.descricao %>
-                                            </p>
-                                            <p>Contato: <%= post.contato %>
-                                            </p>
+                                        <div class="form-group">
+                                            <label for="descricao">Descrição:</label> <textarea class="form-control"
+                                                id="descricao" name="descricao" rows="3" required></textarea>
                                         </div>
-                                        <% }); %>
-                                            <% } else { %>
-                                                <p>Nenhum Publicação criada ainda.</p>
-                                                <% } %>
+                                        <div class="form-group">
+                                            <label for="contato">Contato (email ou telefone):</label> <input type="text"
+                                                class="form-control" id="contato" name="contato" required>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Adicionar Publicação</button>
+                                        <button type="button" id="cancelPostBtn">Cancelar</button>
+                                    </form>
+                                    <div id="formMessage"></div>
+                                </div>
+
+                                <h3 class="mt-4">Publicações</h3>
+                                <div id="postList">
+                                    <% if (publicacoes && publicacoes.length> 0) { %>
+                                        <% publicacoes.forEach(post=> { %>
+                                            <div class="post-item">
+                                                <h5>
+                                                    <%= post.titulo %>
+                                                </h5>
+                                                <p>Data de Publicação: <%= new
+                                                        Date(post.data_publicacao).toLocaleDateString('pt-BR') %>
+                                                </p>
+                                                <p>Descrição: <%= post.descricao %>
+                                                </p>
+                                                <p>Contato: <%= post.contato %>
+                                                </p>
+                                            </div>
+                                            <% }); %>
+                                                <% } else { %>
+                                                    <p>Nenhum Publicação criada ainda.</p>
+                                                    <% } %>
+                                </div>
                             </div>
-                        </div>
-                        <% } %>
+                            <% } %>
 
-    
 
-                            <script src="/js/publicacoes.js">
+                                <% if (tipo==='admin' ) { %>
+                                    <div class="post-section">
+                                        <h1>Mural de Publicações</h1>
 
-                            </script>
+                                        <h3 class="mt-4">Publicações</h3>
+                                        <div id="postList">
+                                            <% if (publicacoes && publicacoes.length> 0) { %>
+                                                <% publicacoes.forEach(post=> { %>
+                                                    <div class="post-item">
+                                                        <h5>
+                                                            <%= post.titulo %>
+                                                        </h5>
+                                                        <p>Data de Publicação: <%= new
+                                                                Date(post.data_publicacao).toLocaleDateString('pt-BR')
+                                                                %>
+                                                        </p>
+                                                        <p>Descrição: <%= post.descricao %>
+                                                        </p>
+                                                        <p>Contato: <%= post.contato %>
+                                                        </p>
+                                                    </div>
+                                                    <% }); %>
+                                                        <% } else { %>
+                                                            <p>Nenhum Publicação criada ainda.</p>
+                                                            <% } %>
+                                        </div>
+                                    </div>
+                                    <% } %>
+
+
+
+                                        <script src="/js/publicacoes.js">
+
+                                        </script>
 </body>
 
 </html>

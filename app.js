@@ -72,12 +72,12 @@ app.post('/login', (req, res) => {
         }
         if (result.length > 0) { //se for maior que 0 achou pelo menos um match
             if (result.length > 0) {
-            req.session.user = {
-                email,
-                tipo: 'medico',
-                id: result[0].id
-            };
-            return res.redirect(`/user_profile?tipo=medico&id=${result[0].id}`);
+                req.session.user = {
+                    email,
+                    tipo: 'medico',
+                    id: result[0].id
+                };
+                return res.redirect(`/user_profile?tipo=medico&id=${result[0].id}`);
             }
         }
 
@@ -140,7 +140,12 @@ app.post('/login', (req, res) => {
 
 app.get('/user_profile', (req, res) => {
     const { tipo, id } = req.query; //pegando os dados da url
-    console.log("Recebido em /user_profile: Tipo =", tipo, "ID =", id); 
+     if (!tipo || !id) {
+       
+        return res.redirect('/templates/auth/login.html');
+        
+    }
+    console.log("Recebido em /user_profile: Tipo =", tipo, "ID =", id);
 
 
     let tabela = tipo + 's';
@@ -264,7 +269,7 @@ app.post('/upload-profile-pic', upload.single('profilePic'), (req, res) => {
     // O caminho que via ser salvo é caminho relativo URL-friendly
     // o navegador usa  para acessar a imagem via  middleware express.static('public').
     const newImagePath = '/images/profile_images/' + req.file.filename;
-    
+
     const userId = req.body.userId;
     const userType = req.body.userType;
 
@@ -280,7 +285,7 @@ app.post('/upload-profile-pic', upload.single('profilePic'), (req, res) => {
     }
 
     // Atualiza o caminho da imagem no banco de dados
-    const sql = `UPDATE ${tableName} SET img_perfil = ? WHERE id = ?`; 
+    const sql = `UPDATE ${tableName} SET img_perfil = ? WHERE id = ?`;
     con.query(sql, [newImagePath, userId], (err, result) => {
         if (err) {
             console.error('Erro ao atualizar foto no banco de dados:', err);
@@ -379,19 +384,19 @@ app.get('/posts', (req, res) => {
     }
     const sql = `SELECT p.*, IFNULL(m.nome, enf.nome) AS nome_autor FROM publicacoes p 
     LEFT JOIN medicos m ON p.medico_id = m.id LEFT JOIN enfermeiros enf ON p.enfermeiro_id
-     = enf.id ORDER BY p.data_publicacao DESC`; 
+     = enf.id ORDER BY p.data_publicacao DESC`;
     con.query(sql, (err, allPosts) => {
         if (err) {
             console.error('Erro ao buscar publicações:', err);
 
             return res.status(500).send("Erro ao carregar publicações.");
         }
-        res.render('publicacoes.ejs', { 
+        res.render('publicacoes.ejs', {
             nome: req.session.user.nome, // Exemplo de como pegar dados do usuário logado
             id: req.session.user.id,
             tipo: req.session.user.tipo,
             publicacoes: allPosts, // Passa TODAS as publicações para o template
-        
+
         });
     });
 });
@@ -418,12 +423,12 @@ app.post('/add-post', (req, res) => {
         enfermeiroId = userId;
     }
 
-     let formattedDate;
-     try {
+    let formattedDate;
+    try {
         const dateObj = new Date(data_publicacao);
-    // Formatando para 'YYYY-MM-DD HH:MM:SS porque ele pega o formato ISO 8601
+        // Formatando para 'YYYY-MM-DD HH:MM:SS porque ele pega o formato ISO 8601
         const year = dateObj.getFullYear();
-        const month = ('0' + (dateObj.getMonth() + 1)).slice(-2); 
+        const month = ('0' + (dateObj.getMonth() + 1)).slice(-2);
         const day = ('0' + dateObj.getDate()).slice(-2);
         const hours = ('0' + dateObj.getHours()).slice(-2);
         const minutes = ('0' + dateObj.getMinutes()).slice(-2);
@@ -431,7 +436,7 @@ app.post('/add-post', (req, res) => {
         formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     } catch (e) {
         console.error("Erro ao formatar data_publicacao:", e);
-     
+
         return res.status(400).json({ success: false, message: 'Formato de data inválido fornecido.' });
     }
 
@@ -443,20 +448,21 @@ app.post('/add-post', (req, res) => {
             console.error('Erro ao inserir publicação no banco de dados:', err);
             return res.status(500).json({ success: false, message: 'Erro ao salvar a publicação.' });
         }
-       
-        res.json({ success: true, message: 'publicação adicionada com sucesso!', postId: result.insertId,
-            post:{
+
+        res.json({
+            success: true, message: 'publicação adicionada com sucesso!', postId: result.insertId,
+            post: {
                 id: result.insertId,
-                titulo:titulo,
-                descricao:descricao,
-                contato:contato,
+                titulo: titulo,
+                descricao: descricao,
+                contato: contato,
                 data_publicacao: data_publicacao,
                 nome_autor: req.session.user.nome,
-                medicoId:medicoId,
-                enfermeiroId:enfermeiroId
+                medicoId: medicoId,
+                enfermeiroId: enfermeiroId
 
             }
-         });
+        });
     });
 });
 
@@ -515,12 +521,12 @@ app.post('/update-user-info', (req, res) => {
 });
 
 app.get('/acessar-publicar-vaga', (req, res) => {
-        if (!req.session.user || req.session.user.tipo !== 'gestor') {
-            return res.redirect('/templates/auth/login.html');
-        }
+    if (!req.session.user || req.session.user.tipo !== 'gestor') {
+        return res.redirect('/templates/auth/login.html');
+    }
 
-        // Se for um gestor logado, redireciona para o formulário de publicação
-        return res.sendFile(path.join(__dirname, 'public', 'templates', 'publicar-vaga.html'));
+    // Se for um gestor logado, redireciona para o formulário de publicação
+    return res.sendFile(path.join(__dirname, 'public', 'templates', 'publicar-vaga.html'));
 });
 
 app.post('/publicar-vaga', (req, res) => {
@@ -559,7 +565,11 @@ app.get('/vagas-:profissao', (req, res) => {
                 console.error("Erro ao buscar vagas do gestor:", err);
                 return res.status(500).send("Erro ao buscar vagas.");
             }
-            return res.render('vagas-gestor', { vagas: result });
+            return res.render('vagas-gestor', {
+            vagas: result,
+            id: req.session.user.id,
+            tipo: req.session.user.tipo
+        });
         });
 
     } else {
@@ -569,7 +579,11 @@ app.get('/vagas-:profissao', (req, res) => {
                 console.error("Erro ao buscar vagas:", err);
                 return res.status(500).send("Erro ao buscar vagas.");
             }
-            return res.render(`vagas-${profissao}`, { vagas: result });
+            return res.render(`vagas-${profissao}`, {
+                vagas: result,
+                tipo: req.session.user ? req.session.user.tipo : '',
+                id: req.session.user ? req.session.user.id : ''
+            });
         });
     }
 });
@@ -601,6 +615,16 @@ app.post('/excluir-vaga/:id', (req, res) => {
     });
 });
 
+app.get('/logout', (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            console.error("Erro ao destruir a sessão:", err);
+            return res.status(500).send("Erro ao tentar fazer logout. Tente novamente.");
+        }
+
+        res.redirect('/'); // Ou para '/' (home)
+    });
+});
 //rota do admin
 app.get('/painel-admin', (req, res) => {
     if (!req.session.user || req.session.user.tipo !== 'admin') {
