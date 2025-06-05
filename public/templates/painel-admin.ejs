@@ -8,24 +8,26 @@
 
 <main class="container">
 
-        <nav>
-            <div class="navbar-left">
-                <a href="/templates/home.html" class="logo">
-                    <img src="/images/logo_cor-removebg-preview.png" alt="logo">
-                    <span class="logo">MedOportuna</span>
-                </a>
-            </div>
-            <ul class="topnav">
-                <li><a href="/posts">Publicações de colaboração</a></li>
-                <li><a href="/vagas-medico">Vagas dos Médicos</a></li>
-                <li><a href="/vagas-enfermeiro">Vagas dos Enfermeiros</a></li>
-               
-            </ul>
-        </nav>
+  <nav>
+    <div class="navbar-left">
+      <a href="/templates/home.html" class="logo">
+        <img src="/images/logo_cor-removebg-preview.png" alt="logo">
+        <span class="logo">MedOportuna</span>
+      </a>
+    </div>
+    <ul class="topnav">
+      <li><a href="/posts">Publicações de colaboração</a></li>
+      <li><a href="/vagas-medico">Vagas dos Médicos</a></li>
+      <li><a href="/vagas-enfermeiro">Vagas dos Enfermeiros</a></li>
+      <li><a href="/logout">Sair</a></li>
 
- 
-    <h2><strong>Painel do Administrador</strong></h2>
-    <p>Bem-vindo, <%= nome %></p>
+    </ul>
+  </nav>
+
+
+  <h2><strong>Painel do Administrador</strong></h2>
+  <p>Bem-vindo, <%= nome %>
+  </p>
 
   <div class="card-custom">
     <h4 class="mb-3">➕ Criar novo administrador</h4>
@@ -43,100 +45,122 @@
 
   <div class="card-custom">
     <h4 class="mb-3">🧑‍💼 Administradores</h4>
-    <% admins.forEach(admin => { %>
-  <div class="item-block">
-    <strong><%= admin.nome %></strong><br>
-    <span><%= admin.email %></span><br>
+    <% admins.forEach(admin=> { %>
+      <div class="item-block">
+        <strong>
+          <%= admin.nome %>
+        </strong><br>
+        <span>
+          <%= admin.email %>
+        </span><br>
 
-    <% if (admin.email === 'admin@medoportuna.com') { %>
-      <span class="text-muted">Admin Geral</span>
+        <% if (admin.email==='admin@medoportuna.com' ) { %>
+          <span class="text-muted">Admin Geral</span>
 
-    <% } else if (admin.id === parseInt(id)) { %>
-      <span class="text-muted">Você está conectado</span>
+          <% } else if (admin.id===parseInt(id)) { %>
+            <span class="text-muted">Você está conectado</span>
 
-    <% } else { %>
-      <form action="/admin/excluir-admin" method="POST">
-        <input type="hidden" name="id" value="<%= admin.id %>">
-        <button class="btn btn-danger btn-sm">Excluir Admin</button>
-      </form>
-    <% } %>
-  </div>
-<% }) %>
+            <% } else { %>
+              <form action="/admin/excluir-admin" method="POST">
+                <input type="hidden" name="id" value="<%= admin.id %>">
+                <button class="btn btn-danger btn-sm">Excluir Admin</button>
+              </form>
+              <% } %>
+      </div>
+      <% }) %>
 
   </div>
 
   <div class="card-custom">
     <h4 class="mb-3">👥 Usuários Cadastrados</h4>
-    <% if (usuarios.length > 0) { %>
-        <% usuarios.forEach(user => { %>
+    <% if (usuarios.length> 0) { %>
+      <% usuarios.forEach(user=> { %>
         <div class="item-block">
-            <strong><%= user.nome %></strong><br>
-            <span><%= user.email %></span><br>
-            <small><%= user.tipo %> | ID: <%= user.id %></small>
-            <form action="/admin/excluir-usuario" method="POST" onsubmit="return confirm('Excluir este usuário?')">
+          <strong>
+            <%= user.nome %>
+          </strong><br>
+          <span>
+            <%= user.email %>
+          </span><br>
+          <small>
+            <%= user.tipo %> | ID: <%= user.id %>
+          </small>
+          <form action="/admin/excluir-usuario" method="POST" onsubmit="return confirm('Excluir este usuário?')">
             <input type="hidden" name="id" value="<%= user.id %>">
             <input type="hidden" name="tipo" value="<%= user.tipo %>">
             <button class="btn btn-danger btn-sm">Excluir</button>
-            </form>
+          </form>
         </div>
         <% }) %>
-    <% } else { %>
-        <p class="text-muted">Nenhum usuário cadastrado.</p>
-    <% } %>
-    </div>
+          <% } else { %>
+            <p class="text-muted">Nenhum usuário cadastrado.</p>
+            <% } %>
+  </div>
 
-    <div class="card-custom">
-        <h4 class="mb-3">📢 Publicações de Profissionais</h4>
-        <% if (publicacoes.length > 0) { %>
-            <% publicacoes.forEach(post => { %>
-            <div class="item-block">
-                <strong><%= post.titulo %></strong><br>
-                <small><%= post.nome_autor %> | <%= new Date(post.data_publicacao).toLocaleDateString('pt-BR') %></small>
-                <p><%= post.descricao %></p>
-                <form action="/admin/excluir-post" method="POST" onsubmit="return confirm('Excluir esta publicação?')">
-                <input type="hidden" name="postId" value="<%= post.id %>">
-                <button class="btn btn-danger btn-sm">Excluir</button>
-                </form>
-            </div>
-            <% }) %>
-        <% } else { %>
+  <div class="card-custom">
+    <h4 class="mb-3">📢 Publicações de Profissionais</h4>
+    <% if (publicacoes.length> 0) { %>
+      <% publicacoes.forEach(post=> { %>
+        <div class="item-block">
+          <strong>
+            <%= post.titulo %>
+          </strong><br>
+          <small>
+            <%= post.nome_autor %> | <%= new Date(post.data_publicacao).toLocaleDateString('pt-BR') %>
+          </small>
+          <p>
+            <%= post.descricao %>
+          </p>
+          <form action="/admin/excluir-post" method="POST" onsubmit="return confirm('Excluir esta publicação?')">
+            <input type="hidden" name="postId" value="<%= post.id %>">
+            <button class="btn btn-danger btn-sm">Excluir</button>
+          </form>
+        </div>
+        <% }) %>
+          <% } else { %>
             <p class="text-muted">Nenhuma publicação disponível.</p>
-        <% } %>
-    </div>
+            <% } %>
+  </div>
 
-    <div class="card-custom">
-        <h4 class="mb-3">💼 Vagas Publicadas</h4>
-        <% if (vagas.length > 0) { %>
-            <% vagas.forEach(vaga => { %>
-            <div class="item-block">
-                <strong><%= vaga.titulo %></strong><br>
-                <small>Profissão: <%= vaga.profissao %> | Publicada em: <%= new Date(vaga.data_publicacao).toLocaleDateString('pt-BR') %></small>
-                <p><%= vaga.descricao %></p>
-                <p>Local: <%= vaga.local %> | Contato: <%= vaga.contato %></p>
-                <form action="/admin/excluir-vaga" method="POST" onsubmit="return confirm('Excluir esta vaga?')">
-                <input type="hidden" name="vagaId" value="<%= vaga.id %>">
-                <button class="btn btn-danger btn-sm">Excluir Vaga</button>
-                </form>
-            </div>
-            <% }) %>
-        <% } else { %>
+  <div class="card-custom">
+    <h4 class="mb-3">💼 Vagas Publicadas</h4>
+    <% if (vagas.length> 0) { %>
+      <% vagas.forEach(vaga=> { %>
+        <div class="item-block">
+          <strong>
+            <%= vaga.titulo %>
+          </strong><br>
+          <small>Profissão: <%= vaga.profissao %> | Publicada em: <%= new
+                Date(vaga.data_publicacao).toLocaleDateString('pt-BR') %></small>
+          <p>
+            <%= vaga.descricao %>
+          </p>
+          <p>Local: <%= vaga.local %> | Contato: <%= vaga.contato %>
+          </p>
+          <form action="/admin/excluir-vaga" method="POST" onsubmit="return confirm('Excluir esta vaga?')">
+            <input type="hidden" name="vagaId" value="<%= vaga.id %>">
+            <button class="btn btn-danger btn-sm">Excluir Vaga</button>
+          </form>
+        </div>
+        <% }) %>
+          <% } else { %>
             <p class="text-muted">Nenhuma vaga publicada.</p>
-        <% } %>
-    </div>
+            <% } %>
+  </div>
 
 
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-    const nomeInput = document.getElementById("emailNome");
-    const emailCompleto = document.getElementById("emailCompleto");
+      const nomeInput = document.getElementById("emailNome");
+      const emailCompleto = document.getElementById("emailCompleto");
 
-    nomeInput.addEventListener("input", function () {
+      nomeInput.addEventListener("input", function () {
         emailCompleto.value = nomeInput.value.trim() + "@medoportuna.com";
-    });
+      });
 
-    document.querySelector("form").addEventListener("submit", function () {
+      document.querySelector("form").addEventListener("submit", function () {
         emailCompleto.value = nomeInput.value.trim() + "@medoportuna.com";
-    });
+      });
     });
   </script>
 
