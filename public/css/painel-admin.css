@@ -1,0 +1,87 @@
+body {
+  font-family: "Poppins", sans-serif;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #191970, #2b7e4c);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
+  min-height: 100vh;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+header h2 {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+main.container {
+  padding: 2rem 1rem;
+  column-count: 2;
+  column-gap: 2rem;
+}
+
+.card-custom {
+  background: #ffffff;
+  color: #000000;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 1rem 1.2rem;
+  transition: transform 0.2s ease;
+  margin-bottom: 2rem;
+  display: inline-block;
+  width: 100%;
+}
+
+
+.card-custom:hover {
+  transform: scale(1.02);
+}
+
+.card-custom h4 {
+  color: #2b7e4c;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.card-custom form {
+  margin-top: 0.5rem;
+}
+
+.card-custom .item-block {
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.card-custom .item-block:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.card-custom p {
+  margin-bottom: 0.5rem;
+}
+
+.card-custom small {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.btn-danger,
+.btn-success {
+  font-weight: 600;
+  padding: 0.4rem 1rem;
+  border-radius: 8px;
+}
+
+footer {
+  background-color: rgba(43, 126, 76, 0.95);
+  color: white;
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}

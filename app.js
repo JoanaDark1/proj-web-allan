@@ -632,7 +632,7 @@ app.get('/painel-admin', (req, res) => {
                 if (err) return res.status(500).send("Erro ao carregar vagas.");
                 con.query(sqlUsuarios, (err, usuarios) => {
                     if (err) return res.status(500).send("Erro ao carregar usuários.");
-                    res.render('painel-admin', { nome: req.session.user.email, admins, publicacoes, vagas, usuarios });
+                    res.render('painel-admin', { nome: req.session.user.email, id: req.session.user.id, admins, publicacoes, vagas, usuarios });
                 });
             });
         });
