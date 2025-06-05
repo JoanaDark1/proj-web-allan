@@ -64,6 +64,20 @@ con.connect(function (err) {
   con.query(sqlAdmin, function (err, result) {
     if (err) throw err;
     console.log("Tabela admin criada");
+
+    const checkAdminSql = "SELECT * FROM admin WHERE email = 'admin@medoportuna.com'";
+    con.query(checkAdminSql, function (err, result) {
+      if (err) throw err;
+      if (result.length === 0) {
+        const insertAdminSql = `INSERT INTO admin (nome, email, senha) VALUES ('Admin Geral', 'admin@medoportuna.com', 'admin123')`;
+        con.query(insertAdminSql, function (err, result) {
+          if (err) throw err;
+          console.log("Admin 0 inserido com sucesso.");
+        });
+      } else {
+        console.log("Admin 0 já existe, não será duplicado.");
+      }
+    });
   });
 
 

@@ -126,7 +126,7 @@ app.post('/login', (req, res) => {
                             tipo: 'admin',
                             id: result[0].id
                         };
-                        return res.redirect(`/user_profile?tipo=admin&id=${result[0].id}`); // talvez o admin não seja redirecionado p/ uma pag de user profile
+                        return res.redirect(`/painel-admin`);
                     }
                     // caso não exista match em nenhuma tabela
                     return res.status(401).send("Email ou senha inválidos.");
@@ -598,6 +598,63 @@ app.post('/excluir-vaga/:id', (req, res) => {
 
         // Exclusão ok, redireciona para lista de vagas do gestor
         res.redirect('/vagas-gestor');
+    });
+});
+
+//rota do admin
+app.get('/painel-admin', (req, res) => {
+    if (!req.session.user || req.session.user.tipo !== 'admin') {
+        return res.status(403).send("Acesso negado.");
+    }
+
+    // Buscando todos os admins e publicações (exemplo)
+    const sqlAdmins = "SELECT id, nome, email FROM admin";
+    const sqlPublicacoes = `SELECT p.*, IFNULL(m.nome, enf.nome) AS nome_autor 
+                             FROM publicacoes p 
+                             LEFT JOIN medicos m ON p.medico_id = m.id 
+                             LEFT JOIN enfermeiros enf ON p.enfermeiro_id = enf.id 
+                             ORDER BY p.data_publicacao DESC`;
+
+    con.query(sqlAdmins, (err, admins) => {
+        if (err) return res.status(500).send("Erro ao carregar admins.");
+        con.query(sqlPublicacoes, (err, publicacoes) => {
+            if (err) return res.status(500).send("Erro ao carregar publicações.");
+            res.render('painel-admin', { nome: req.session.user.email, admins, publicacoes });
+        });
+    });
+});
+
+app.post('/criar-admin', (req, res) => {
+    const { nome, email, senha } = req.body;
+    const sql = "INSERT INTO admin (nome, email, senha) VALUES (?, ?, ?)";
+    con.query(sql, [nome, email, senha], (err) => {
+        if (err) return res.status(500).send("Erro ao criar admin.");
+        res.redirect('/painel-admin');
+    });
+});
+
+app.post('/admin/excluir-post', (req, res) => {
+    const { postId } = req.body;
+    if (!req.session.user || req.session.user.tipo !== 'admin') {
+        return res.status(403).send("Acesso negado.");
+    }
+
+    const sql = "DELETE FROM publicacoes WHERE id = ?";
+    con.query(sql, [postId], (err) => {
+        if (err) return res.status(500).send("Erro ao excluir post.");
+        res.redirect('/painel-admin');
+    });
+});
+
+app.post('/admin/excluir-usuario', (req, res) => {
+    const { tipo, id } = req.body;
+    const tabela = tipo === 'medico' ? 'medicos' : tipo === 'enfermeiro' ? 'enfermeiros' : tipo === 'gestor' ? 'gestores' : null;
+
+    if (!tabela) return res.status(400).send("Tipo inválido.");
+    const sql = `DELETE FROM ${tabela} WHERE id = ?`;
+    con.query(sql, [id], (err) => {
+        if (err) return res.status(500).send("Erro ao excluir usuário.");
+        res.redirect('/painel-admin');
     });
 });
 
