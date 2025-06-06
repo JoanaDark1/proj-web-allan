@@ -1,1 +1,0 @@
-termina a parte de validate da pagina de login la no final
