@@ -265,8 +265,10 @@
                                                         <%= post.titulo %>
                                                     </h5>
                                                     <button class="btn btn-outline-danger btn-sm btn-favoritar"
-                                                        title="Favoritar publicação" data-id="<%= post.id %>">
-                                                        <i class="fa-regular fa-heart"></i>
+                                                            data-id="<%= post.id %>"
+                                                            data-tipo="publicacao"
+                                                            title="Desfavoritar publicação">
+                                                        <i class="fa-solid fa-heart"></i> <!-- Ícone preenchido -->
                                                     </button>
                                                 </div>
                                                 <p>Data de Publicação: <%=post.data_publicao %>
@@ -292,8 +294,10 @@
                                                         <%= vaga.titulo %>
                                                     </h5>
                                                     <button class="btn btn-outline-danger btn-sm btn-favoritar"
-                                                        title="Favoritar publicação" data-id="<%= vaga.id %>">
-                                                        <i class="fa-regular fa-heart"></i>
+                                                            data-id="<%= vaga.id %>"
+                                                            data-tipo="vaga"
+                                                            title="Desfavoritar vaga">
+                                                        <i class="fa-solid fa-heart"></i> <!-- Ícone preenchido -->
                                                     </button>
                                                 </div>
                                                 <p>Data de Publicação: <%= vaga.data_publicao%>

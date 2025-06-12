@@ -821,39 +821,25 @@ app.post('/favoritar-publicacao', (req, res) => {
     });
 });
 
-app.post('/desfavoritar-publicacao', (req, res) => {
-    const { usuario_id, usuario_tipo, publicacao_id } = req.body;
-
-
-    if (usuario_tipo ==='medico'){
-    const sql = `DELETE FROM favoritos_publicacoes WHERE medico_id = ?  AND publicacao_id = ?`;
-    params=[usuario_id,publicacao_id];
-        }
-
-    else if (usuario_tipo === 'enfermeiro') {
-    const sql = `DELETE FROM favoritos_publicacoes WHERE enfermeiro_id = ?  AND publicacao_id = ?`;
-     params=[usuario_id,publicacao_id];
-    }
-    else {
-        return res.status(400).json({ success: false, message: 'Tipo de usuário inválido.' });
-    }
-
-    con.query(sql,params,(err)=>{
-        if (err) { return res.status(500).json({ success: false, message: 'Erro ao desfavoritar publicação.' }); }
-        return res.json({ success: true, message: 'Publicação desfavoritada com sucesso.' });
-    });
-});
-
 app.get('/favoritos-publicacoes/:tipo/:id', (req, res) => {
     const { tipo, id } = req.params;
 
-    const sql = `
-        SELECT publicacao_id FROM favoritos_publicacoes 
-        WHERE usuario_tipo = ? AND usuario_id = ?`;
+    let sql;
+    let params;
 
-    con.query(sql, [tipo, id], (err, results) => {
+    if (tipo === 'medico') {
+        sql = `SELECT publicacao_id FROM favoritos_publicacoes WHERE medico_id = ?`;
+        params = [id];
+    } else if (tipo === 'enfermeiro') {
+        sql = `SELECT publicacao_id FROM favoritos_publicacoes WHERE enfermeiro_id = ?`;
+        params = [id];
+    } else {
+        return res.status(400).json([]);
+    }
+
+    con.query(sql, params, (err, results) => {
         if (err) {
-            console.error("Erro ao buscar favoritos:", err);
+            console.error("Erro ao buscar favoritos de publicações:", err);
             return res.status(500).json([]);
         }
         const favoritos = results.map(r => r.publicacao_id);
@@ -886,37 +872,74 @@ app.post('/favoritar-vaga', (req, res) => {
     });
 });
 
-// Desfavoritar vaga
-app.post('/desfavoritar-vaga', (req, res) => {
-    const { usuario_id, usuario_tipo, vaga_id } = req.body;
-    
-    if (usuario_tipo ==='medico'){
-    const sql = `DELETE FROM favoritos_vagas WHERE medico_id = ?  AND publicacao_id = ?`;
-    params=[usuario_id,publicacao_id];
-        }
-
-    else if (usuario_tipo === 'enfermeiro') {
-    const sql = `DELETE FROM favoritos_vagas WHERE enfermeiro_id = ?  AND publicacao_id = ?`;
-     params=[usuario_id,publicacao_id];
-    }
-    else {
-        return res.status(400).json({ success: false, message: 'Tipo de usuário inválido.' });
-    }
-
-    con.query(sql,params,(err)=>{
-        if (err) { return res.status(500).json({ success: false, message: 'Erro ao desfavoritar publicação.' }); }
-        return res.json({ success: true, message: 'Publicação desfavoritada com sucesso.' });
-    });
-});
-
-// Listar favoritos do usuário
 app.get('/favoritos-vagas/:tipo/:id', (req, res) => {
     const { tipo, id } = req.params;
-    const sql = `SELECT vaga_id FROM favoritos_vagas WHERE usuario_tipo = ? AND usuario_id = ?`;
-    con.query(sql, [tipo, id], (err, results) => {
+
+    let sql;
+    let params;
+
+    if (tipo === 'medico') {
+        sql = `SELECT vaga_id FROM favoritos_vagas WHERE medico_id = ?`;
+        params = [id];
+    } else if (tipo === 'enfermeiro') {
+        sql = `SELECT vaga_id FROM favoritos_vagas WHERE enfermeiro_id = ?`;
+        params = [id];
+    } else {
+        return res.status(400).json([]);
+    }
+
+    con.query(sql, params, (err, results) => {
         if (err) return res.status(500).json([]);
         const favoritos = results.map(r => r.vaga_id);
         return res.json(favoritos);
+    });
+});
+
+app.post('/desfavoritar-vaga', (req, res) => {
+    const { usuario_id, usuario_tipo, vaga_id } = req.body;
+
+    let sql;
+    let params;
+
+    if (usuario_tipo === 'medico') {
+        sql = `DELETE FROM favoritos_vagas WHERE medico_id = ? AND vaga_id = ?`;
+        params = [usuario_id, vaga_id];
+    } else if (usuario_tipo === 'enfermeiro') {
+        sql = `DELETE FROM favoritos_vagas WHERE enfermeiro_id = ? AND vaga_id = ?`;
+        params = [usuario_id, vaga_id];
+    } else {
+        return res.status(400).json({ success: false, message: 'Tipo de usuário inválido.' });
+    }
+
+    con.query(sql, params, (err) => {
+        if (err) {
+            return res.status(500).json({ success: false, message: 'Erro ao desfavoritar vaga.' });
+        }
+        return res.json({ success: true, message: 'Vaga desfavoritada com sucesso.' });
+    });
+});
+
+app.post('/desfavoritar-publicacao', (req, res) => {
+    const { usuario_id, usuario_tipo, publicacao_id } = req.body;
+
+    let sql;
+    let params;
+
+    if (usuario_tipo === 'medico') {
+        sql = `DELETE FROM favoritos_publicacoes WHERE medico_id = ? AND publicacao_id = ?`;
+        params = [usuario_id, publicacao_id];
+    } else if (usuario_tipo === 'enfermeiro') {
+        sql = `DELETE FROM favoritos_publicacoes WHERE enfermeiro_id = ? AND publicacao_id = ?`;
+        params = [usuario_id, publicacao_id];
+    } else {
+        return res.status(400).json({ success: false, message: 'Tipo de usuário inválido.' });
+    }
+
+    con.query(sql, params, (err) => {
+        if (err) {
+            return res.status(500).json({ success: false, message: 'Erro ao desfavoritar publicação.' });
+        }
+        return res.json({ success: true, message: 'Publicação desfavoritada com sucesso.' });
     });
 });
 
