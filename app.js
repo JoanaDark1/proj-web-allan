@@ -180,7 +180,10 @@ app.get('/user_profile', (req, res) => {
             especialidade2: usuario.especialidade2,
             coren: usuario.coren,
             empresa_hospital: usuario.empresa_hospital,
-            certificados: [] // inicia como array vazio porque talvez o user não tenha certificados
+            certificados: [], // inicia como array vazio porque talvez o user não tenha certificados
+            fav_post: [],
+            fav_vaga: []
+
         };
 
         // Somente profissionais de saúde têm certificados
@@ -189,19 +192,56 @@ app.get('/user_profile', (req, res) => {
             if (tipo === 'medico') fkColumn = 'medico_id';
             else if (tipo === 'enfermeiro') fkColumn = 'enfermeiro_id';
 
+
+            //fazer promises pra garantir que os dados sejam carregados antes de renderizar o template
+
+            const promise1 = new Promise((resolve,reject) => {
+
             const sqlCertificados = `SELECT * FROM certificados WHERE ${fkColumn} = ?`;
             con.query(sqlCertificados, [id], (err, resultCertificados) => { //[id] é o id do usuario que ta logado
-                if (err) {
-                    console.error("Erro ao buscar certificados:", err);
-                    // Se houver erro, 'certificados' já é um array vazio, o que é seguro
-                } else {
-                    dataParaTemplate.certificados = resultCertificados; //resultCertificados é um array de objetos, cada objeto é um certificado
-                }
-                res.render('user_profile', dataParaTemplate);
+                if (err) return resolve([]);
+                resolve(resultCertificados);
+                
+               
             });
+             });
+
+            const promise2 = new Promise((resolve,reject) => {
+            const sqlFavPost =`SELECT p.* FROM favoritos_publicacoes f
+                              JOIN publicacoes p on f.publicacao_id = p.id
+                              WHERE f.${fkColumn}=?`;
+            con.query(sqlFavPost, [id], (err, resultPosts) => { //[id] é o id do usuario que ta logado
+                if (err) return resolve([]);
+                resolve(resultPosts)
+            });
+             });
+
+             const promise3 = new Promise((resolve,reject) => {
+            const sqlFavVaga = `SELECT v.* FROM favoritos_vagas f
+                                JOIN vagas v on f.vaga_id = v.id
+            WHERE f.${fkColumn}=?`;
+            con.query(sqlFavVaga, [id], (err,resultVagas) => {
+                 if (err) return resolve([]);
+                resolve(resultVagas)
+
+            });
+             });
+
+        Promise.all([promise1, promise2,promise3]).then(([certificados,fav_post,fav_vaga]) =>{
+            dataParaTemplate.certificados = certificados; 
+            dataParaTemplate.fav_post = fav_post; 
+            dataParaTemplate.fav_vaga = fav_vaga;
+            res.render('user_profile', dataParaTemplate);
+        })
+            .catch((e) => {
+                    console.error("Erro ao buscar favoritos ou certificados:", e);
+                    res.render('user_profile', dataParaTemplate); // ainda renderiza mas sem  dados
+                });
+
+
         } else {
             // Para gestores e admins, renderiza imediatamente.
-            // 'certificados' já será um array vazio, então não haverá ReferenceError.
+
             res.render('user_profile', dataParaTemplate);
         }
     });
@@ -759,20 +799,48 @@ app.post('/admin/excluir-admin', (req, res) => {
 app.post('/favoritar-publicacao', (req, res) => {
     const { usuario_id, usuario_tipo, publicacao_id } = req.body;
 
-    const sql = `INSERT IGNORE INTO favoritos_publicacoes (usuario_id, usuario_tipo, publicacao_id) VALUES (?, ?, ?)`;
-    con.query(sql, [usuario_id, usuario_tipo, publicacao_id], (err) => {
-        if (err) return res.status(500).json({ success: false });
-        return res.json({ success: true });
+    let sql;
+    let params;
+
+    if (usuario_tipo ==='medico'){
+     sql = `INSERT IGNORE INTO favoritos_publicacoes (medico_id, publicacao_id) VALUES (?, ?)`;
+        params=[usuario_id,publicacao_id];
+    
+}
+    else if (usuario_tipo === 'enfermeiro') {
+          sql = `INSERT IGNORE INTO favoritos_publicacoes (enfermeiro_id, publicacao_id) VALUES (?, ?)`;
+             params=[usuario_id,publicacao_id];
+    
+    } else {
+        return res.status(400).json({ success: false, message: 'Tipo de usuário inválido.' });
+}
+
+    con.query(sql,params,(err)=>{
+        if (err) { return res.status(500).json({ success: false, message: 'Erro ao favoritar publicação.' }); }
+        return res.json({ success: true, message: 'Publicação favoritada com sucesso.' });
     });
 });
 
 app.post('/desfavoritar-publicacao', (req, res) => {
     const { usuario_id, usuario_tipo, publicacao_id } = req.body;
 
-    const sql = `DELETE FROM favoritos_publicacoes WHERE usuario_id = ? AND usuario_tipo = ? AND publicacao_id = ?`;
-    con.query(sql, [usuario_id, usuario_tipo, publicacao_id], (err) => {
-        if (err) return res.status(500).json({ success: false });
-        return res.json({ success: true });
+
+    if (usuario_tipo ==='medico'){
+    const sql = `DELETE FROM favoritos_publicacoes WHERE medico_id = ?  AND publicacao_id = ?`;
+    params=[usuario_id,publicacao_id];
+        }
+
+    else if (usuario_tipo === 'enfermeiro') {
+    const sql = `DELETE FROM favoritos_publicacoes WHERE enfermeiro_id = ?  AND publicacao_id = ?`;
+     params=[usuario_id,publicacao_id];
+    }
+    else {
+        return res.status(400).json({ success: false, message: 'Tipo de usuário inválido.' });
+    }
+
+    con.query(sql,params,(err)=>{
+        if (err) { return res.status(500).json({ success: false, message: 'Erro ao desfavoritar publicação.' }); }
+        return res.json({ success: true, message: 'Publicação desfavoritada com sucesso.' });
     });
 });
 
@@ -796,20 +864,48 @@ app.get('/favoritos-publicacoes/:tipo/:id', (req, res) => {
 // Favoritar vaga
 app.post('/favoritar-vaga', (req, res) => {
     const { usuario_id, usuario_tipo, vaga_id } = req.body;
-    const sql = `INSERT IGNORE INTO favoritos_vagas (usuario_id, usuario_tipo, vaga_id) VALUES (?, ?, ?)`;
-    con.query(sql, [usuario_id, usuario_tipo, vaga_id], (err) => {
-        if (err) return res.status(500).json({ success: false });
-        return res.json({ success: true });
+
+    let sql;
+    let params;
+
+    if (usuario_tipo ==='medico'){
+     sql = `INSERT IGNORE INTO favoritos_vagas (medico_id, vaga_id) VALUES ( ?, ?)`;
+    params = [usuario_id, vaga_id];}
+
+    else if (usuario_tipo === 'enfermeiro') {
+        sql = `INSERT IGNORE INTO favoritos_vagas (enfermeiro_id, vaga_id) VALUES (?, ?)`;
+            params = [usuario_id, vaga_id];}
+
+    else {
+        return res.status(400).json({ success: false, message: 'Tipo de usuário inválido.' });
+}
+
+    con.query(sql,params,(err)=>{
+        if (err) { return res.status(500).json({ success: false, message: 'Erro ao favoritar publicação.' }); }
+        return res.json({ success: true, message: 'Publicação favoritada com sucesso.' });
     });
 });
 
 // Desfavoritar vaga
 app.post('/desfavoritar-vaga', (req, res) => {
     const { usuario_id, usuario_tipo, vaga_id } = req.body;
-    const sql = `DELETE FROM favoritos_vagas WHERE usuario_id = ? AND usuario_tipo = ? AND vaga_id = ?`;
-    con.query(sql, [usuario_id, usuario_tipo, vaga_id], (err) => {
-        if (err) return res.status(500).json({ success: false });
-        return res.json({ success: true });
+    
+    if (usuario_tipo ==='medico'){
+    const sql = `DELETE FROM favoritos_vagas WHERE medico_id = ?  AND publicacao_id = ?`;
+    params=[usuario_id,publicacao_id];
+        }
+
+    else if (usuario_tipo === 'enfermeiro') {
+    const sql = `DELETE FROM favoritos_vagas WHERE enfermeiro_id = ?  AND publicacao_id = ?`;
+     params=[usuario_id,publicacao_id];
+    }
+    else {
+        return res.status(400).json({ success: false, message: 'Tipo de usuário inválido.' });
+    }
+
+    con.query(sql,params,(err)=>{
+        if (err) { return res.status(500).json({ success: false, message: 'Erro ao desfavoritar publicação.' }); }
+        return res.json({ success: true, message: 'Publicação desfavoritada com sucesso.' });
     });
 });
 

@@ -158,11 +158,29 @@ con.query(sqlVagas, function (err, result) {
   var sqlFavoritosPublicacoes = `
 CREATE TABLE IF NOT EXISTS favoritos_publicacoes (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  usuario_tipo ENUM('medico', 'enfermeiro') NOT NULL,
-  usuario_id INT NOT NULL,
-  publicacao_id INT NOT NULL,
-  UNIQUE KEY unique_favorito (usuario_tipo, usuario_id, publicacao_id),
-  FOREIGN KEY (publicacao_id) REFERENCES publicacoes(id) ON DELETE CASCADE
+  -- fk dos tipos de usuario
+    medico_id INT null,
+    enfermeiro_id INT null,
+    publicacao_id INT NOT NULL,
+
+ 
+  
+  UNIQUE KEY unique_favorito_medico (medico_id, publicacao_id),
+  UNIQUE KEY unique_favorito_enfermeiro (enfermeiro_id, publicacao_id),
+
+
+  CONSTRAINT fk_post_fav
+    FOREIGN KEY (publicacao_id) REFERENCES publicacoes(id) ON DELETE CASCADE,
+
+  CONSTRAINT fk_publicacao_medico_fav 
+      FOREIGN KEY (medico_id) REFERENCES medicos(id) ON DELETE CASCADE,
+
+  CONSTRAINT fk_publicacao_enfermeiro_fav
+      FOREIGN KEY (enfermeiro_id) REFERENCES enfermeiros(id) ON DELETE CASCADE,
+
+  CONSTRAINT chk_user_type_publicacoes_fav CHECK(
+      (medico_id IS NOT NULL AND enfermeiro_id IS NULL) OR 
+      (medico_id IS NULL AND enfermeiro_id IS NOT NULL)) -- so um dos 2 pode ser nulo
 )`;
 
 con.query(sqlFavoritosPublicacoes, function (err) {
@@ -173,11 +191,30 @@ con.query(sqlFavoritosPublicacoes, function (err) {
 var sqlFavoritosVagas = `
 CREATE TABLE IF NOT EXISTS favoritos_vagas (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  usuario_tipo ENUM('medico', 'enfermeiro') NOT NULL,
-  usuario_id INT NOT NULL,
-  vaga_id INT NOT NULL,
-  UNIQUE KEY unique_favorito_vaga (usuario_tipo, usuario_id, vaga_id),
-  FOREIGN KEY (vaga_id) REFERENCES vagas(id) ON DELETE CASCADE
+
+
+  -- fk dos tipos de usuario
+    medico_id INT null,
+    enfermeiro_id INT null,
+    vaga_id INT NOT NULL,
+
+
+  UNIQUE KEY unique__vaga_med (medico_id, vaga_id),
+  UNIQUE KEY unique__vaga_enf (enfermeiro_id, vaga_id),
+
+
+  CONSTRAINT fk_vaga_fav
+    FOREIGN KEY (vaga_id) REFERENCES vagas(id) ON DELETE CASCADE,
+
+  CONSTRAINT fk_vaga_medico 
+      FOREIGN KEY (medico_id) REFERENCES medicos(id) ON DELETE CASCADE,
+
+  CONSTRAINT fk_vaga_enfermeiro 
+      FOREIGN KEY (enfermeiro_id) REFERENCES enfermeiros(id) ON DELETE CASCADE,
+
+  CONSTRAINT chk_user_type_vaga CHECK(
+      (medico_id IS NOT NULL AND enfermeiro_id IS NULL) OR 
+      (medico_id IS NULL AND enfermeiro_id IS NOT NULL)) -- so um dos 2 pode ser nulo
 )`;
 
 con.query(sqlFavoritosVagas, function (err) {

@@ -22,7 +22,7 @@
 </head>
 
 <body data-user-id="<%=id%>" data-user-type="<%=tipo%>">
-     <% if (tipo === 'medico' ) { %>
+    <% if (tipo==='medico' ) { %>
         <nav>
             <div class="navbar-left">
                 <a href="/templates/home.html" class="logo">
@@ -36,223 +36,290 @@
                 <li><a href="/logout">Sair</a></li>
             </ul>
         </nav>
-    <% } else if (tipo === 'enfermeiro') { %>
-        <nav>
-            <div class="navbar-left">
-                <a href="/templates/home.html" class="logo">
-                    <img src="/images/logo_cor-removebg-preview.png" alt="logo">
-                    <span class="logo">MedOportuna</span>
-                </a>
-            </div>
-            <ul class="topnav">
-                <li><a href="/posts">Publicações de colaboração</a></li>
-                <li><a href="/vagas-enfermeiro">Vagas</a></li>
-                <li><a href="/logout">Sair</a></li>
-            </ul>
-        </nav>
-    <% } else if (tipo === 'gestor') { %>
-        <nav>
-            <div class="navbar-left">
-                <a href="/templates/home.html" class="logo">
-                    <img src="/images/logo_cor-removebg-preview.png" alt="logo">
-                    <span class="logo">MedOportuna</span>
-                </a>
-            </div>
-            <ul class="topnav">
-                <li><a href="/acessar-publicar-vaga">Publicar Vaga</a></li>
-                <li><a href="/vagas-gestor">Minhas Vagas</a></li>
-                <li><a href="/logout">Sair</a></li>
-            </ul>
-        </nav>
-    <% } %>
-    
-    <div class="main-container">
-        <div class="profile-header">
-            <% if (tipo !='admin' ) { %>
-                <div class="profile-pic-container">
-                    <img id="profileImage" src="<%= foto_perfil %>" alt="Foto de perfil">
-                    <i class="fa-solid fa-pencil edit-icon" id="editProfilePic"></i>
-                    <input type="file" id="fileInput" accept="image/*" style="display: none;">
+        <% } else if (tipo==='enfermeiro' ) { %>
+            <nav>
+                <div class="navbar-left">
+                    <a href="/templates/home.html" class="logo">
+                        <img src="/images/logo_cor-removebg-preview.png" alt="logo">
+                        <span class="logo">MedOportuna</span>
+                    </a>
                 </div>
+                <ul class="topnav">
+                    <li><a href="/posts">Publicações de colaboração</a></li>
+                    <li><a href="/vagas-enfermeiro">Vagas</a></li>
+                    <li><a href="/logout">Sair</a></li>
+                </ul>
+            </nav>
+            <% } else if (tipo==='gestor' ) { %>
+                <nav>
+                    <div class="navbar-left">
+                        <a href="/templates/home.html" class="logo">
+                            <img src="/images/logo_cor-removebg-preview.png" alt="logo">
+                            <span class="logo">MedOportuna</span>
+                        </a>
+                    </div>
+                    <ul class="topnav">
+                        <li><a href="/acessar-publicar-vaga">Publicar Vaga</a></li>
+                        <li><a href="/vagas-gestor">Minhas Vagas</a></li>
+                        <li><a href="/logout">Sair</a></li>
+                    </ul>
+                </nav>
                 <% } %>
 
-                    <div class="user-info">
-                        <button id="editInfoBtn" class="btn btn-outline-secondary btn-sm float-right">
-                            <i class="fas fa-pencil-alt"></i> Editar
-                        </button>
+                    <div class="main-container">
+                        <div class="profile-header">
+                            <% if (tipo !='admin' ) { %>
+                                <div class="profile-pic-container">
+                                    <img id="profileImage" src="<%= foto_perfil %>" alt="Foto de perfil">
+                                    <i class="fa-solid fa-pencil edit-icon" id="editProfilePic"></i>
+                                    <input type="file" id="fileInput" accept="image/*" style="display: none;">
+                                </div>
+                                <% } %>
 
-                        <h1>
-                            <%= nome %>
-                        </h1>
+                                    <div class="user-info">
+                                        <button id="editInfoBtn" class="btn btn-outline-secondary btn-sm float-right">
+                                            <i class="fas fa-pencil-alt"></i> Editar
+                                        </button>
 
-                        <div id="view-mode-details"> <!--detalhes do usuario-->
-                            <div class="user-details">
-                                <% if (tipo==='medico' ) { %>
-                                    
-                                    <p><strong>CRM:</strong>
-                                        <%= crm %>
-                                    </p>
-                                    <% if (especialidade1) { %>
-                                        <p><strong>Especialidade:</strong>
-                                            <%= especialidade1 %> (<%= rqe1 ? `RQE: ${rqe1}` : 'RQE não informado' %>)
-                                        </p>
-                                        <% } else { %>
-                                            <p class="text-muted">Nenhuma especialidade cadastrada.</p>
-                                            <% } %>
-                                                <% if (especialidade2) { %>
-                                                    <p><strong>Especialidade 2:</strong>
-                                                        <%= especialidade2 %> (<%= rqe2 ? `RQE: ${rqe2}`
-                                                                : 'RQE não informado' %>)
+                                        <h1>
+                                            <%= nome %>
+                                        </h1>
+
+                                        <div id="view-mode-details"> <!--detalhes do usuario-->
+                                            <div class="user-details">
+                                                <% if (tipo==='medico' ) { %>
+
+                                                    <p><strong>CRM:</strong>
+                                                        <%= crm %>
                                                     </p>
-                                                    <% } %>
-                                                        <% } else if (tipo==='enfermeiro' ) { %>
-                                                            <p><strong>COREN:</strong>
-                                                                <%= coren %>
-                                                            </p>
-                                                            <% if (especialidade1) { %>
-                                                                <p><strong>Especialidade:</strong>
-                                                                    <%= especialidade1 %>
-                                                                </p>
-                                                                <% } %>
-                                                                    <% } else if (tipo==='gestor' ) { %>
-                                                                        <p><strong>Empresa/Hospital:</strong>
-                                                                            <%= empresa_hospital %>
-                                                                        </p>
-                                                                        <% } %>
+                                                    <% if (especialidade1) { %>
+                                                        <p><strong>Especialidade:</strong>
+                                                            <%= especialidade1 %> (<%= rqe1 ? `RQE: ${rqe1}`
+                                                                    : 'RQE não informado' %>)
+                                                        </p>
+                                                        <% } else { %>
+                                                            <p class="text-muted">Nenhuma especialidade cadastrada.</p>
+                                                            <% } %>
+                                                                <% if (especialidade2) { %>
+                                                                    <p><strong>Especialidade 2:</strong>
+                                                                        <%= especialidade2 %> (<%= rqe2 ? `RQE: ${rqe2}`
+                                                                                : 'RQE não informado' %>)
+                                                                    </p>
+                                                                    <% } %>
+                                                                        <% } else if (tipo==='enfermeiro' ) { %>
+                                                                            <p><strong>COREN:</strong>
+                                                                                <%= coren %>
+                                                                            </p>
+                                                                            <% if (especialidade1) { %>
+                                                                                <p><strong>Especialidade:</strong>
+                                                                                    <%= especialidade1 %>
+                                                                                </p>
+                                                                                <% } %>
+                                                                                    <% } else if (tipo==='gestor' ) { %>
+                                                                                        <p><strong>Empresa/Hospital:</strong>
+                                                                                            <%= empresa_hospital %>
+                                                                                        </p>
+                                                                                        <% } %>
 
 
-                            </div>
-                        </div>
-
-                        <form id="edit-mode-form" style="display: none;"> <!-- parte de edição-->
-                            <% if (tipo==='medico' ) { %>
-                                <div class="form-row">
-                                    <div class="form-group col-md-6">
-                                        <label for="crm">CRM</label>
-                                        <input type="text" class="form-control" name="crm" value="<%= crm || '' %>">
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group col-md-8">
-                                        <label for="especialidade1">Especialidade 1</label>
-                                        <input type="text" class="form-control" name="especialidade1"
-                                            \value="<%= especialidade1 || '' %>">
-                                    </div>
-                                    <div class="form-group col-md-4">
-                                        <label for="rqe1">RQE 1</label>
-                                        <input type="text" class="form-control" name="rqe1" value="<%= rqe1 || '' %>"
-                                            maxlength="6">
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group col-md-8">
-                                        <label for="especialidade2">Especialidade 2 (Opcional)</label>
-                                        <input type="text" class="form-control" name="especialidade2"
-                                            value="<%= especialidade2 || '' %>">
-                                    </div>
-                                    <div class="form-group col-md-4">
-                                        <label for="rqe2">RQE 2 (Opcional)</label>
-                                        <input type="text" class="form-control" name="rqe2" value="<%= rqe2 || '' %>"
-                                            maxlength="6">
-                                    </div>
-                                </div>
-                                <% } else if (tipo==='enfermeiro' ) { %>
-                                    <div class="form-row">
-                                        <div class="form-group col-md-6">
-                                            <label for="coren">COREN</label>
-                                            <input type="text" class="form-control" name="coren"
-                                                value="<%= coren || '' %>">
-                                        </div>
-                                        <div class="form-group col-md-6">
-                                            <label for="especialidade1">Especialidade</label> <input type="text"
-                                                class="form-control" name="especialidade1"
-                                                value="<%= especialidade1 || '' %>">
-                                        </div>
-                                    </div>
-                                    <% } else if (tipo==='gestor'){ %>
-                                        <div class="form-row">
-                                            <div class="form-group col-md-6">
-                                                <label for="empresa_hospital"></label>
-                                                <input type="text" class="form-control" name="empresa_hospital"
-                                                value="<%= empresa_hospital || '' %>">
-                                                
                                             </div>
                                         </div>
-                                        <%} %>
+
+                                        <form id="edit-mode-form" style="display: none;"> <!-- parte de edição-->
+                                            <% if (tipo==='medico' ) { %>
+                                                <div class="form-row">
+                                                    <div class="form-group col-md-6">
+                                                        <label for="crm">CRM</label>
+                                                        <input type="text" class="form-control" name="crm"
+                                                            value="<%= crm || '' %>">
+                                                    </div>
+                                                </div>
+                                                <div class="form-row">
+                                                    <div class="form-group col-md-8">
+                                                        <label for="especialidade1">Especialidade 1</label>
+                                                        <input type="text" class="form-control" name="especialidade1"
+                                                            \value="<%= especialidade1 || '' %>">
+                                                    </div>
+                                                    <div class="form-group col-md-4">
+                                                        <label for="rqe1">RQE 1</label>
+                                                        <input type="text" class="form-control" name="rqe1"
+                                                            value="<%= rqe1 || '' %>" maxlength="6">
+                                                    </div>
+                                                </div>
+                                                <div class="form-row">
+                                                    <div class="form-group col-md-8">
+                                                        <label for="especialidade2">Especialidade 2 (Opcional)</label>
+                                                        <input type="text" class="form-control" name="especialidade2"
+                                                            value="<%= especialidade2 || '' %>">
+                                                    </div>
+                                                    <div class="form-group col-md-4">
+                                                        <label for="rqe2">RQE 2 (Opcional)</label>
+                                                        <input type="text" class="form-control" name="rqe2"
+                                                            value="<%= rqe2 || '' %>" maxlength="6">
+                                                    </div>
+                                                </div>
+                                                <% } else if (tipo==='enfermeiro' ) { %>
+                                                    <div class="form-row">
+                                                        <div class="form-group col-md-6">
+                                                            <label for="coren">COREN</label>
+                                                            <input type="text" class="form-control" name="coren"
+                                                                value="<%= coren || '' %>">
+                                                        </div>
+                                                        <div class="form-group col-md-6">
+                                                            <label for="especialidade1">Especialidade</label> <input
+                                                                type="text" class="form-control" name="especialidade1"
+                                                                value="<%= especialidade1 || '' %>">
+                                                        </div>
+                                                    </div>
+                                                    <% } else if (tipo==='gestor' ){ %>
+                                                        <div class="form-row">
+                                                            <div class="form-group col-md-6">
+                                                                <label for="empresa_hospital"></label>
+                                                                <input type="text" class="form-control"
+                                                                    name="empresa_hospital"
+                                                                    value="<%= empresa_hospital || '' %>">
+
+                                                            </div>
+                                                        </div>
+                                                        <%} %>
 
 
 
-                                        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
-                                        <button type="button" id="cancelEditBtn"
-                                            class="btn btn-secondary">Cancelar</button>
-                        </form>
-                    </div>
-        </div>
-
-
-        <% if (tipo==='medico' || tipo==='enfermeiro' ) { %>
-            <div class="certificate-section">
-                <h2>Meus Certificados</h2>
-
-                <button id="toggleAddCertificateBtn" class="btn btn-info mb-3">Adicionar Novo Certificado</button>
-
-                <div id="addCertificateWrapper" style="display: none;">
-                    <h3>Adicionar Novo Certificado</h3>
-                    <form id="addCertificateForm">
-                        <input type="hidden" name="userId" value="<%= id %>">
-                        <input type="hidden" name="userType" value="<%= tipo %>">
-
-                        <div class="form-group">
-                            <label for="titulo">Título:</label>
-                            <input type="text" class="form-control" id="titulo" name="titulo" required>
+                                                            <button type="submit" class="btn btn-primary">Salvar
+                                                                Alterações</button>
+                                                            <button type="button" id="cancelEditBtn"
+                                                                class="btn btn-secondary">Cancelar</button>
+                                        </form>
+                                    </div>
                         </div>
-                        <div class="form-group">
-                            <label for="data_emissao">Data de Emissão:</label>
-                            <input type="date" class="form-control" id="data_emissao" name="data_emissao" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="carga_horaria">Carga Horária (horas):</label>
-                            <input type="number" class="form-control" id="carga_horaria" name="carga_horaria" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="tipo_certificado">Tipo de Certificado:</label>
-                            <select class="form-control" id="tipo_certificado" name="tipo_certificado" required>
-                                <option value="">Selecione</option>
-                                <option value="curso">Curso</option>
-                                <option value="congresso">Congresso</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Adicionar Certificado</button>
-                    </form>
-                </div>
 
-                <h3 class="mt-4">Certificados Cadastrados</h3>
-                <div class="certificate-list">
-                    <% if (certificados && certificados.length> 0) { %>
-                        <% certificados.forEach(cert=> { %>
-                            <div class="certificate-item">
-                                <h5>
-                                    <%= cert.titulo %>
-                                </h5>
-                                <p>Data de Emissão: <%= new Date(cert.data_emissao).toLocaleDateString('pt-BR') %>
-                                </p>
-                                <p>Carga Horária: <%= cert.carga_horaria %> horas</p>
-                                <p>Tipo: <%= cert.tipo_certificado %>
-                                </p>
+
+                        <% if (tipo==='medico' || tipo==='enfermeiro' ) { %>
+                            <div class="certificate-section">
+                                <h2>Meus Certificados</h2>
+
+                                <button id="toggleAddCertificateBtn" class="btn btn-info mb-3">Adicionar Novo
+                                    Certificado</button>
+
+                                <div id="addCertificateWrapper" style="display: none;">
+                                    <h3>Adicionar Novo Certificado</h3>
+                                    <form id="addCertificateForm">
+                                        <input type="hidden" name="userId" value="<%= id %>">
+                                        <input type="hidden" name="userType" value="<%= tipo %>">
+
+                                        <div class="form-group">
+                                            <label for="titulo">Título:</label>
+                                            <input type="text" class="form-control" id="titulo" name="titulo" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="data_emissao">Data de Emissão:</label>
+                                            <input type="date" class="form-control" id="data_emissao"
+                                                name="data_emissao" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="carga_horaria">Carga Horária (horas):</label>
+                                            <input type="number" class="form-control" id="carga_horaria"
+                                                name="carga_horaria" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="tipo_certificado">Tipo de Certificado:</label>
+                                            <select class="form-control" id="tipo_certificado" name="tipo_certificado"
+                                                required>
+                                                <option value="">Selecione</option>
+                                                <option value="curso">Curso</option>
+                                                <option value="congresso">Congresso</option>
+                                            </select>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Adicionar Certificado</button>
+                                    </form>
+                                </div>
+
+                                <h3 class="mt-4">Certificados Cadastrados</h3>
+                                <div class="certificate-list">
+                                    <% if (certificados && certificados.length> 0) { %>
+                                        <% certificados.forEach(cert=> { %>
+                                            <div class="certificate-item">
+                                                <h5>
+                                                    <%= cert.titulo %>
+                                                </h5>
+                                                <p>Data de Emissão: <%= new
+                                                        Date(cert.data_emissao).toLocaleDateString('pt-BR') %>
+                                                </p>
+                                                <p>Carga Horária: <%= cert.carga_horaria %> horas</p>
+                                                <p>Tipo: <%= cert.tipo_certificado %>
+                                                </p>
+                                            </div>
+                                            <% }); %>
+                                                <% } else { %>
+                                                    <p>Nenhum certificado cadastrado ainda.</p>
+                                                    <% } %>
+                                </div>
+
+                                <h3 class="mt-4">Publicações favoritadas</h3>
+                                <div class="postList">
+                                    <% if (fav_post && fav_post.length> 0) { %>
+                                        <% fav_post.forEach(post=> { %>
+                                            <div class="post-item" data-id="<%= post.id %>">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <h5>
+                                                        <%= post.titulo %>
+                                                    </h5>
+                                                    <button class="btn btn-outline-danger btn-sm btn-favoritar"
+                                                        title="Favoritar publicação" data-id="<%= post.id %>">
+                                                        <i class="fa-regular fa-heart"></i>
+                                                    </button>
+                                                </div>
+                                                <p>Data de Publicação: <%=post.data_publicao %>
+                                                </p>
+                                                <p>Descrição: <%= post.descricao %>
+                                                </p>
+                                                <p>Contato: <%= post.contato %>
+                                                </p>
+                                            </div>
+                                            <% }); %>
+                                                <% } else { %>
+                                                    <p>Nenhum Publicação favoritada ainda.</p>
+                                                    <% } %>
+                                </div>
+
+                                 <h3 class="mt-4">Vagas favoritadas</h3>
+                                <div class="postList">
+                                    <% if (fav_vaga && fav_vaga.length> 0) { %>
+                                        <% fav_vaga.forEach(vaga=> { %>
+                                            <div class="post-item" data-id="<%= vaga.id %>">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <h5>
+                                                        <%= vaga.titulo %>
+                                                    </h5>
+                                                    <button class="btn btn-outline-danger btn-sm btn-favoritar"
+                                                        title="Favoritar publicação" data-id="<%= vaga.id %>">
+                                                        <i class="fa-regular fa-heart"></i>
+                                                    </button>
+                                                </div>
+                                                <p>Data de Publicação: <%= vaga.data_publicao%>
+                                                </p>
+                                                <p>Descrição: <%= vaga.descricao %>
+                                                </p>
+                                                <p>Contato: <%= vaga.contato %>
+                                                </p>
+                                                <p>Remuneração: <%= vaga.remuneracao %>
+                                                </p>
+                                                <p>Local: <%= vaga.local %>
+                                                </p>
+                                            </div>
+                                            <% }); %>
+                                                <% } else { %>
+                                                    <p>Nenhuma Vaga favoritada ainda.</p>
+                                                    <% } %>
+                                </div>
                             </div>
-                            <% }); %>
-                                <% } else { %>
-                                    <p>Nenhum certificado cadastrado ainda.</p>
-                                    <% } %>
-                </div>
-            </div>
-            <% } %>
+                            <% } %>
 
-                
 
-                <script src="/js/user_profile.js">
 
-                </script>
+                                <script src="/js/user_profile.js">
+
+                                </script>
 </body>
 
 </html>
