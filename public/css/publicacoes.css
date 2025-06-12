@@ -310,3 +310,7 @@ nav {
         font-size: 0.9rem;
     }
 }
+
+.btn-favoritar.favoritado {
+    color: red;
+}

@@ -155,4 +155,34 @@ con.query(sqlVagas, function (err, result) {
     console.log("Tabela publicacoes criada");
   });
 
+  var sqlFavoritosPublicacoes = `
+CREATE TABLE IF NOT EXISTS favoritos_publicacoes (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  usuario_tipo ENUM('medico', 'enfermeiro') NOT NULL,
+  usuario_id INT NOT NULL,
+  publicacao_id INT NOT NULL,
+  UNIQUE KEY unique_favorito (usuario_tipo, usuario_id, publicacao_id),
+  FOREIGN KEY (publicacao_id) REFERENCES publicacoes(id) ON DELETE CASCADE
+)`;
+
+con.query(sqlFavoritosPublicacoes, function (err) {
+  if (err) throw err;
+  console.log("Tabela favoritos_publicacoes criada");
+});
+
+var sqlFavoritosVagas = `
+CREATE TABLE IF NOT EXISTS favoritos_vagas (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  usuario_tipo ENUM('medico', 'enfermeiro') NOT NULL,
+  usuario_id INT NOT NULL,
+  vaga_id INT NOT NULL,
+  UNIQUE KEY unique_favorito_vaga (usuario_tipo, usuario_id, vaga_id),
+  FOREIGN KEY (vaga_id) REFERENCES vagas(id) ON DELETE CASCADE
+)`;
+
+con.query(sqlFavoritosVagas, function (err) {
+  if (err) throw err;
+  console.log("Tabela favoritos_vagas criada");
+});
+
 });

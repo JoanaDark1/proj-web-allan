@@ -756,6 +756,74 @@ app.post('/admin/excluir-admin', (req, res) => {
     });
 });
 
+app.post('/favoritar-publicacao', (req, res) => {
+    const { usuario_id, usuario_tipo, publicacao_id } = req.body;
+
+    const sql = `INSERT IGNORE INTO favoritos_publicacoes (usuario_id, usuario_tipo, publicacao_id) VALUES (?, ?, ?)`;
+    con.query(sql, [usuario_id, usuario_tipo, publicacao_id], (err) => {
+        if (err) return res.status(500).json({ success: false });
+        return res.json({ success: true });
+    });
+});
+
+app.post('/desfavoritar-publicacao', (req, res) => {
+    const { usuario_id, usuario_tipo, publicacao_id } = req.body;
+
+    const sql = `DELETE FROM favoritos_publicacoes WHERE usuario_id = ? AND usuario_tipo = ? AND publicacao_id = ?`;
+    con.query(sql, [usuario_id, usuario_tipo, publicacao_id], (err) => {
+        if (err) return res.status(500).json({ success: false });
+        return res.json({ success: true });
+    });
+});
+
+app.get('/favoritos-publicacoes/:tipo/:id', (req, res) => {
+    const { tipo, id } = req.params;
+
+    const sql = `
+        SELECT publicacao_id FROM favoritos_publicacoes 
+        WHERE usuario_tipo = ? AND usuario_id = ?`;
+
+    con.query(sql, [tipo, id], (err, results) => {
+        if (err) {
+            console.error("Erro ao buscar favoritos:", err);
+            return res.status(500).json([]);
+        }
+        const favoritos = results.map(r => r.publicacao_id);
+        res.json(favoritos);
+    });
+});
+
+// Favoritar vaga
+app.post('/favoritar-vaga', (req, res) => {
+    const { usuario_id, usuario_tipo, vaga_id } = req.body;
+    const sql = `INSERT IGNORE INTO favoritos_vagas (usuario_id, usuario_tipo, vaga_id) VALUES (?, ?, ?)`;
+    con.query(sql, [usuario_id, usuario_tipo, vaga_id], (err) => {
+        if (err) return res.status(500).json({ success: false });
+        return res.json({ success: true });
+    });
+});
+
+// Desfavoritar vaga
+app.post('/desfavoritar-vaga', (req, res) => {
+    const { usuario_id, usuario_tipo, vaga_id } = req.body;
+    const sql = `DELETE FROM favoritos_vagas WHERE usuario_id = ? AND usuario_tipo = ? AND vaga_id = ?`;
+    con.query(sql, [usuario_id, usuario_tipo, vaga_id], (err) => {
+        if (err) return res.status(500).json({ success: false });
+        return res.json({ success: true });
+    });
+});
+
+// Listar favoritos do usuário
+app.get('/favoritos-vagas/:tipo/:id', (req, res) => {
+    const { tipo, id } = req.params;
+    const sql = `SELECT vaga_id FROM favoritos_vagas WHERE usuario_tipo = ? AND usuario_id = ?`;
+    con.query(sql, [tipo, id], (err, results) => {
+        if (err) return res.status(500).json([]);
+        const favoritos = results.map(r => r.vaga_id);
+        return res.json(favoritos);
+    });
+});
+
 app.listen(port, () => {
     console.log(`Servidor rodando em http://localhost:${port}`);
 });

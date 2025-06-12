@@ -112,20 +112,19 @@
                                 <h3 class="mt-4">Publicações</h3>
                                 <div id="postList">
                                     <% if (publicacoes && publicacoes.length> 0) { %>
-                                        <% publicacoes.forEach(post=> { %>
-                                            <div class="post-item">
-                                                <h5>
-                                                    <%= post.titulo %>
-                                                </h5>
-                                                <p>Data de Publicação: <%= new
-                                                        Date(post.data_publicacao).toLocaleDateString('pt-BR') %>
-                                                </p>
-                                                <p>Descrição: <%= post.descricao %>
-                                                </p>
-                                                <p>Contato: <%= post.contato %>
-                                                </p>
+                                        <% publicacoes.forEach(post => { %>
+                                            <div class="post-item" data-id="<%= post.id %>">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <h5><%= post.titulo %></h5>
+                                                    <button class="btn btn-outline-danger btn-sm btn-favoritar" title="Favoritar publicação" data-id="<%= post.id %>">
+                                                        <i class="fa-regular fa-heart"></i>
+                                                    </button>
+                                                </div>
+                                                <p>Data de Publicação: <%= new Date(post.data_publicacao).toLocaleDateString('pt-BR') %></p>
+                                                <p>Descrição: <%= post.descricao %></p>
+                                                <p>Contato: <%= post.contato %></p>
                                             </div>
-                                            <% }); %>
+                                        <% }); %>
                                                 <% } else { %>
                                                     <p>Nenhum Publicação criada ainda.</p>
                                                     <% } %>

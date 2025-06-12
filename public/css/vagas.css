@@ -173,3 +173,7 @@ nav {
       flex: 1 ;
       padding-bottom: 6.3rem;
     }
+
+    .btn-favoritar-vaga.favoritada {
+      color: red;
+    }
