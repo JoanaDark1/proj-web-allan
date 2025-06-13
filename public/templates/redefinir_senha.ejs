@@ -35,13 +35,13 @@
     <div>
         <div class="container-login" style="background-image: url('/images/bg-login.jpg');">
             <div class="wrap-auth">
-                <form class="auth-form validate-form" action="/enviar_email_redefinir_senha" method="post">
+                <form class="auth-form validate-form" action="/redefinir_senha" method="post">
                     <span class="auth-form-logo"></span>
                     <input type="hidden" name="tipo" value="<%= tipo %>">
                     <input type="hidden" name="id" value="<%= id %>">
 
                      <div class="wrap-input validate-input" data-validate="Insira a nova senha">
-                        <input class="input" type="password" name="senha" placeholder="Senha"  maxlength="45" required>
+                        <input class="input" type="password" name="senha" placeholder="Nova senha"  maxlength="45" required>
                         <span class="focus-input" >
                             <i class="fas fa-lock"></i>
                             

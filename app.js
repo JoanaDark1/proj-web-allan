@@ -139,15 +139,24 @@ app.post('/login', (req, res) => {
     });
 });
 
+
+
+app.get('/esqueci_senha', (req, res) => {
+    
+    res.render('enviar_email_redefinir_senha'); 
+
+});
 app.post('/enviar_email_redefinir_senha',(req,res) => {
 
     const{email}= req.body;
 
-    const sqlUsuario =`SELECT * FROM medicos WHERE email = ? 
-                        UNION
-                        SELECT * FROM enfermeiros WHERE email = ?
-                        UNION 
-                        SELECT * FROM gestores WHERE email =?`;
+    const sqlUsuario = `
+    SELECT id, nome, email, 'medico' AS tipo FROM medicos WHERE email = ?
+    UNION ALL
+    SELECT id, nome, email, 'enfermeiro' AS tipo FROM enfermeiros WHERE email = ?
+    UNION ALL
+    SELECT id, nome, email, 'gestor' AS tipo FROM gestores WHERE email = ?
+`;
 
 
     con.query(sqlUsuario,[email,email,email],(err, resultUsuario) => {
@@ -168,8 +177,8 @@ app.post('/enviar_email_redefinir_senha',(req,res) => {
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth:{
-                user:'medoportuna@gmail.com',
-                pass :'projeto123'
+                user:process.env.GMAIL_USER,
+                pass :process.env.GMAIL_PASS
             }
         });
 
@@ -200,7 +209,7 @@ app.get('/redefinir_senha', (req, res) => {
     res.render('redefinir_senha', { tipo, id }); 
 });
 
-app.post('redefinir_senha', (req, res) => {
+app.post('/redefinir_senha', (req, res) => {
     const { tipo, id, senha, senha_repeticao } = req.body;
 
 
@@ -222,7 +231,7 @@ app.post('redefinir_senha', (req, res) => {
             console.error("Erro ao atualizar senha:", err);
             return res.status(500).send("Erro interno.");
         }
-    res.render('login', { mensagem: 'Senha redefinida com sucesso! Faça login novamente.' });
+    res.render('auth/login', { mensagem: 'Senha redefinida com sucesso! Faça login novamente.' });
 
 });
 });

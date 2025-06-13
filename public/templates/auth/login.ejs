@@ -37,7 +37,11 @@
         <div class="container-login" style="background-image: url('/images/bg-login.jpg');">
             <div class="wrap-auth">
 
-
+                <% if (typeof mensagem !=='undefined' && mensagem) { %>
+                    <div class="alert alert-success" role="alert" style="text-align: center;">
+                        <%= mensagem %>
+                    </div>
+                    <% } %>
                         <form class="auth-form validate-form" action="/login" method="post">
                             <span class="auth-form-logo"></span>
 
