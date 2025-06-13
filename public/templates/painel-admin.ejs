@@ -61,7 +61,7 @@
             <span class="text-muted">Você está conectado</span>
 
             <% } else { %>
-              <form action="/admin/excluir-admin" method="POST">
+              <form action="/admin/excluir-admin" method="POST" onsubmit="return confirm('Excluir este administrador?')">
                 <input type="hidden" name="id" value="<%= admin.id %>">
                 <button class="btn btn-danger btn-sm">Excluir Admin</button>
               </form>
