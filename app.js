@@ -6,6 +6,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 const con = require('./database/db.js');
 const multer = require('multer'); // npm install multer
+const nodemailer = require('nodemailer'); //npm install nodemailer
 
 
 
@@ -136,6 +137,94 @@ app.post('/login', (req, res) => {
             });
         });
     });
+});
+
+app.post('/enviar_email_redefinir_senha',(req,res) => {
+
+    const{email}= req.body;
+
+    const sqlUsuario =`SELECT * FROM medicos WHERE email = ? 
+                        UNION
+                        SELECT * FROM enfermeiros WHERE email = ?
+                        UNION 
+                        SELECT * FROM gestores WHERE email =?`;
+
+
+    con.query(sqlUsuario,[email,email,email],(err, resultUsuario) => {
+        if(err){
+            console.error("Erro ao buscar email do usuário:", err);
+            return res.status(500).send("Erro interno do servidor.");
+        }
+        if(resultUsuario.length ===0){
+            console.log(`Nenhum usuário encontrado com o email : '${email}'`);
+            return res.status(404).send("Usuário não encontrado");
+        }
+    
+        const usuario = resultUsuario[0];
+        const link = `http://localhost:3000/redefinir_senha?tipo=${usuario.tipo}&id=${usuario.id}`;
+
+        // Config do Nodemailer -- nosso email
+
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth:{
+                user:'medoportuna@gmail.com',
+                pass :'projeto123'
+            }
+        });
+
+        const mailOptions = {
+            from:'medoportuna@gmail.com',
+            to : email,
+            subject: 'Redefinição de Senha - MedOportuna',
+            text: `Olá ${usuario.nome}, \n
+            Para redefinição da sua senha clique neste link: ${link}\n`
+        };
+
+        transporter.sendMail(mailOptions,(error,info)=>{
+            if(error){
+                console.error("Erro ao enviar email:", error);
+                return res.status(500).send("Erro ao enviar email de redefinição de senha.");
+            }
+            else{
+                console.log("Email enviado:", info.response);
+                return res.status(200).send("Email de redefinição de senha enviado com sucesso.");
+            }
+            
+        });
+    });
+});
+
+app.get('/redefinir_senha', (req, res) => {
+    const { tipo, id } = req.query;
+    res.render('redefinir_senha', { tipo, id }); 
+});
+
+app.post('redefinir_senha', (req, res) => {
+    const { tipo, id, senha, senha_repeticao } = req.body;
+
+
+
+    if (tipo==='medico'||tipo==='enfermeiro') {
+        tabela = tipo +'s';
+    
+        sql = `UPDATE ${tabela} SET senha = ? WHERE id = ?`;
+        params = [senha,id]
+    }
+    else if (tipo === 'gestor') {
+        tabela = 'gestores';
+         sql = `UPDATE ${tabela} SET senha = ? WHERE id = ?`;
+        params =  [senha,id]
+    }
+
+    con.query(sql, [senha, id], (err, result) => {
+        if (err) {
+            console.error("Erro ao atualizar senha:", err);
+            return res.status(500).send("Erro interno.");
+        }
+    res.render('login', { mensagem: 'Senha redefinida com sucesso! Faça login novamente.' });
+
+});
 });
 
 app.get('/user_profile', (req, res) => {
