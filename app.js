@@ -142,67 +142,61 @@ app.post('/login', (req, res) => {
 
 
 app.get('/esqueci_senha', (req, res) => {
-    
     res.render('enviar_email_redefinir_senha'); 
-
 });
-app.post('/enviar_email_redefinir_senha',(req,res) => {
 
-    const{email}= req.body;
+app.post('/enviar_email_redefinir_senha', (req, res) => {
+    const { email } = req.body;
 
     const sqlUsuario = `
-    SELECT id, nome, email, 'medico' AS tipo FROM medicos WHERE email = ?
-    UNION ALL
-    SELECT id, nome, email, 'enfermeiro' AS tipo FROM enfermeiros WHERE email = ?
-    UNION ALL
-    SELECT id, nome, email, 'gestor' AS tipo FROM gestores WHERE email = ?
-`;
+        SELECT id, nome, email, 'medico' AS tipo FROM medicos WHERE email = ?
+        UNION ALL
+        SELECT id, nome, email, 'enfermeiro' AS tipo FROM enfermeiros WHERE email = ?
+        UNION ALL
+        SELECT id, nome, email, 'gestor' AS tipo FROM gestores WHERE email = ?
+    `;
 
-
-    con.query(sqlUsuario,[email,email,email],(err, resultUsuario) => {
-        if(err){
+    con.query(sqlUsuario, [email, email, email], (err, resultUsuario) => {
+        if (err) {
             console.error("Erro ao buscar email do usuário:", err);
-            return res.status(500).send("Erro interno do servidor.");
+            return res.status(500).json({ sucesso: false, mensagem: "Erro interno do servidor." });
         }
-        if(resultUsuario.length ===0){
-            console.log(`Nenhum usuário encontrado com o email : '${email}'`);
-            return res.status(404).send("Usuário não encontrado");
+
+        if (resultUsuario.length === 0) {
+            console.log(`Nenhum usuário encontrado com o email: '${email}'`);
+            return res.status(404).json({ sucesso: false, mensagem: "Usuário não encontrado." });
         }
-    
+
         const usuario = resultUsuario[0];
         const link = `http://localhost:3000/redefinir_senha?tipo=${usuario.tipo}&id=${usuario.id}`;
 
-        // Config do Nodemailer -- nosso email
-
         const transporter = nodemailer.createTransport({
             service: 'gmail',
-            auth:{
-                user:process.env.GMAIL_USER,
-                pass :process.env.GMAIL_PASS
+            auth: {
+                user: process.env.GMAIL_USER,
+                pass: process.env.GMAIL_PASS
             }
         });
 
         const mailOptions = {
-            from:'medoportuna@gmail.com',
-            to : email,
+            from: 'medoportuna@gmail.com',
+            to: email,
             subject: 'Redefinição de Senha - MedOportuna',
-            text: `Olá ${usuario.nome}, \n
-            Para redefinição da sua senha clique neste link: ${link}\n`
+            text: `Olá ${usuario.nome},\n\nPara redefinir sua senha, clique no seguinte link:\n${link}\n\nCaso não tenha solicitado, ignore este e-mail.`
         };
 
-        transporter.sendMail(mailOptions,(error,info)=>{
-            if(error){
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
                 console.error("Erro ao enviar email:", error);
-                return res.status(500).send("Erro ao enviar email de redefinição de senha.");
-            }
-            else{
+                return res.status(500).json({ sucesso: false, mensagem: "Erro ao enviar o e-mail de redefinição de senha." });
+            } else {
                 console.log("Email enviado:", info.response);
-                return res.status(200).send("Email de redefinição de senha enviado com sucesso.");
+                return res.status(200).json({ sucesso: true, mensagem: "E-mail de redefinição de senha enviado com sucesso!" });
             }
-            
         });
     });
 });
+
 
 app.get('/redefinir_senha', (req, res) => {
     const { tipo, id } = req.query;
