@@ -63,31 +63,32 @@ const upload = multer({ storage: storage });
 app.post('/login', (req, res) => {
     const { email, senha } = req.body;
 
-    //verificando nas tabelas
-
+    // Verificando na tabela médicos
     let sql = "SELECT * FROM medicos WHERE email = ? AND senha = ?";
     con.query(sql, [email, senha], (err, result) => {
         if (err) {
-            console.log(err);
-            return res.status(500).send("Erro ao fazer login.");
+            console.error(err);
+            return res.status(500).json({ sucesso: false, mensagem: "Erro ao fazer login." });
         }
-        if (result.length > 0) { //se for maior que 0 achou pelo menos um match
-            if (result.length > 0) {
-                req.session.user = {
-                    email,
-                    tipo: 'medico',
-                    id: result[0].id
-                };
-                return res.redirect(`/user_profile?tipo=medico&id=${result[0].id}`);
-            }
+        if (result.length > 0) {
+            req.session.user = {
+                email,
+                tipo: 'medico',
+                id: result[0].id
+            };
+            return res.json({
+                sucesso: true,
+                mensagem: "Login realizado com sucesso.",
+                redirectUrl: `/user_profile?tipo=medico&id=${result[0].id}`
+            });
         }
 
-        //verifcando na tabela enfermeiros
-        let sql = "SELECT * FROM enfermeiros WHERE email = ? AND senha = ?";
+        // Verificando na tabela enfermeiros
+        sql = "SELECT * FROM enfermeiros WHERE email = ? AND senha = ?";
         con.query(sql, [email, senha], (err, result) => {
             if (err) {
-                console.log(err);
-                return res.status(500).send("Erro ao fazer login.");
+                console.error(err);
+                return res.status(500).json({ sucesso: false, mensagem: "Erro ao fazer login." });
             }
             if (result.length > 0) {
                 req.session.user = {
@@ -95,15 +96,19 @@ app.post('/login', (req, res) => {
                     tipo: 'enfermeiro',
                     id: result[0].id
                 };
-                return res.redirect(`/user_profile?tipo=enfermeiro&id=${result[0].id}`);
+                return res.json({
+                    sucesso: true,
+                    mensagem: "Login realizado com sucesso.",
+                    redirectUrl: `/user_profile?tipo=enfermeiro&id=${result[0].id}`
+                });
             }
 
-            //verifcando na tabela gestores
-            let sql = "SELECT * FROM gestores WHERE email = ? AND senha = ?";
+            // Verificando na tabela gestores
+            sql = "SELECT * FROM gestores WHERE email = ? AND senha = ?";
             con.query(sql, [email, senha], (err, result) => {
                 if (err) {
-                    console.log(err);
-                    return res.status(500).send("Erro ao fazer login.");
+                    console.error(err);
+                    return res.status(500).json({ sucesso: false, mensagem: "Erro ao fazer login." });
                 }
                 if (result.length > 0) {
                     req.session.user = {
@@ -111,15 +116,19 @@ app.post('/login', (req, res) => {
                         tipo: 'gestor',
                         id: result[0].id
                     };
-                    return res.redirect(`/user_profile?tipo=gestor&id=${result[0].id}`);
+                    return res.json({
+                        sucesso: true,
+                        mensagem: "Login realizado com sucesso.",
+                        redirectUrl: `/user_profile?tipo=gestor&id=${result[0].id}`
+                    });
                 }
 
-                //verifcando na tabela Admin
-                let sql = "SELECT * FROM admin WHERE email = ? AND senha = ?";
+                // Verificando na tabela admin
+                sql = "SELECT * FROM admin WHERE email = ? AND senha = ?";
                 con.query(sql, [email, senha], (err, result) => {
                     if (err) {
-                        console.log(err);
-                        return res.status(500).send("Erro ao fazer login.");
+                        console.error(err);
+                        return res.status(500).json({ sucesso: false, mensagem: "Erro ao fazer login." });
                     }
                     if (result.length > 0) {
                         req.session.user = {
@@ -127,12 +136,18 @@ app.post('/login', (req, res) => {
                             tipo: 'admin',
                             id: result[0].id
                         };
-                        return res.redirect(`/painel-admin`);
+                        return res.json({
+                            sucesso: true,
+                            mensagem: "Login realizado com sucesso.",
+                            redirectUrl: `/painel-admin`
+                        });
                     }
-                    // caso não exista match em nenhuma tabela
-                    return res.status(401).send("Email ou senha inválidos.");
 
-
+                    // Nenhum match encontrado em nenhuma tabela
+                    return res.status(401).json({
+                        sucesso: false,
+                        mensagem: "Email ou senha inválidos."
+                    });
                 });
             });
         });
