@@ -548,6 +548,25 @@ app.get('/posts', (req, res) => {
     });
 });
 
+app.get('/lista-editais', (req, res) => {
+    const sql = `SELECT * FROM editais ORDER BY data_publicacao DESC`;
+    con.query(sql, (err, result) => {
+        if (err) {
+            console.error("Erro ao buscar editais:", err);
+            return res.status(500).send("Erro ao buscar editais.");
+        }
+
+        const tipoUsuario = req.session.user ? req.session.user.tipo : '';
+        const idUsuario = req.session.user ? req.session.user.id : '';
+
+        res.render('lista-editais', { 
+            editais: result, 
+            tipo: tipoUsuario, 
+            id: idUsuario 
+        });
+    });
+});
+
 // Nova rota para adicionar publicações
 app.post('/add-post', (req, res) => {
     console.log(req.body);
@@ -1075,6 +1094,29 @@ app.post('/desfavoritar-publicacao', (req, res) => {
             return res.status(500).json({ success: false, message: 'Erro ao desfavoritar publicação.' });
         }
         return res.json({ success: true, message: 'Publicação desfavoritada com sucesso.' });
+    });
+});
+
+// Exibir formulário de publicação de edital
+app.get('/publicar-edital', (req, res) => {
+    if (!req.session.user || req.session.user.tipo !== 'admin') {
+        return res.status(403).send("Acesso negado.");
+    }
+    res.render('publicar-edital');
+});
+
+// Receber e salvar o edital
+app.post('/publicar-edital', (req, res) => {
+    const { instituicao, especialidade, periodo, documentos } = req.body;
+
+    const sql = `INSERT INTO editais (instituicao, especialidade, periodo, documentos) VALUES (?, ?, ?, ?)`;
+
+    con.query(sql, [instituicao, especialidade, periodo, documentos], (err) => {
+        if (err) {
+            console.error("Erro ao salvar edital:", err);
+            return res.status(500).send("Erro ao publicar o edital.");
+        }
+        res.redirect('/painel-admin');
     });
 });
 

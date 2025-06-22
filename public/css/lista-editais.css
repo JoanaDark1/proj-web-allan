@@ -1,0 +1,150 @@
+body {
+    font-family: "Poppins", sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #191970, #2b7e4c);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: cover;
+    min-height: 100vh;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+}
+
+nav {
+    background-color: #426488; 
+    font-family: "Poppins", sans-serif;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+    height: 95px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+}
+
+.navbar-left {
+    display: flex;
+    align-items: center;
+}
+
+
+.logo {
+    font-size: 24px;
+    font-weight: 500;
+    color: #ffffff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo img {
+    height: 80px;
+    width: auto;
+    object-fit: contain;
+}
+
+.topnav {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 15px;
+}
+
+.topnav li a {
+    color: #e0e0e0;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.topnav li a:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+}
+
+.topnav li a.ativo {
+    color: #ffffff;
+    font-weight: 700;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+header {
+    margin-top: 120px;
+    color: white;
+    text-align: center;
+    padding: 20px 0;
+}
+
+header h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+}
+
+.card {
+    border: none;
+    border-radius: 12px;
+    background: #ffffff;
+    color: #000000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+}
+
+.card:hover {
+    transform: scale(1.02);
+}
+
+.card-title {
+    font-weight: 600;
+    color: #2b7e4c;
+}
+
+.card-text {
+    font-size: 1rem;
+}
+
+.text-muted {
+    font-size: 0.95rem;
+}
+
+ footer {
+    background-color: rgba(43, 126, 76, 0.95);
+    color: white;
+    padding: 1.5rem 0;
+    text-align: center;
+    font-size: 0.95rem;
+    flex-shrink: 0;
+    margin-top: auto;
+}
+
+footer a {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main.container {
+    flex: 1;
+}
+
+.linha-branca {
+    width: 100%;
+    height: 10px; 
+    background-color: #ffffff;
+    margin-top: 30px;
+}

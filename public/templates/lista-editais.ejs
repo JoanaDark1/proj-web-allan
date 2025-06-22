@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Editais Disponíveis</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/lista-editais.css">
+</head>
+<body>
+
+    <% if (tipo==='medico') { %>
+    <nav>
+        <div class="navbar-left">
+            <a href="/templates/home.html" class="logo">
+                <img src="/images/logo_cor-removebg-preview.png" alt="logo">
+                <span class="logo">MedOportuna</span>
+            </a>
+        </div>
+        <ul class="topnav">
+            <li><a href="/posts">Publicações de colaboração</a></li>
+            <li><a href="/vagas-medico">Vagas</a></li>
+            <li><a href="/user_profile?tipo=<%= tipo %>&id=<%= id %>">Meu perfil</a></li>
+            <li><a href="/logout">Sair</a></li>
+        </ul>
+    </nav>
+
+<% } else if (tipo==='enfermeiro') { %>
+    <nav>
+        <div class="navbar-left">
+            <a href="/templates/home.html" class="logo">
+                <img src="/images/logo_cor-removebg-preview.png" alt="logo">
+                <span class="logo">MedOportuna</span>
+            </a>
+        </div>
+        <ul class="topnav">
+            <li><a href="/posts">Publicações de colaboração</a></li>
+            <li><a href="/vagas-enfermeiro">Vagas</a></li>
+            <li><a href="/user_profile?tipo=<%= tipo %>&id=<%= id %>">Meu perfil</a></li>
+            <li><a href="/logout">Sair</a></li>
+        </ul>
+    </nav>
+
+<% } else if (tipo==='gestor') { %>
+    <nav>
+        <div class="navbar-left">
+            <a href="/templates/home.html" class="logo">
+                <img src="/images/logo_cor-removebg-preview.png" alt="logo">
+                <span class="logo">MedOportuna</span>
+            </a>
+        </div>
+        <ul class="topnav">
+            <li><a href="/acessar-publicar-vaga">Publicar Vaga</a></li>
+            <li><a href="/vagas-gestor">Minhas Vagas</a></li>
+            <li><a href="/user_profile?tipo=<%= tipo %>&id=<%= id %>">Meu perfil</a></li>
+            <li><a href="/logout">Sair</a></li>
+        </ul>
+    </nav>
+    <% } %>
+
+
+    <main class="container">
+        <header>
+            <h1>Editais Disponíveis</h1>
+        </header> 
+
+        <% if (editais.length === 0) { %>
+            <p class="text-center">Nenhum edital publicado ainda.</p>
+        <% } %>
+
+        <% editais.forEach(edital => { %>
+            <div class="card mb-4 p-3">
+                <h4 class="card-title"><%= edital.instituicao %></h4>
+                <p class="card-text"><strong>Especialidade:</strong> <%= edital.especialidade %></p>
+                <p class="card-text"><strong>Período de inscrição:</strong> <%= edital.periodo %></p>
+                <p class="card-text"><strong>Documentos Necessários:</strong> <%= edital.documentos %></p>
+                <p class="card-text text-muted"><strong>Publicado em:</strong> <%= new Date(edital.data_publicacao).toLocaleDateString('pt-BR') %></p>
+            </div>
+        <% }) %>
+    </main>
+
+    <div class="linha-branca"></div>
+    <footer>
+        <p>© 2025 MedOportuna. Todos os direitos reservados.</p>
+        <p>Contato: <a href="mailto:contato@medoportuna.com">contato@medoportuna.com</a></p>
+    </footer>
+</body>
+</html>

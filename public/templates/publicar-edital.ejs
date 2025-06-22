@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Publicar Edital</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/publicar-edital.css">
+</head>
+
+<body>
+  <nav>
+    <div class="navbar-left">
+      <a href="/painel-admin" class="logo">
+        <img src="/images/logo_cor-removebg-preview.png" alt="logo">
+        <span class="logo">MedOportuna</span>
+      </a>
+    </div>
+    <ul class="topnav">
+      <li><a href="/posts">Publicações de Colaboração</a></li>
+      <li><a href="/publicar-edital">Publicar Edital</a></li>
+      <li><a href="/vagas-medico">Vagas dos Médicos</a></li>
+      <li><a href="/vagas-enfermeiro">Vagas dos Enfermeiros</a></li>
+      <li><a href="/logout">Sair</a></li>
+    </ul>
+  </nav>
+
+  <div class="container" style="padding-top:120px">
+    <h2>Publicar Novo Edital</h2>
+
+    <div class="form-container">
+      <form action="/publicar-edital" method="POST">
+
+        <div class="mb-3">
+          <label for="instituicao" class="form-label">Instituição</label>
+          <input type="text" class="form-control" id="instituicao" name="instituicao" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="especialidade" class="form-label">Especialidade</label>
+          <input type="text" class="form-control" id="especialidade" name="especialidade" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="periodo" class="form-label">Período de Inscrição</label>
+          <input type="text" class="form-control" id="periodo" name="periodo" placeholder="Ex: 01/07/2025 a 15/07/2025" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="documentos" class="form-label">Documentos Necessários</label>
+          <textarea class="form-control" id="documentos" name="documentos" rows="4" required></textarea>
+        </div>
+
+        <div class="publicar-botao">
+            <button type="submit" class="btn btn-success">Publicar Edital</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

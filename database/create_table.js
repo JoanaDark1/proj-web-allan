@@ -223,3 +223,18 @@ con.query(sqlFavoritosVagas, function (err) {
 });
 
 });
+
+var sqlEditais = `
+CREATE TABLE IF NOT EXISTS editais (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  instituicao VARCHAR(255) NOT NULL,
+  especialidade VARCHAR(255) NOT NULL,
+  periodo VARCHAR(255) NOT NULL,
+  documentos TEXT NOT NULL,
+  data_publicacao DATETIME DEFAULT CURRENT_TIMESTAMP
+)`;
+
+con.query(sqlEditais, function (err) {
+  if (err) throw err;
+  console.log("Tabela editais criada");
+});
