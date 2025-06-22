@@ -58,6 +58,20 @@
           </div>
         </header>
 
+        <div class="container my-3">
+          <form method="GET" action="/vagas-enfermeiro" class="row g-2">
+            <div class="col-md-4">
+              <select class="form-select" name="filtro" onchange="this.form.submit()">
+                <option value="">Ordenar por...</option>
+                <option value="local" <%= (typeof filtro !== 'undefined' && filtro === 'local') ? 'selected' : '' %>>Local</option>
+                <option value="alfabetica" <%= (typeof filtro !== 'undefined' && filtro === 'alfabetica') ? 'selected' : '' %>>Título (A-Z)</option>
+                <option value="data" <%= (typeof filtro !== 'undefined' && filtro === 'data') ? 'selected' : '' %>>Mais Recentes</option>
+              </select>
+            </div>
+          </form>
+        </div>
+
+
         <main class="container my-5">
           <div class="row">
             <% if (vagas.length===0) { %>

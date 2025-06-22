@@ -700,40 +700,68 @@ app.post('/publicar-vaga', (req, res) => {
 
 app.get('/vagas-:profissao', (req, res) => {
     const { profissao } = req.params;
+    const { filtro } = req.query;
 
+    let orderClause = "ORDER BY data_publicacao DESC"; // padrão
+
+    if (filtro === 'local') {
+        orderClause = "ORDER BY local ASC";
+    } else if (filtro === 'alfabetica') {
+        orderClause = "ORDER BY titulo ASC";
+    } else if (filtro === 'data') {
+        orderClause = "ORDER BY data_publicacao DESC";
+    }
+
+    // CASO 1: GESTOR → só vê vagas que ele criou
     if (profissao === 'gestor') {
         if (!req.session.user || req.session.user.tipo !== 'gestor') {
             return res.redirect('/templates/auth/login.html');
         }
+
         const gestor_id = req.session.user.id;
-        const sql = "SELECT * FROM vagas WHERE gestor_id = ? ORDER BY data_publicacao DESC";
+        let sql = "SELECT * FROM vagas WHERE gestor_id = ?";
+        if (filtro === 'local') {
+            sql += " ORDER BY local ASC";
+        } else if (filtro === 'alfabetica') {
+            sql += " ORDER BY titulo ASC";
+        } else {
+            sql += " ORDER BY data_publicacao DESC"; // padrão
+        }
+
         con.query(sql, [gestor_id], (err, result) => {
             if (err) {
                 console.error("Erro ao buscar vagas do gestor:", err);
                 return res.status(500).send("Erro ao buscar vagas.");
             }
+
             return res.render('vagas-gestor', {
-            vagas: result,
-            id: req.session.user.id,
-            tipo: req.session.user.tipo
-        });
+                vagas: result,
+                id: req.session.user.id,
+                tipo: req.session.user.tipo,
+                filtro: req.query.filtro || ''
+            });
         });
 
     } else {
-        const sql = "SELECT * FROM vagas WHERE profissao = ? ORDER BY data_publicacao DESC";
+        // CASO 2: médico ou enfermeiro → vagas por profissão com filtro
+        const sql = `SELECT * FROM vagas WHERE profissao = ? ${orderClause}`;
         con.query(sql, [profissao], (err, result) => {
             if (err) {
                 console.error("Erro ao buscar vagas:", err);
                 return res.status(500).send("Erro ao buscar vagas.");
             }
+
             return res.render(`vagas-${profissao}`, {
                 vagas: result,
                 tipo: req.session.user ? req.session.user.tipo : '',
-                id: req.session.user ? req.session.user.id : ''
+                id: req.session.user ? req.session.user.id : '',
+                filtro: req.query.filtro || ''
             });
         });
     }
 });
+
+
 
 app.post('/excluir-vaga/:id', (req, res) => {
     if (!req.session.user || req.session.user.tipo !== 'gestor') {
