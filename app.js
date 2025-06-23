@@ -819,7 +819,8 @@ app.get('/logout', (req, res) => {
         res.redirect('/'); // Ou para '/' (home)
     });
 });
-//rota do admin
+
+// Rota do admin
 app.get('/painel-admin', (req, res) => {
     if (!req.session.user || req.session.user.tipo !== 'admin') {
         return res.status(403).send("Acesso negado.");
@@ -842,6 +843,8 @@ app.get('/painel-admin', (req, res) => {
         SELECT id, nome, email, 'gestor' AS tipo FROM gestores
     `;
 
+    const sqlEditais = `SELECT * FROM editais ORDER BY data_publicacao DESC`;
+
     con.query(sqlAdmins, (err, admins) => {
         if (err) return res.status(500).send("Erro ao carregar admins.");
         con.query(sqlPosts, (err, publicacoes) => {
@@ -850,13 +853,40 @@ app.get('/painel-admin', (req, res) => {
                 if (err) return res.status(500).send("Erro ao carregar vagas.");
                 con.query(sqlUsuarios, (err, usuarios) => {
                     if (err) return res.status(500).send("Erro ao carregar usuários.");
-                    res.render('painel-admin', { nome: req.session.user.email, id: req.session.user.id, admins, publicacoes, vagas, usuarios });
+                    con.query(sqlEditais, (err, editais) => {
+                        if (err) return res.status(500).send("Erro ao carregar editais.");
+                        res.render('painel-admin', { 
+                            nome: req.session.user.email, 
+                            id: req.session.user.id, 
+                            admins, 
+                            publicacoes, 
+                            vagas, 
+                            usuarios,
+                            editais
+                        });
+                    });
                 });
             });
         });
     });
 });
 
+app.post('/admin/excluir-edital', (req, res) => {
+    if (!req.session.user || req.session.user.tipo !== 'admin') {
+        return res.status(403).send("Acesso negado.");
+    }
+
+    const editalId = req.body.editalId;
+
+    const sql = "DELETE FROM editais WHERE id = ?";
+    con.query(sql, [editalId], (err) => {
+        if (err) {
+            console.error("Erro ao excluir edital:", err);
+            return res.status(500).send("Erro ao excluir edital.");
+        }
+        res.redirect('/painel-admin');
+    });
+});
 
 app.post('/criar-admin', (req, res) => {
     const { nome, email, senha } = req.body;

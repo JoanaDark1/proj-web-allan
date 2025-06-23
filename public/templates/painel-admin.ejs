@@ -24,7 +24,6 @@
     </ul>
   </nav>
 
-
   <h2><strong>Painel do Administrador</strong></h2>
   <p>Bem-vindo, <%= nome %>
   </p>
@@ -148,6 +147,26 @@
             <% } %>
   </div>
 
+  <div class="card-custom">
+    <h4 class="mb-3">📄 Editais Publicados</h4>
+    <% if (editais.length > 0) { %>
+      <% editais.forEach(edital => { %>
+        <div class="item-block">
+          <strong><%= edital.instituicao %></strong><br>
+          <small>Especialidade: <%= edital.especialidade %> | Período: <%= edital.periodo %></small>
+          <p>Documentos Necessários: <%= edital.documentos %></p>
+
+        <form action="/admin/excluir-edital" method="POST" onsubmit="return confirm('Excluir este edital?')">
+          <input type="hidden" name="editalId" value="<%= edital.id %>">
+          <button class="btn btn-danger btn-sm">Excluir Edital</button>
+        </form>
+
+        </div>
+      <% }) %>
+    <% } else { %>
+      <p class="text-muted">Nenhum edital publicado ainda.</p>
+    <% } %>
+  </div>
 
   <script>
     document.addEventListener("DOMContentLoaded", function () {
