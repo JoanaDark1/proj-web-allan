@@ -8,8 +8,6 @@ const con = require('./database/db.js');
 const multer = require('multer'); // npm install multer
 const nodemailer = require('nodemailer'); //npm install nodemailer
 
-
-
 const app = express();
 const port = 3000;
 
@@ -23,16 +21,13 @@ app.use(session({
 
 app.use(express.json());
 
-
-
 app.use(bodyParser.urlencoded({ extended: false }));
 
 //  acessar arquivos HTML, CSS, JS na pasta public
 app.use(express.static('public'));
 
-
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'templates', 'home.html'));
+    res.render('home');
 });
 
 // // Configurar o Express para usar EJS como motor de template
@@ -212,7 +207,6 @@ app.post('/enviar_email_redefinir_senha', (req, res) => {
     });
 });
 
-
 app.get('/redefinir_senha', (req, res) => {
     const { tipo, id } = req.query;
     res.render('redefinir_senha', { tipo, id }); 
@@ -220,8 +214,6 @@ app.get('/redefinir_senha', (req, res) => {
 
 app.post('/redefinir_senha', (req, res) => {
     const { tipo, id, senha, senha_repeticao } = req.body;
-
-
 
     if (tipo==='medico'||tipo==='enfermeiro') {
         tabela = tipo +'s';
@@ -238,7 +230,7 @@ app.post('/redefinir_senha', (req, res) => {
     con.query(sql, [senha, id], (err, result) => {
         if (err) {
             console.error("Erro ao atualizar senha:", err);
-            return res.status(500).send("Erro interno.");
+            return res.status(500).render('erro', { mensagem: 'Erro interno.' });
         }
     res.render('auth/login', { mensagem: 'Senha redefinida com sucesso! Faça login novamente.' });
 
@@ -246,14 +238,13 @@ app.post('/redefinir_senha', (req, res) => {
 });
 
 app.get('/user_profile', (req, res) => {
-    const { tipo, id } = req.query; //pegando os dados da url
+    const { tipo, id } = req.query; // Pegando os dados da url
      if (!tipo || !id) {
        
         return res.redirect('/templates/auth/login.html');
         
     }
     console.log("Recebido em /user_profile: Tipo =", tipo, "ID =", id);
-
 
     let tabela = tipo + 's';
     if (tipo === 'admin') {
@@ -265,11 +256,11 @@ app.get('/user_profile', (req, res) => {
     con.query(sqlUsuario, [id], (err, resultUsuario) => {
         if (err) {
             console.error("Erro na busca de usuário em /user_profile:", err);
-            return res.status(500).send("Erro interno do servidor.");
+            return res.status(500).render('erro', { mensagem: 'Erro interno do servidor.' });
         }
         if (resultUsuario.length === 0) {
             console.log(`Nenhum usuário encontrado na tabela '${tabela}' com ID '${id}'`);
-            return res.status(404).send("Usuário não encontrado");
+            return res.status(404).render('erro', { mensagem: 'Usuário não encontrado' });
         }
 
         const usuario = resultUsuario[0];
@@ -295,21 +286,19 @@ app.get('/user_profile', (req, res) => {
 
         // Somente profissionais de saúde têm certificados
         if (tipo === 'medico' || tipo === 'enfermeiro') {
-            let fkColumn; //foreign key pra achar o dono do certificado, lembrando que tem uma coluna que é medico_id e outra enfermeiro_id na tabela de certificados
+            let fkColumn; // foreign key pra achar o dono do certificado, lembrando que tem uma coluna que é medico_id e outra enfermeiro_id na tabela de certificados
             if (tipo === 'medico') fkColumn = 'medico_id';
             else if (tipo === 'enfermeiro') fkColumn = 'enfermeiro_id';
 
 
-            //fazer promises pra garantir que os dados sejam carregados antes de renderizar o template
+            // fazer promises pra garantir que os dados sejam carregados antes de renderizar o template
 
             const promise1 = new Promise((resolve,reject) => {
 
             const sqlCertificados = `SELECT * FROM certificados WHERE ${fkColumn} = ?`;
-            con.query(sqlCertificados, [id], (err, resultCertificados) => { //[id] é o id do usuario que ta logado
+            con.query(sqlCertificados, [id], (err, resultCertificados) => { // [id] é o id do usuario que ta logado
                 if (err) return resolve([]);
                 resolve(resultCertificados);
-                
-               
             });
              });
 
@@ -317,7 +306,7 @@ app.get('/user_profile', (req, res) => {
             const sqlFavPost =`SELECT p.* FROM favoritos_publicacoes f
                               JOIN publicacoes p on f.publicacao_id = p.id
                               WHERE f.${fkColumn}=?`;
-            con.query(sqlFavPost, [id], (err, resultPosts) => { //[id] é o id do usuario que ta logado
+            con.query(sqlFavPost, [id], (err, resultPosts) => { // [id] é o id do usuario que ta logado
                 if (err) return resolve([]);
                 resolve(resultPosts)
             });
@@ -342,7 +331,7 @@ app.get('/user_profile', (req, res) => {
         })
             .catch((e) => {
                     console.error("Erro ao buscar favoritos ou certificados:", e);
-                    res.render('user_profile', dataParaTemplate); // ainda renderiza mas sem  dados
+                    res.render('user_profile', dataParaTemplate); // ainda renderiza mas sem dados
                 });
 
 
@@ -355,21 +344,17 @@ app.get('/user_profile', (req, res) => {
 });
 
 
-app.post('/add', (req, res) => {  //res = resposta do servidor, req = requisição do cliente
+app.post('/add', (req, res) => {  // res = resposta do servidor, req = requisição do cliente
 
     console.log("Dados recebidos:", req.body);
-    const { tipo } = req.body; //req.body objeto que contém todos os campos enviados pelo formulário
+    const { tipo } = req.body; // req.body objeto que contém todos os campos enviados pelo formulário
     const foto_perfil_padrao = '/images/User_Avatar.png';
 
     let sql = "";
     let values = [];
 
     if (tipo === "medico") {
-
-
         const crm = req.body.crm + '/' + req.body.estado_crm;
-
-
         sql = "INSERT INTO medicos(nome,email,senha,crm,rqe1,telefone,especialidade1,img_perfil) VALUES (?,?,?,?,?,?,?,?)";
         values = [req.body.nome, req.body.email, req.body.senha, crm, req.body.rqe1,
         req.body.telefone, req.body.especialidade1, foto_perfil_padrao];
@@ -377,33 +362,28 @@ app.post('/add', (req, res) => {  //res = resposta do servidor, req = requisiç�
     }
     else if (tipo === "enfermeiro") {
         const coren = req.body.coren + '-' + req.body.coren_tipo;
-
         sql = "INSERT INTO enfermeiros(nome,email,senha,coren,telefone,especialidade1,img_perfil) VALUES (?,?,?,?,?,?,?)";
         values = [req.body.nome, req.body.email, req.body.senha, coren,
         req.body.telefone, req.body.especialidade1, foto_perfil_padrao];
     }
     else if (tipo === "gestor") {
         const { empresa_hospital } = req.body
-
         sql = "INSERT INTO gestores(nome,email,senha,empresa_hospital,telefone,img_perfil) VALUES (?,?,?,?,?,?)";
         values = [req.body.nome, req.body.email, req.body.senha, req.body.empresa_hospital, req.body.telefone, foto_perfil_padrao];
     }
     else {
         return res.send("Tipo de usuário inválido.");
-
     }
 
     con.query(sql, values, (err, result) => {
         if (err) {
             console.log(err);
-            return res.status(500).send("Erro ao cadastrar usuário.");
+            return res.status(500).render('erro', { mensagem: 'Erro ao cadastrar usuário.' });
         }
         console.log("Resultado da query: ", result);  // Log do resultado
         console.log("Usuário cadastrado com sucesso!");
         console.log("ID inserido: ", result.insertId);
         return res.redirect(`/user_profile?tipo=${tipo}&id=${result.insertId}`);
-
-
     });
 });
 
@@ -535,8 +515,7 @@ app.get('/posts', (req, res) => {
     con.query(sql, (err, allPosts) => {
         if (err) {
             console.error('Erro ao buscar publicações:', err);
-
-            return res.status(500).send("Erro ao carregar publicações.");
+            return res.status(500).render('erro', { mensagem: 'Erro ao carregar publicações.' });
         }
         res.render('publicacoes.ejs', {
             nome: req.session.user.nome, // Exemplo de como pegar dados do usuário logado
@@ -553,7 +532,7 @@ app.get('/lista-editais', (req, res) => {
     con.query(sql, (err, result) => {
         if (err) {
             console.error("Erro ao buscar editais:", err);
-            return res.status(500).send("Erro ao buscar editais.");
+            return res.status(500).render('erro', { mensagem: 'Erro ao buscar editais.' });
         }
 
         const tipoUsuario = req.session.user ? req.session.user.tipo : '';
@@ -602,7 +581,6 @@ app.post('/add-post', (req, res) => {
         formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     } catch (e) {
         console.error("Erro ao formatar data_publicacao:", e);
-
         return res.status(400).json({ success: false, message: 'Formato de data inválido fornecido.' });
     }
 
@@ -632,11 +610,10 @@ app.post('/add-post', (req, res) => {
     });
 });
 
-//pra fazer o update dos dados do usuario
+// pra fazer o update dos dados do usuario
 app.post('/update-user-info', (req, res) => {
     // Pega os dados que o frontend enviou no corpo da requisição
     const { userId, userType, ...userData } = req.body;
-
 
     if (!userId || !userType) {
         return res.status(400).json({ success: false, message: 'Faltam dados de identificação do usuário.' });
@@ -714,7 +691,7 @@ app.post('/publicar-vaga', (req, res) => {
     con.query(sql, [titulo, descricao, local, remuneracao, profissao, data_publicacao, contato, gestor_id], (err) => {
         if (err) {
             console.error("Erro ao publicar vaga:", err);
-            return res.status(500).send("Erro ao publicar a vaga.");
+            return res.status(500).render('erro', { mensagem: 'Erro ao publicar a vaga.' });
         }
         res.redirect('/vagas-gestor');
     });
@@ -753,7 +730,7 @@ app.get('/vagas-:profissao', (req, res) => {
         con.query(sql, [gestor_id], (err, result) => {
             if (err) {
                 console.error("Erro ao buscar vagas do gestor:", err);
-                return res.status(500).send("Erro ao buscar vagas.");
+                return res.status(500).render('erro', { mensagem: 'Erro ao buscar vagas.' });
             }
 
             return res.render('vagas-gestor', {
@@ -770,7 +747,7 @@ app.get('/vagas-:profissao', (req, res) => {
         con.query(sql, [profissao], (err, result) => {
             if (err) {
                 console.error("Erro ao buscar vagas:", err);
-                return res.status(500).send("Erro ao buscar vagas.");
+                return res.status(500).render('erro', { mensagem: 'Erro ao buscar vagas.' });
             }
 
             return res.render(`vagas-${profissao}`, {
@@ -782,8 +759,6 @@ app.get('/vagas-:profissao', (req, res) => {
         });
     }
 });
-
-
 
 app.post('/excluir-vaga/:id', (req, res) => {
     if (!req.session.user || req.session.user.tipo !== 'gestor') {
@@ -799,12 +774,12 @@ app.post('/excluir-vaga/:id', (req, res) => {
     con.query(sql, [vagaId, gestorId], (err, result) => {
         if (err) {
             console.error("Erro ao excluir vaga:", err);
-            return res.status(500).send("Erro ao excluir vaga.");
+            return res.status(500).render('erro', { mensagem: 'Erro ao excluir vaga.' });
         }
 
         if (result.affectedRows === 0) {
             // Não encontrou vaga ou não pertence ao gestor
-            return res.status(404).send("Vaga não encontrada ou acesso negado.");
+            return res.status(404).render('erro', { mensagem: 'Vaga não encontrada ou acesso negado.' });
         }
 
         // Exclusão ok, redireciona para lista de vagas do gestor
@@ -816,7 +791,7 @@ app.get('/logout', (req, res) => {
     req.session.destroy(err => {
         if (err) {
             console.error("Erro ao destruir a sessão:", err);
-            return res.status(500).send("Erro ao tentar fazer logout. Tente novamente.");
+            return res.status(500).render('erro', { mensagem: 'Erro ao tentar fazer logout. Tente novamente.' });
         }
 
         res.redirect('/'); // Ou para '/' (home)
@@ -826,7 +801,7 @@ app.get('/logout', (req, res) => {
 // Rota do admin
 app.get('/painel-admin', (req, res) => {
     if (!req.session.user || req.session.user.tipo !== 'admin') {
-        return res.status(403).send("Acesso negado.");
+        return res.status(403).render('erro', { mensagem: 'Acesso negado.' });
     }
 
     const sqlAdmins = "SELECT id, nome, email FROM admin";
@@ -849,15 +824,15 @@ app.get('/painel-admin', (req, res) => {
     const sqlEditais = `SELECT * FROM editais ORDER BY data_publicacao DESC`;
 
     con.query(sqlAdmins, (err, admins) => {
-        if (err) return res.status(500).send("Erro ao carregar admins.");
+        if (err) return res.status(500).render('erro', { mensagem: 'Erro ao carregar admins.' });
         con.query(sqlPosts, (err, publicacoes) => {
-            if (err) return res.status(500).send("Erro ao carregar publicações.");
+            if (err) return res.status(500).render('erro', { mensagem: 'Erro ao carregar publicações.' });
             con.query(sqlVagas, (err, vagas) => {
-                if (err) return res.status(500).send("Erro ao carregar vagas.");
+                if (err) return res.status(500).render('erro', { mensagem: 'Erro ao carregar vagas.' });
                 con.query(sqlUsuarios, (err, usuarios) => {
-                    if (err) return res.status(500).send("Erro ao carregar usuários.");
+                    if (err) return res.status(500).render('erro', { mensagem: 'Erro ao carregar usuários.' });
                     con.query(sqlEditais, (err, editais) => {
-                        if (err) return res.status(500).send("Erro ao carregar editais.");
+                        if (err) return res.status(500).render('erro', { mensagem: 'Erro ao carregar editais.' });
                         res.render('painel-admin', { 
                             nome: req.session.user.email, 
                             id: req.session.user.id, 
@@ -876,7 +851,7 @@ app.get('/painel-admin', (req, res) => {
 
 app.post('/admin/excluir-edital', (req, res) => {
     if (!req.session.user || req.session.user.tipo !== 'admin') {
-        return res.status(403).send("Acesso negado.");
+        return res.status(403).render('erro', { mensagem: 'Acesso negado.' });
     }
 
     const editalId = req.body.editalId;
@@ -885,7 +860,7 @@ app.post('/admin/excluir-edital', (req, res) => {
     con.query(sql, [editalId], (err) => {
         if (err) {
             console.error("Erro ao excluir edital:", err);
-            return res.status(500).send("Erro ao excluir edital.");
+            return res.status(500).render('erro', { mensagem: 'Erro ao excluir edital.' });
         }
         res.redirect('/painel-admin');
     });
@@ -895,7 +870,7 @@ app.post('/criar-admin', (req, res) => {
     const { nome, email, senha } = req.body;
     const sql = "INSERT INTO admin (nome, email, senha) VALUES (?, ?, ?)";
     con.query(sql, [nome, email, senha], (err) => {
-        if (err) return res.status(500).send("Erro ao criar admin.");
+        if (err) return res.status(500).render('erro', { mensagem: 'Erro ao criar admin.' });
         res.redirect('/painel-admin');
     });
 });
@@ -903,19 +878,19 @@ app.post('/criar-admin', (req, res) => {
 app.post('/admin/excluir-post', (req, res) => {
     const { postId } = req.body;
     if (!req.session.user || req.session.user.tipo !== 'admin') {
-        return res.status(403).send("Acesso negado.");
+        return res.status(403).render('erro', { mensagem: 'Acesso negado.' });
     }
 
     const sql = "DELETE FROM publicacoes WHERE id = ?";
     con.query(sql, [postId], (err) => {
-        if (err) return res.status(500).send("Erro ao excluir post.");
+        if (err) return res.status(500).render('erro', { mensagem: 'Erro ao excluir post.' });
         res.redirect('/painel-admin');
     });
 });
 
 app.post('/admin/excluir-usuario', (req, res) => {
     if (!req.session.user || req.session.user.tipo !== 'admin') {
-        return res.status(403).send("Acesso negado.");
+        return res.status(403).render('erro', { mensagem: 'Acesso negado.' });
     }
 
     const { tipo, id } = req.body;
@@ -924,13 +899,12 @@ app.post('/admin/excluir-usuario', (req, res) => {
     if (tipo === 'medico') tabela = 'medicos';
     else if (tipo === 'enfermeiro') tabela = 'enfermeiros';
     else if (tipo === 'gestor') tabela = 'gestores';
-    else return res.status(400).send("Tipo de usuário inválido.");
-
+    else return res.status(400).render('erro', { mensagem: 'Tipo de usuário inválido.' });
     const sql = `DELETE FROM ${tabela} WHERE id = ?`;
     con.query(sql, [id], (err) => {
         if (err) {
             console.error("Erro ao excluir usuário:", err);
-            return res.status(500).send("Erro ao excluir usuário.");
+            return res.status(500).render('erro', { mensagem: 'Erro ao excluir usuário.' });
         }
         res.redirect('/painel-admin');
     });
@@ -939,7 +913,7 @@ app.post('/admin/excluir-usuario', (req, res) => {
 
 app.post('/admin/excluir-vaga', (req, res) => {
     if (!req.session.user || req.session.user.tipo !== 'admin') {
-        return res.status(403).send("Acesso negado.");
+        return res.status(403).render('erro', { mensagem: 'Acesso negado.' });
     }
 
     const vagaId = req.body.vagaId;
@@ -1162,10 +1136,6 @@ app.use((req, res, next) => {
 app.use((err, req, res, next) => {
     console.error('Erro no servidor:', err);
     res.status(500).render('erro', { mensagem: 'Erro interno do servidor.' });
-});
-
-app.get('/forcar-erro', (req, res, next) => {
-    next(new Error('Erro forçado para teste.'));
 });
 
 app.listen(port, () => {

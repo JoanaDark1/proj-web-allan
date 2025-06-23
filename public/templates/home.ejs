@@ -1,62 +1,46 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
-
-    <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/home.css">
-    <link
-    href="https://fonts.googleapis.com/css2?family=Poppins:wght@200..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
-    rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200..800&display=swap" rel="stylesheet">
 </head>
 <body>
-    
     <nav>
         <div class="navbar-left">
-            <a href="/templates/home.html" class="logo">
+            <a href="/" class="logo">
             <img src="/images/logo_cor-removebg-preview.png" alt="logo">  
             <span class="logo">MedOportuna</span>
-
             </a>
         </div>
-
         <ul class="topnav">
             <li><a href="#">Início</a></li>
             <li><a href="#quem-usa">Quem usa</a></li>
             <li><a href="#publicar-vagas">Publicar Vagas</a></li>
         </ul>
-
         <div class="d-flex align-items-end">
             <a href="/templates/auth/login.html" class="btn btn-outline-light btn-lg">Entrar</a>
         </div>
     </nav>
-
     <div class="home-page">
         <div class="home-txt">
             <h1>Oferta de emprego para a comunidade médica</h1>
             <h2>Além de oportunidades para o meio acadêmico</h2>
         </div>
-        <div class="pixel-art">
+        <div class="pixel-art"></div>
+        <div class="container-cadastro-btn">
+            <button class="cadastro-btn" data-profissao="medico">Sou médico</button>
+            <button class="cadastro-btn" data-profissao="enfermeiro">Sou enfermeiro</button>
+            <button class="cadastro-btn" data-profissao="gestor">Sou gestor</button>
         </div>
-         <!-- <div class="container-cadastro-btn"> -->
-    <div class="container-cadastro-btn ">
-        <button class="cadastro-btn" data-profissao="medico">Sou médico</button>
-        <button class="cadastro-btn" data-profissao="enfermeiro">Sou enfermeiro</button>
-        <button class="cadastro-btn" data-profissao="gestor">Sou gestor</button>
     </div>
-    </div>
-   
-
     <div id="quem-usa"></div>
     <div class="quem-usa-faixa mt-5 mb-3">
         <h3>Quem usa?</h3>
     </div>
-
     <div class="home-info container mt-5">
         <div class="row align-items-center">
             <div class="col-md-6">
@@ -69,13 +53,11 @@
             </p>
             </div>
             <div class="col-md-6">
-            <img src="\images\medico-e-enfermeiras.avif" class="img-fluid rounded mb-3" alt="Profissionais de saúde">
-            <img src="\images\gestores.jpg" class="img-fluid rounded" alt="Gestores de saúde">
+            <img src="/images/medico-e-enfermeiras.avif" class="img-fluid rounded mb-3" alt="Profissionais de saúde">
+            <img src="/images/gestores.jpg" class="img-fluid rounded" alt="Gestores de saúde">
             </div>
         </div>
     </div>
-
-    <!-- Seção: Publicar Vagas -->
     <div id="publicar-vagas" class="publicar-vagas-section mt-5 mb-5">
         <div class="container">
             <h3 class="text-center mb-4"><strong>Publicar Vagas</strong></h3>
@@ -83,13 +65,11 @@
             Se você é <strong>gestor de uma instituição</strong> ou <strong>organizador de eventos</strong>, pode usar nossa plataforma para <strong>divulgar vagas de emprego, plantões, congressos e projetos acadêmicos</strong> diretamente para profissionais da área da saúde. 
             Publique facilmente e amplie seu alcance com poucos cliques.
             </p>
-
             <div class="d-flex justify-content-center mt-4">
                 <a id="btn-publicar-vaga" href="#" class="btn btn-success btn-lg">Quero Publicar uma Vaga</a>
             </div>
         </div>
     </div>
-
     <footer class="site-footer mt-5">
         <div class="container text-center py-4">
             <p class="mb-1">© 2025 MedOportuna. Todos os direitos reservados.</p>
@@ -99,32 +79,20 @@
             </p>
         </div>
     </footer>
-
-
-    <!--Lógica de mudança de cor dos links do topnav-->
     <script>
         const links = document.querySelectorAll('.topnav li a');
-
         links.forEach(link => {
             link.addEventListener('click', function(e) {
-            // Impede navegação se href for vazio
             if (this.getAttribute("href") === "") {
                 e.preventDefault();
             }
-
-            // Remove classe ativo de todos
-            links.forEach(linkzin => linkzin.classList.remove('ativo'));
-
-            // Adiciona classe ativo no clicado
+         links.forEach(linkzin => linkzin.classList.remove('ativo'));
             this.classList.add('ativo');
             });
         });
-
-        // Lógica dos botões "sou médico"
         document.querySelectorAll('.cadastro-btn').forEach(button => {
         button.addEventListener('click', function () {
             const profissao = this.dataset.profissao;
-
             fetch(`/verificar-acesso?profissao=${profissao}`)
                 .then(res => res.json())
                 .then(data => {
@@ -139,7 +107,6 @@
                 });
         });
     });
-    //Lógica da página publicar vaga
         document.getElementById('btn-publicar-vaga').addEventListener('click', function (e) {
             e.preventDefault();
             fetch('/acessar-publicar-vaga')
@@ -153,6 +120,5 @@
                 .catch(err => console.error('Erro ao verificar login:', err));
         });
     </script>
-
 </body>
 </html>

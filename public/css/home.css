@@ -31,7 +31,7 @@
  /***************** Navbar ******************/
  nav {
     background-color: #2b7e4c;
-    font-family: "Poppins", serif;
+    font-family: "Poppins", sans-serif;
     position: fixed;
     width: 100%;
     top: 0;
@@ -1483,8 +1483,8 @@
 }
 
 .cadastro-btn {
-    font-family: "Poppins", sans-serif; /* Garante a fonte e adiciona fallback */
-    font-weight: 500;
+    font-family: "Poppins", sans-serif;
+    font-weight: 600;
     font-size: 16px;
     color: #ffffff; 
     line-height: 1.2;
