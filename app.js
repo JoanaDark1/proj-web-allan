@@ -948,7 +948,7 @@ app.post('/admin/excluir-vaga', (req, res) => {
     con.query(sql, [vagaId], (err, result) => {
         if (err) {
             console.error("Erro ao excluir vaga como admin:", err);
-            return res.status(500).send("Erro ao excluir vaga.");
+            return res.status(500).render('erro', { mensagem: 'Erro ao excluir vaga.' });
         }
         res.redirect('/painel-admin');
     });
@@ -956,7 +956,7 @@ app.post('/admin/excluir-vaga', (req, res) => {
 
 app.post('/admin/excluir-admin', (req, res) => {
     if (!req.session.user || req.session.user.tipo !== 'admin') {
-        return res.status(403).send("Acesso negado.");
+        return res.status(403).render('erro', { mensagem: 'Acesso negado.' });
     }
 
     const adminId = req.body.id;
@@ -965,18 +965,18 @@ app.post('/admin/excluir-admin', (req, res) => {
     const checkSql = "SELECT email FROM admin WHERE id = ?";
     con.query(checkSql, [adminId], (err, result) => {
         if (err || result.length === 0) {
-            return res.status(400).send("Admin não encontrado.");
+            return res.status(400).render('erro', { mensagem: 'Admin não encontrado.' });
         }
 
         if (result[0].email === 'admin@medoportuna.com') {
-            return res.status(403).send("O Admin Geral não pode ser excluído.");
+            return res.status(403).render('erro', { mensagem: 'O Admin Geral não pode ser excluído.' });
         }
 
         const deleteSql = "DELETE FROM admin WHERE id = ?";
         con.query(deleteSql, [adminId], (err) => {
             if (err) {
                 console.error("Erro ao excluir admin:", err);
-                return res.status(500).send("Erro ao excluir administrador.");
+                return res.status(500).render('erro', { mensagem: 'Erro ao excluir administrador.' });
             }
             res.redirect('/painel-admin');
         });
@@ -1133,7 +1133,7 @@ app.post('/desfavoritar-publicacao', (req, res) => {
 // Exibir formulário de publicação de edital
 app.get('/publicar-edital', (req, res) => {
     if (!req.session.user || req.session.user.tipo !== 'admin') {
-        return res.status(403).send("Acesso negado.");
+        return res.status(403).render('erro', { mensagem: 'Acesso negado.' });
     }
     res.render('publicar-edital');
 });
@@ -1147,10 +1147,25 @@ app.post('/publicar-edital', (req, res) => {
     con.query(sql, [instituicao, especialidade, periodo, documentos], (err) => {
         if (err) {
             console.error("Erro ao salvar edital:", err);
-            return res.status(500).send("Erro ao publicar o edital.");
+            return res.status(500).render('erro', { mensagem: 'Erro ao publicar o edital.' });
         }
         res.redirect('/painel-admin');
     });
+});
+
+// Middleware para rota não encontrada (404)
+app.use((req, res, next) => {
+    res.status(404).render('erro', { mensagem: 'Página não encontrada.' });
+});
+
+// Middleware para outros erros (500, etc.)
+app.use((err, req, res, next) => {
+    console.error('Erro no servidor:', err);
+    res.status(500).render('erro', { mensagem: 'Erro interno do servidor.' });
+});
+
+app.get('/forcar-erro', (req, res, next) => {
+    next(new Error('Erro forçado para teste.'));
 });
 
 app.listen(port, () => {
