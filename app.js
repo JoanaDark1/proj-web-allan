@@ -691,9 +691,12 @@ app.get('/acessar-publicar-vaga', (req, res) => {
         return res.redirect('/templates/auth/login.html');
     }
 
-    // Se for um gestor logado, redireciona para o formulário de publicação
-    return res.sendFile(path.join(__dirname, 'public', 'templates', 'publicar-vaga.html'));
+    return res.render('publicar-vaga', {
+        id: req.session.user.id,
+        tipo: req.session.user.tipo
+    });
 });
+
 
 app.post('/publicar-vaga', (req, res) => {
     const { titulo, descricao, local, remuneracao, profissao, contato } = req.body;
