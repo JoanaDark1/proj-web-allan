@@ -107,10 +107,18 @@
                     title: resultado.sucesso ? 'Bem-vindo!' : 'Erro',
                     text: resultado.mensagem
                 }).then(() => {
-                    if (resultado.sucesso && resultado.redirectUrl) {
-                        window.location.href = resultado.redirectUrl;
+                    if (resultado.sucesso) {
+                        // Verifica se há redirect na URL
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const redirect = urlParams.get('redirect');
+                        if (redirect) {
+                            window.location.href = redirect;
+                        } else {
+                            window.location.href = '/';
+                        }
                     }
                 });
+
 
             } catch (erro) {
                 console.error("Erro ao fazer login:", erro);

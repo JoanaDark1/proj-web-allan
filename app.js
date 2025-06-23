@@ -23,12 +23,43 @@ app.use(express.json());
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
-//  acessar arquivos HTML, CSS, JS na pasta public
+// acessar arquivos HTML, CSS, JS na pasta public
 app.use(express.static('public'));
 
 app.get('/', (req, res) => {
-    res.render('home');
+    let foto_perfil = null;
+
+    if (req.session.user) {
+        if (req.session.user.tipo === 'admin') {
+            foto_perfil = '/images/admin_default.jpg';
+            return res.render('home', { user: req.session.user, foto_perfil });
+        } else {
+            let tabela;
+            if (req.session.user.tipo === 'medico') tabela = 'medicos';
+            else if (req.session.user.tipo === 'enfermeiro') tabela = 'enfermeiros';
+            else if (req.session.user.tipo === 'gestor') tabela = 'gestores';
+            else tabela = null;
+
+            if (!tabela) {
+                foto_perfil = '/images/User_Avatar.png';
+                return res.render('home', { user: req.session.user, foto_perfil });
+            }
+
+            const sql = `SELECT img_perfil FROM ${tabela} WHERE id = ?`;
+            con.query(sql, [req.session.user.id], (err, result) => {
+                if (err || result.length === 0) {
+                    foto_perfil = '/images/User_Avatar.png';
+                } else {
+                    foto_perfil = (result[0].img_perfil || '/images/User_Avatar.png') + '?t=' + Date.now();
+                }
+                return res.render('home', { user: req.session.user, foto_perfil });
+            });
+            return;
+        }
+    }
+    res.render('home', { user: req.session.user, foto_perfil });
 });
+
 
 // // Configurar o Express para usar EJS como motor de template
 app.set('view engine', 'ejs');
@@ -68,6 +99,7 @@ app.post('/login', (req, res) => {
         if (result.length > 0) {
             req.session.user = {
                 email,
+                nome: result[0].nome,
                 tipo: 'medico',
                 id: result[0].id
             };
@@ -88,6 +120,7 @@ app.post('/login', (req, res) => {
             if (result.length > 0) {
                 req.session.user = {
                     email,
+                    nome: result[0].nome,
                     tipo: 'enfermeiro',
                     id: result[0].id
                 };
@@ -108,6 +141,7 @@ app.post('/login', (req, res) => {
                 if (result.length > 0) {
                     req.session.user = {
                         email,
+                        nome: result[0].nome,
                         tipo: 'gestor',
                         id: result[0].id
                     };
@@ -128,6 +162,7 @@ app.post('/login', (req, res) => {
                     if (result.length > 0) {
                         req.session.user = {
                             email,
+                            nome: result[0].nome,
                             tipo: 'admin',
                             id: result[0].id
                         };
@@ -383,6 +418,15 @@ app.post('/add', (req, res) => {  // res = resposta do servidor, req = requisiç
         console.log("Resultado da query: ", result);  // Log do resultado
         console.log("Usuário cadastrado com sucesso!");
         console.log("ID inserido: ", result.insertId);
+
+        // Login automático
+        req.session.user = {
+            id: result.insertId,
+            nome: req.body.nome,
+            email: req.body.email,
+            tipo: tipo
+        };
+
         return res.redirect(`/user_profile?tipo=${tipo}&id=${result.insertId}`);
     });
 });

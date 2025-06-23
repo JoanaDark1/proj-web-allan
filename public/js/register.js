@@ -14,47 +14,52 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (btnMedico) {
         btnMedico.addEventListener("click", () => {
-            btnSubmit.disabled = false; // habilitar o botão de submit
+            btnSubmit.disabled = false;
             document.getElementById("tipo-usuario").value = "medico";
             container.innerHTML = `
                 <div class="wrap-input validate-input" data-validate="CRM obrigatório">
-                    <input class="wrap-input input" name="crm" type="text" placeholder="CRM" required minlength = "5" maxlength="6" id="crm">
+                    <input class="input" name="crm" type="text" placeholder="CRM" required minlength="5" maxlength="6">
+                </div>
+                <div class="wrap-input validate-input" data-validate="Selecione o estado">
                     <select id="estado_crm" name="estado_crm" class="input" required>
-                            <option value="">Selecione o estado do seu CRM</option>
-                            <option value="AC">AC</option>
-                            <option value="AL">AL</option>
-                            <option value="AP">AP</option>
-                            <option value="AM">AM</option>
-                            <option value="BA">BA</option>
-                            <option value="CE">CE</option>
-                            <option value="DF">DF</option>
-                            <option value="ES">ES</option>
-                            <option value="GO">GO</option>
-                            <option value="MA">MA</option>
-                            <option value="MT">MT</option>
-                            <option value="MS">MS</option>
-                            <option value="MG">MG</option>
-                            <option value="PA">PA</option>
-                            <option value="PB">PB</option>
-                            <option value="PR">PR</option>
-                            <option value="PE">PE</option>
-                            <option value="PI">PI</option>
-                            <option value="RJ">RJ</option>
-                            <option value="RN">RN</option>
-                            <option value="RS">RS</option>
-                            <option value="RO">RO</option>
-                            <option value="RR">RR</option>
-                            <option value="SC">SC</option>
-                            <option value="SP">SP</option>
-                            <option value="SE">SE</option>
-                            <option value="TO">TO</option>
+                        <option value="">Selecione o estado do seu CRM</option>
+                        <option value="AC">AC</option>
+                        <option value="AL">AL</option>
+                        <option value="AP">AP</option>
+                        <option value="AM">AM</option>
+                        <option value="BA">BA</option>
+                        <option value="CE">CE</option>
+                        <option value="DF">DF</option>
+                        <option value="ES">ES</option>
+                        <option value="GO">GO</option>
+                        <option value="MA">MA</option>
+                        <option value="MT">MT</option>
+                        <option value="MS">MS</option>
+                        <option value="MG">MG</option>
+                        <option value="PA">PA</option>
+                        <option value="PB">PB</option>
+                        <option value="PR">PR</option>
+                        <option value="PE">PE</option>
+                        <option value="PI">PI</option>
+                        <option value="RJ">RJ</option>
+                        <option value="RN">RN</option>
+                        <option value="RS">RS</option>
+                        <option value="RO">RO</option>
+                        <option value="RR">RR</option>
+                        <option value="SC">SC</option>
+                        <option value="SP">SP</option>
+                        <option value="SE">SE</option>
+                        <option value="TO">TO</option>
                     </select>
-    
-                    </div>
+                </div>
                 <div class="wrap-input validate-input" data-validate="RQE opcional">
-                    <input class="input" name="rqm1" type="text" placeholder="RQE" minlength = "4" maxlength="7">
-                    <input class="wrap-input input" name="especialidade1" type="text" placeholder="Especialidade"  minlength = "5" maxlength="50" id="Especialidade">
-                    <p> Caso possua uma segunda especialidade poderá ser adicionada na página do usuário</p>
+                    <input class="input" name="rqe1" type="text" placeholder="RQE (opcional)" minlength="4" maxlength="7">
+                </div>
+                <div class="wrap-input validate-input" data-validate="Especialidade">
+                    <input class="input" name="especialidade1" type="text" placeholder="Especialidade" minlength="5" maxlength="50">
+                </div>
+                <div class="text-center mt-2 mb-2">
+                    <small> Caso possua uma segunda especialidade poderá ser adicionada na página do usuário </small>
                 </div>
             `;
         });
@@ -62,22 +67,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (btnEnfermeiro) {
         btnEnfermeiro.addEventListener("click", () => {
-            btnSubmit.disabled = false; // habilitar o botão de submit
+            btnSubmit.disabled = false;
             document.getElementById("tipo-usuario").value = "enfermeiro";
             container.innerHTML = `
-                <div class="wrap-input validate-input" data-validate="COREN obrigatório" >
-                    <input class="input" name="coren" type="text" placeholder="COREN" required  minlength = "4" maxlength="7"> 
+                <div class="wrap-input validate-input" data-validate="COREN obrigatório">
+                    <input class="input" name="coren" type="text" placeholder="COREN" required minlength="4" maxlength="7">
+                </div>
+                <div class="wrap-input validate-input" data-validate="Selecione a categoria">
                     <select id="coren_tipo" name="coren_tipo" class="input" required>
-                            <option value="">Selecione a categoria do seu CRM</option>
-                            <option value="ENF">Enfermeiro-ENF</option>
-                            <option value="TE">Técnico de Enfermagem-TE</option>
-                            <option value="AE">Auxiliar de Enfermagem-AE</option>
-                            <option value="OB">Obstetriz-OB</option>
-                          
+                        <option value="">Selecione a categoria do seu COREN</option>
+                        <option value="ENF">Enfermeiro</option>
+                        <option value="TE">Técnico de Enfermagem</option>
+                        <option value="AE">Auxiliar de Enfermagem</option>
+                        <option value="OB">Obstetriz</option>
                     </select>
-    
-                    <input class="wrap-input input" name="especialidade1" type="text" placeholder="Especialidade"  minlength = "5" maxlength="50" id="Especialidade">
-
+                </div>
+                <div class="wrap-input validate-input" data-validate="Especialidade">
+                    <input class="input" name="especialidade1" type="text" placeholder="Especialidade" minlength="5" maxlength="50">
                 </div>
             `;
         });
